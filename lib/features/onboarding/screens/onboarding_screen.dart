@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/features/onboarding/model/onboarding_data.dart';
 import 'package:pulze_plus/features/onboarding/widgets/onboarding_bottom_action.dart';
@@ -22,7 +23,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
 
-  final List<OnboardingData> _pages = const [
+  static const List<OnboardingData> _pages = [
     OnboardingData(
       title: 'Find the right connection.',
       description: 'Connect with people who need blood and donors who are ready to help.',
@@ -46,26 +47,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  void _nextPage() {
+  Future<void> _nextPage() async {
     final currentPage = ref.read(onboardingProvider);
 
     if (currentPage < _pages.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
+      await _pageController.nextPage(
+        duration: const Duration(milliseconds: 350),
         curve: Curves.easeOutCubic,
       );
       return;
     }
 
-    _finishOnboarding();
+    await _finishOnboarding();
   }
 
-  void _skipOnboarding() async {
-    await ref.read(onboardingProvider.notifier).complete();
-
-    if (!mounted) return;
-
-    context.go(AppRoutes.home);
+  Future<void> _skipOnboarding() async {
+    await _finishOnboarding();
   }
 
   Future<void> _finishOnboarding() async {
@@ -87,17 +84,34 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       large: AppSpacing.xxxl,
     );
 
-    final bottomSpacing = ResponsiveUtils.value(
+    final topSpacing = ResponsiveUtils.value(
       context,
-      mobile: AppSpacing.xl,
-      tablet: AppSpacing.xxl,
+      mobile: AppSpacing.xs,
+      tablet: AppSpacing.sm,
+      large: AppSpacing.md,
+    );
+
+    final indicatorSpacing = ResponsiveUtils.value(
+      context,
+      mobile: AppSpacing.md,
+      tablet: AppSpacing.lg,
+      large: AppSpacing.xl,
+    );
+
+    final actionSpacing = ResponsiveUtils.value(
+      context,
+      mobile: AppSpacing.lg,
+      tablet: AppSpacing.xl,
       large: AppSpacing.xxl,
     );
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
+            SizedBox(height: topSpacing),
+
             OnboardingTopBar(
               currentPage: currentPage,
               totalPages: _pages.length,
@@ -109,6 +123,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: _pages.length,
+                physics: const BouncingScrollPhysics(),
                 onPageChanged: (index) {
                   ref.read(onboardingProvider.notifier).setPage(index);
                 },
@@ -121,12 +136,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
 
+            SizedBox(height: indicatorSpacing),
+
             OnboardingPageIndicator(
               currentPage: currentPage,
               pageCount: _pages.length,
             ),
 
-            SizedBox(height: bottomSpacing),
+            SizedBox(height: actionSpacing),
 
             OnboardingBottomAction(
               currentPage: currentPage,
@@ -135,7 +152,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               horizontalPadding: horizontalPadding,
             ),
 
-            SizedBox(height: bottomSpacing),
+            SizedBox(height: actionSpacing),
           ],
         ),
       ),

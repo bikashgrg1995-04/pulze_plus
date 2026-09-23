@@ -14,30 +14,51 @@ class OnboardingIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: isDark
+            ? AppColors.darkSurface
+            : AppColors.surface,
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.border,
+          color: isDark
+              ? AppColors.darkBorder
+              : AppColors.border,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(
+              alpha: isDark ? 0.10 : 0.08,
+            ),
+            blurRadius: size * 0.12,
+            spreadRadius: 0,
+            offset: Offset(
+              0,
+              size * 0.04,
+            ),
+          ),
+        ],
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Container(
-            width: size * 0.72,
-            height: size * 0.72,
+            width: size * 0.74,
+            height: size * 0.74,
             decoration: BoxDecoration(
-              color: AppColors.coral.withValues(alpha: 0.12),
+              color: AppColors.coral.withValues(
+                alpha: isDark ? 0.14 : 0.10,
+              ),
               shape: BoxShape.circle,
             ),
           ),
           Container(
-            width: size * 0.48,
-            height: size * 0.48,
+            width: size * 0.50,
+            height: size * 0.50,
             decoration: const BoxDecoration(
               color: AppColors.primary,
               shape: BoxShape.circle,

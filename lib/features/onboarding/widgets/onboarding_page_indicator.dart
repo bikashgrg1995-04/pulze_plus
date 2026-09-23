@@ -15,21 +15,37 @@ class OnboardingPageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        pageCount,
-        (index) => AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          height: 8,
-          width: currentPage == index ? 24 : 8,
-          decoration: BoxDecoration(
-            color: currentPage == index
-                ? AppColors.primary
-                : AppColors.border,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Semantics(
+      label: 'Onboarding page ${currentPage + 1} of $pageCount',
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          pageCount,
+          (index) {
+            final isSelected = currentPage == index;
+
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              margin: const EdgeInsets.symmetric(
+                horizontal: 4,
+              ),
+              width: isSelected ? 26 : 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.primary
+                    : isDark
+                        ? AppColors.darkBorder
+                        : AppColors.border,
+                borderRadius: BorderRadius.circular(
+                  AppRadius.pill,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

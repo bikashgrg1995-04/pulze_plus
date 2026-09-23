@@ -1,0 +1,60 @@
+import '../models/donor_model.dart';
+
+const demoDonors = [
+  DonorModel(
+    id: 'donor_001',
+    bloodGroup: 'O+',
+    distance: 2.4,
+    isAvailable: true,
+    isEligible: true,
+    lastDonation: '3 months ago',
+  ),
+  DonorModel(
+    id: 'donor_002',
+    bloodGroup: 'A+',
+    distance: 3.1,
+    isAvailable: true,
+    isEligible: true,
+    lastDonation: '4 months ago',
+  ),
+  DonorModel(
+    id: 'donor_003',
+    bloodGroup: 'O+',
+    distance: 4.7,
+    isAvailable: true,
+    isEligible: true,
+    lastDonation: '5 months ago',
+  ),
+  DonorModel(
+    id: 'donor_004',
+    bloodGroup: 'B+',
+    distance: 5.2,
+    isAvailable: true,
+    isEligible: true,
+    lastDonation: '3 months ago',
+  ),
+  DonorModel(
+    id: 'donor_005',
+    bloodGroup: 'AB+',
+    distance: 6.8,
+    isAvailable: false,
+    isEligible: true,
+    lastDonation: '2 months ago',
+  ),
+  DonorModel(
+    id: 'donor_006',
+    bloodGroup: 'A-',
+    distance: 8.4,
+    isAvailable: true,
+    isEligible: true,
+    lastDonation: '4 months ago',
+  ),
+  DonorModel(
+    id: 'donor_007',
+    bloodGroup: 'O-',
+    distance: 10.2,
+    isAvailable: true,
+    isEligible: false,
+    lastDonation: '1 month ago',
+  ),
+];

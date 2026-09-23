@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 
 class OnboardingTopBar extends StatelessWidget {
@@ -19,6 +20,8 @@ class OnboardingTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLastPage = currentPage >= totalPages - 1;
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: horizontalPadding,
@@ -28,15 +31,40 @@ class OnboardingTopBar extends StatelessWidget {
         height: 40,
         child: Align(
           alignment: Alignment.centerRight,
-          child: currentPage < totalPages - 1
-              ? TextButton(
-                  onPressed: onSkip,
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: isLastPage
+                ? const SizedBox(
+                    key: ValueKey('empty'),
+                  )
+                : TextButton(
+                    key: const ValueKey('skip'),
+                    onPressed: onSkip,
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs,
+                      ),
+                      minimumSize: const Size(0, 40),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppRadius.pill,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Skip',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
                   ),
-                  child: const Text('Skip'),
-                )
-              : null,
+          ),
         ),
       ),
     );

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/responsive_utils.dart';
 
 class OnboardingBottomAction extends StatelessWidget {
@@ -18,6 +21,8 @@ class OnboardingBottomAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLastPage = currentPage == lastPage;
+
     final buttonWidth = ResponsiveUtils.value(
       context,
       mobile: double.infinity,
@@ -25,22 +30,46 @@ class OnboardingBottomAction extends StatelessWidget {
       large: 480,
     );
 
-    return SizedBox(
-      width: buttonWidth,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: ResponsiveUtils.isMobile(context)
-              ? horizontalPadding
-              : 0,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.isMobile(context)
+            ? horizontalPadding
+            : 0,
+      ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: buttonWidth,
         ),
         child: SizedBox(
+          width: double.infinity,
           height: 52,
           child: ElevatedButton(
             onPressed: onPressed,
-            child: Text(
-              currentPage == lastPage
-                  ? 'Get Started'
-                  : 'Next',
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  AppRadius.md,
+                ),
+              ),
+            ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: Text(
+                isLastPage ? 'Get Started' : 'Next',
+                key: ValueKey(isLastPage),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:pulze_plus/features/onboarding/model/onboarding_data.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -22,16 +23,22 @@ class OnboardingPage extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final isSmallHeight = constraints.maxHeight < 620;
+
         final illustrationSize = ResponsiveUtils.value(
           context,
-          mobile: ResponsiveUtils.isSmallMobile(context) ? 180 : 210,
+          mobile: ResponsiveUtils.isSmallMobile(context)
+              ? 176
+              : isSmallHeight
+                  ? 190
+                  : 210,
           tablet: 260,
           large: 300,
         );
 
-        final titleSpacing = ResponsiveUtils.value(
+        final contentSpacing = ResponsiveUtils.value(
           context,
-          mobile: constraints.maxHeight < 620
+          mobile: isSmallHeight
               ? AppSpacing.lg
               : AppSpacing.xxl,
           tablet: AppSpacing.xxl,
@@ -48,8 +55,8 @@ class OnboardingPage extends StatelessWidget {
         final descriptionWidth = ResponsiveUtils.value(
           context,
           mobile: 340,
-          tablet: 440,
-          large: 520,
+          tablet: 460,
+          large: 540,
         );
 
         return Padding(
@@ -65,7 +72,9 @@ class OnboardingPage extends StatelessWidget {
                 size: illustrationSize,
               ),
 
-              SizedBox(height: titleSpacing),
+              SizedBox(
+                height: contentSpacing,
+              ),
 
               ConstrainedBox(
                 constraints: BoxConstraints(
@@ -75,12 +84,15 @@ class OnboardingPage extends StatelessWidget {
                   data.title,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
-                    color: AppColors.textPrimary,
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
 
               ConstrainedBox(
                 constraints: BoxConstraints(
@@ -90,7 +102,9 @@ class OnboardingPage extends StatelessWidget {
                   data.description,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                   ),
                 ),
               ),
