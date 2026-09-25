@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/responsive_utils.dart';
 
 class AuthHeader extends StatelessWidget {
   const AuthHeader({
@@ -18,11 +19,32 @@ class AuthHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final logoSize = ResponsiveUtils.value(
+      context,
+      mobile: 64.0,
+      tablet: 72.0,
+      large: 80.0,
+    );
+
+    final titleSpacing = ResponsiveUtils.value(
+      context,
+      mobile: AppSpacing.lg,
+      tablet: AppSpacing.xl,
+      large: AppSpacing.xl,
+    );
+
+    final subtitleMaxWidth = ResponsiveUtils.value(
+      context,
+      mobile: 340.0,
+      tablet: 400.0,
+      large: 440.0,
+    );
+
     return Column(
       children: [
         Container(
-          width: 64,
-          height: 64,
+          width: logoSize,
+          height: logoSize,
           decoration: BoxDecoration(
             color: AppColors.surface,
             shape: BoxShape.circle,
@@ -30,13 +52,20 @@ class AuthHeader extends StatelessWidget {
               color: AppColors.border,
             ),
           ),
-          child: SvgPicture.asset(
-            'assets/branding/app_icon.svg',
-            fit: BoxFit.contain,
+          child: Padding(
+            padding: EdgeInsets.all(
+              logoSize * 0.16,
+            ),
+            child: SvgPicture.asset(
+              'assets/branding/app_icon.svg',
+              fit: BoxFit.contain,
+            ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.lg),
+        SizedBox(
+          height: titleSpacing,
+        ),
 
         Text(
           title,
@@ -48,11 +77,13 @@ class AuthHeader extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: AppSpacing.xs),
+        const SizedBox(
+          height: AppSpacing.xs,
+        ),
 
         ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 340,
+          constraints: BoxConstraints(
+            maxWidth: subtitleMaxWidth,
           ),
           child: Text(
             subtitle,

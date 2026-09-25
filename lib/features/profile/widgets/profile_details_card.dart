@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:pulze_plus/core/widgets/app_section_header.dart';
+import 'package:pulze_plus/features/auth/models/user_model.dart';
+import 'package:pulze_plus/features/profile/models/profile_model.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 
 class ProfileUserCard extends StatelessWidget {
-  const ProfileUserCard({super.key, this.onEdit});
+  const ProfileUserCard({
+    super.key,
+    required this.user,
+    required this.profile,
+    this.onEdit,
+  });
 
+  final UserModel user;
+  final ProfileModel? profile;
   final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
@@ -24,7 +32,6 @@ class ProfileUserCard extends StatelessWidget {
       child: Stack(
         children: [
           const Positioned.fill(child: _DetailsBackground()),
-
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
@@ -35,11 +42,10 @@ class ProfileUserCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: AppSectionHeader(title: 'Personal Details'),
                     ),
                     if (onEdit != null)
-
                       IconButton(
                         onPressed: onEdit,
                         tooltip: 'Edit profile',
@@ -51,39 +57,50 @@ class ProfileUserCard extends StatelessWidget {
                       ),
                   ],
                 ),
-
                 const SizedBox(height: AppSpacing.sm),
-
-                const _DetailRow(
+                _DetailRow(
                   icon: Icons.person_outline_rounded,
                   label: 'Full Name',
-                  value: 'Bikash Gurung',
+                  value: user.fullName,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
-                const _DetailRow(
+                _DetailRow(
                   icon: Icons.email_outlined,
                   label: 'Email',
-                  value: 'bikash.gurung@example.com',
+                  value: user.email,
                 ),
-
                 const SizedBox(height: AppSpacing.md),
 
-                const _DetailRow(
+                _DetailRow(
                   icon: Icons.phone_outlined,
                   label: 'Phone',
-                  value: '+977 98XXXXXXXX',
+                  value: profile?.phoneNumber ?? 'Not added',
+                ),
+                Text(
+                  profile?.isPhoneVerified == true ? 'Verified' : 'Unverified',
                 ),
 
                 const SizedBox(height: AppSpacing.md),
-
-                const _DetailRow(
-                  icon: Icons.location_on_outlined,
-                  label: 'Location',
-                  value: 'Bharatpur, Nepal',
+                _DetailRow(
+                  icon: Icons.person_outline_rounded,
+                  label: 'Gender',
+                  value: _formatGender(profile?.gender),
                 ),
+                const SizedBox(height: AppSpacing.md),
+                _DetailRow(
+                  icon: Icons.calendar_today_outlined,
+                  label: 'Date of Birth',
+                  value: _formatDate(profile?.dateOfBirth),
+                ),
+                const SizedBox(height: AppSpacing.md),
 
+                _DetailRow(
+                  icon: Icons.location_city_outlined,
+                  label: 'City',
+                  value: profile?.city?.trim().isNotEmpty == true
+                      ? profile!.city!
+                      : 'Not added',
+                ),
                 const SizedBox(height: AppSpacing.lg),
               ],
             ),
@@ -91,6 +108,33 @@ class ProfileUserCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatGender(String? gender) {
+    switch (gender) {
+      case 'male':
+        return 'Male';
+      case 'female':
+        return 'Female';
+      case 'other':
+        return 'Other';
+      case 'prefer_not_to_say':
+        return 'Not specified';
+      default:
+        return 'Not specified';
+    }
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      return 'Not added';
+    }
+
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+
+    return '$year-$month-$day';
   }
 }
 
@@ -122,9 +166,7 @@ class _DetailRow extends StatelessWidget {
           ),
           child: Icon(icon, size: 19, color: AppColors.primary),
         ),
-
         const SizedBox(width: AppSpacing.md),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,9 +179,7 @@ class _DetailRow extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-
               const SizedBox(height: AppSpacing.xxs),
-
               Text(
                 value,
                 style: theme.textTheme.bodyMedium?.copyWith(

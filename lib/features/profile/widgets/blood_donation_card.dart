@@ -8,8 +8,8 @@ class BloodDonationCard extends StatelessWidget {
   const BloodDonationCard({
     super.key,
     required this.bloodGroup,
-    this.lastDonation = '12 June 2026',
-    this.nextEligibleDate = '12 September 2026',
+    required this.lastDonation,
+    required this.nextEligibleDate,
     this.onEdit,
   });
 
@@ -20,7 +20,7 @@ class BloodDonationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
     return Container(
       width: double.infinity,
@@ -39,42 +39,41 @@ class BloodDonationCard extends StatelessWidget {
           const Positioned.fill(
             child: _DetailsBackground(),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
               vertical: AppSpacing.md,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
-                
-
                 _DetailRow(
                   icon: Icons.bloodtype_outlined,
                   label: 'Blood Group',
                   value: bloodGroup,
                   valueColor: AppColors.primary,
                 ),
-
-                const SizedBox(height: AppSpacing.md),
-
+                const SizedBox(
+                  height: AppSpacing.md,
+                ),
                 _DetailRow(
                   icon: Icons.calendar_today_outlined,
                   label: 'Last Donation',
                   value: lastDonation,
                 ),
-
-                const SizedBox(height: AppSpacing.md),
-
+                const SizedBox(
+                  height: AppSpacing.md,
+                ),
                 _DetailRow(
                   icon: Icons.event_available_outlined,
                   label: 'Next Eligible Date',
                   value: nextEligibleDate,
                   valueColor: AppColors.success,
                 ),
-
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(
+                  height: AppSpacing.lg,
+                ),
               ],
             ),
           ),
@@ -120,12 +119,13 @@ class _DetailRow extends StatelessWidget {
             color: AppColors.primary,
           ),
         ),
-
-        const SizedBox(width: AppSpacing.md),
-
+        const SizedBox(
+          width: AppSpacing.md,
+        ),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 label.toUpperCase(),
@@ -135,13 +135,15 @@ class _DetailRow extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-
-              const SizedBox(height: AppSpacing.xxs),
-
+              const SizedBox(
+                height: AppSpacing.xxs,
+              ),
               Text(
                 value,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: valueColor ?? AppColors.textPrimary,
+                  color:
+                      valueColor ??
+                      AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -166,7 +168,10 @@ class _DetailsBackground extends StatelessWidget {
 
 class _DetailsBackgroundPainter extends CustomPainter {
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(
+    Canvas canvas,
+    Size size,
+  ) {
     final topPaint = Paint()
       ..color = AppColors.primary.withValues(
         alpha: 0.035,

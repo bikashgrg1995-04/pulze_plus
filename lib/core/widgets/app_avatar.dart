@@ -39,9 +39,7 @@ class AppAvatar extends StatelessWidget {
         color: background,
         shape: BoxShape.circle,
         border: showBorder
-            ? Border.all(
-                color: borderColor ?? AppColors.border,
-              )
+            ? Border.all(color: borderColor ?? AppColors.border)
             : null,
       ),
       clipBehavior: Clip.antiAlias,
@@ -56,7 +54,7 @@ class AppAvatar extends StatelessWidget {
         width: size,
         height: size,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) {
+        errorBuilder: (_, _, _) {
           return _fallback(foregroundColor);
         },
       );
@@ -81,10 +79,6 @@ class AppAvatar extends StatelessWidget {
       );
     }
 
-    return Icon(
-      icon,
-      size: size * 0.48,
-      color: foregroundColor,
-    );
+    return Icon(icon, size: size * 0.48, color: foregroundColor);
   }
 }

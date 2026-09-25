@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/features/auth/screens/auth_screen.dart';
 import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
 import 'package:pulze_plus/features/home/screens/home_screen.dart';
+import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
@@ -21,6 +24,7 @@ class MainNavigationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(navigationIndexProvider);
+    final authState = ref.watch(authProvider);
 
     final screens = [
       const HomeScreen(
@@ -36,7 +40,7 @@ class MainNavigationScreen extends ConsumerWidget {
           );
         },
       ),
-      const ProfileScreen(),
+      _buildProfileScreen(authState),
     ];
 
     return Scaffold(
@@ -54,6 +58,24 @@ class MainNavigationScreen extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  Widget _buildProfileScreen(AuthState authState) {
+    switch (authState.status) {
+      case AuthStatus.authenticated:
+        return const ProfileScreen();
+
+      case AuthStatus.needsProfile:
+        return const ProfileFormScreen(
+          mode: ProfileFormMode.create,
+        );
+
+      case AuthStatus.unauthenticated:
+      case AuthStatus.needsVerification:
+      case AuthStatus.initial:
+      case AuthStatus.loading:
+        return const AuthScreen();
+    }
   }
 }
 

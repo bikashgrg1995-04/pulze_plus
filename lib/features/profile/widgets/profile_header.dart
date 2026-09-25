@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/responsive_utils.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({
     super.key,
-    this.name = 'Bikash Gurung',
-    this.bloodGroup = 'O+',
-    this.location = 'Bharatpur, Nepal',
+    required this.name,
+    required this.bloodGroup,
+    required this.address,
+    this.avatarUrl,
+    this.isUploadingAvatar = false,
     this.isAvailable = true,
     this.onAvatarTap,
     this.onAvailabilityChanged,
@@ -17,7 +20,9 @@ class ProfileHeader extends StatelessWidget {
 
   final String name;
   final String bloodGroup;
-  final String location;
+  final String address;
+  final String? avatarUrl;
+  final bool isUploadingAvatar;
   final bool isAvailable;
   final VoidCallback? onAvatarTap;
   final ValueChanged<bool>? onAvailabilityChanged;
@@ -26,9 +31,30 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final horizontalPadding = ResponsiveUtils.value(
+      context,
+      mobile: AppSpacing.lg,
+      tablet: AppSpacing.xxl,
+      large: AppSpacing.xxxl,
+    );
+
+    final verticalPadding = ResponsiveUtils.value(
+      context,
+      mobile: AppSpacing.md,
+      tablet: AppSpacing.lg,
+      large: AppSpacing.lg,
+    );
+
+    final headerHeight = ResponsiveUtils.value(
+      context,
+      mobile: 160.0,
+      tablet: 165.0,
+      large: 175.0,
+    );
+
     return SizedBox(
       width: double.infinity,
-      height: 150,
+      height: headerHeight,
       child: Stack(
         children: [
           Positioned.fill(
@@ -38,13 +64,28 @@ class ProfileHeader extends StatelessWidget {
           ),
 
           Positioned(
-            top: 16,
-            right: 20,
+            top: ResponsiveUtils.value(
+              context,
+              mobile: 16.0,
+              tablet: 20.0,
+              large: 24.0,
+            ),
+            right: ResponsiveUtils.value(
+              context,
+              mobile: 20.0,
+              tablet: 28.0,
+              large: 32.0,
+            ),
             child: Opacity(
               opacity: 0.08,
               child: Icon(
                 Icons.favorite_rounded,
-                size: 82,
+                size: ResponsiveUtils.value(
+                  context,
+                  mobile: 82.0,
+                  tablet: 92.0,
+                  large: 100.0,
+                ),
                 color: AppColors.primary,
               ),
             ),
@@ -52,18 +93,27 @@ class ProfileHeader extends StatelessWidget {
 
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _ProfileAvatar(
+                    avatarUrl: avatarUrl,
                     onTap: onAvatarTap,
+                    isUploading: isUploadingAvatar,
                   ),
 
-                  const SizedBox(width: AppSpacing.lg),
+                  SizedBox(
+                    width: ResponsiveUtils.value(
+                      context,
+                      mobile: AppSpacing.lg,
+                      tablet: AppSpacing.xl,
+                      large: AppSpacing.xl,
+                    ),
+                  ),
 
                   Expanded(
                     child: Column(
@@ -71,68 +121,53 @@ class ProfileHeader extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          name.trim().isNotEmpty
-                              ? name.trim()
-                              : 'Donor',
+                          name.trim().isNotEmpty ? name.trim() : 'User',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: AppColors.textPrimary,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
+                            fontSize: ResponsiveUtils.value(
+                              context,
+                              mobile: 24.0,
+                              tablet: 27.0,
+                              large: 29.0,
+                            ),
                           ),
+                        ),
+
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              size: 15,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                address.trim().isNotEmpty
+                                    ? address.trim()
+                                    : 'Address not added',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
                         const SizedBox(height: AppSpacing.xs),
 
                         Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.sm,
-                                vertical: AppSpacing.xxs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.10,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.pill,
-                                ),
-                              ),
-                              child: Text(
-                                bloodGroup,
-                                style: theme.textTheme.labelLarge?.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                            _BloodGroupBadge(
+                              bloodGroup: bloodGroup,
                             ),
-
                             const SizedBox(width: AppSpacing.sm),
-
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_outlined,
-                                    size: 15,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      location,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
 
@@ -155,23 +190,100 @@ class ProfileHeader extends StatelessWidget {
   }
 }
 
-class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar({
-    this.onTap,
+// =============================================================================
+// Blood group badge
+// =============================================================================
+
+class _BloodGroupBadge extends StatelessWidget {
+  const _BloodGroupBadge({
+    required this.bloodGroup,
   });
 
-  final VoidCallback? onTap;
+  final String bloodGroup;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(
+        bloodGroup.trim().isNotEmpty ? bloodGroup.trim() : '--',
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Profile avatar
+// =============================================================================
+
+class _ProfileAvatar extends StatelessWidget {
+  const _ProfileAvatar({
+    this.avatarUrl,
+    this.onTap,
+    this.isUploading = false,
+  });
+
+  final String? avatarUrl;
+  final VoidCallback? onTap;
+  final bool isUploading;
+
+  @override
+  Widget build(BuildContext context) {
+    final avatarSize = ResponsiveUtils.value(
+      context,
+      mobile: 88.0,
+      tablet: 96.0,
+      large: 104.0,
+    );
+
+    final iconSize = ResponsiveUtils.value(
+      context,
+      mobile: 42.0,
+      tablet: 46.0,
+      large: 50.0,
+    );
+
+    final editSize = ResponsiveUtils.value(
+      context,
+      mobile: 30.0,
+      tablet: 32.0,
+      large: 34.0,
+    );
+
+    final editIconSize = ResponsiveUtils.value(
+      context,
+      mobile: 15.0,
+      tablet: 16.0,
+      large: 17.0,
+    );
+
+    final hasAvatar =
+        avatarUrl != null && avatarUrl!.trim().isNotEmpty;
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: isUploading ? null : onTap,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          // -------------------------------------------------------------------
+          // Avatar
+          // -------------------------------------------------------------------
           Container(
-            width: 88,
-            height: 88,
+            width: avatarSize,
+            height: avatarSize,
             decoration: BoxDecoration(
               color: AppColors.surface,
               shape: BoxShape.circle,
@@ -181,33 +293,86 @@ class _ProfileAvatar extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.navy.withValues(
-                    alpha: 0.10,
-                  ),
+                  color: AppColors.navy.withValues(alpha: 0.10),
                   blurRadius: 16,
                   offset: const Offset(0, 6),
                 ),
               ],
             ),
             child: Container(
-              decoration: BoxDecoration(
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
                 color: AppColors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.person_rounded,
-                size: 42,
-                color: AppColors.textSecondary,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Current avatar
+                  if (hasAvatar)
+                    Image.network(
+                      avatarUrl!,
+                      width: avatarSize,
+                      height: avatarSize,
+                      fit: BoxFit.cover,
+                      errorBuilder: (
+                        context,
+                        error,
+                        stackTrace,
+                      ) {
+                        return Icon(
+                          Icons.person_rounded,
+                          size: iconSize,
+                          color: AppColors.textSecondary,
+                        );
+                      },
+                    )
+                  else
+                    Icon(
+                      Icons.person_rounded,
+                      size: iconSize,
+                      color: AppColors.textSecondary,
+                    ),
+
+                  // Upload overlay
+                  if (isUploading)
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(
+                            alpha: 0.38,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: avatarSize * 0.28,
+                            height: avatarSize * 0.28,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 3,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
 
+          // -------------------------------------------------------------------
+          // Edit / Upload indicator
+          // -------------------------------------------------------------------
           Positioned(
             right: -2,
             bottom: 2,
             child: Container(
-              width: 30,
-              height: 30,
+              width: editSize,
+              height: editSize,
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
@@ -216,11 +381,23 @@ class _ProfileAvatar extends StatelessWidget {
                   width: 3,
                 ),
               ),
-              child: const Icon(
-                Icons.edit_outlined,
-                size: 15,
-                color: Colors.white,
-              ),
+              child: isUploading
+                  ? SizedBox(
+                      width: editIconSize,
+                      height: editIconSize,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      Icons.edit_outlined,
+                      size: editIconSize,
+                      color: Colors.white,
+                    ),
             ),
           ),
         ],
@@ -228,6 +405,10 @@ class _ProfileAvatar extends StatelessWidget {
     );
   }
 }
+
+// =============================================================================
+// Availability
+// =============================================================================
 
 class _AvailabilityStatus extends StatelessWidget {
   const _AvailabilityStatus({
@@ -261,9 +442,9 @@ class _AvailabilityStatus extends StatelessWidget {
         Text(
           isAvailable ? 'Available' : 'Unavailable',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-              ),
+            color: statusColor,
+            fontWeight: FontWeight.w600,
+          ),
         ),
 
         const SizedBox(width: AppSpacing.xs),
@@ -285,12 +466,13 @@ class _AvailabilityStatus extends StatelessWidget {
   }
 }
 
+// =============================================================================
+// Header wave painter
+// =============================================================================
+
 class _ProfileHeaderWavePainter extends CustomPainter {
   @override
-  void paint(
-    Canvas canvas,
-    Size size,
-  ) {
+  void paint(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
       ..color = AppColors.background
       ..style = PaintingStyle.fill;
@@ -301,9 +483,7 @@ class _ProfileHeaderWavePainter extends CustomPainter {
     );
 
     final wavePaint = Paint()
-      ..color = AppColors.primary.withValues(
-        alpha: 0.07,
-      )
+      ..color = AppColors.primary.withValues(alpha: 0.07)
       ..style = PaintingStyle.fill;
 
     final wavePath = Path();
@@ -349,9 +529,7 @@ class _ProfileHeaderWavePainter extends CustomPainter {
     );
 
     final softWavePaint = Paint()
-      ..color = AppColors.surface.withValues(
-        alpha: 0.75,
-      )
+      ..color = AppColors.surface.withValues(alpha: 0.75)
       ..style = PaintingStyle.fill;
 
     final softWavePath = Path();
