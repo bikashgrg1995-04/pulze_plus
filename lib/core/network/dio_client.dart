@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import 'api_endpoints.dart';
 import 'dio_exception_handler.dart';
 import 'token_storage.dart';
 
 class DioClient {
-  DioClient({
-    Dio? dio,
-    TokenStorage? tokenStorage,
-  })  : _dio = dio ?? Dio(),
-        _tokenStorage = tokenStorage ?? TokenStorage() {
+  DioClient({Dio? dio, TokenStorage? tokenStorage})
+    : _dio = dio ?? Dio(),
+      _tokenStorage = tokenStorage ?? TokenStorage() {
     _dio.options = BaseOptions(
       baseUrl: ApiEndpoints.baseUrl,
       connectTimeout: const Duration(seconds: 15),
@@ -30,26 +29,22 @@ class DioClient {
   Dio get instance => _dio;
 
   void _setupInterceptors() {
-    // Central exception handling.
+    // 1. Attach access token first.
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onError: (error, handler) {
-          final appException = DioExceptionHandler.handle(error);
+        onRequest: (options, handler) async {
+          final accessToken = await _tokenStorage.getAccessToken();
 
-          handler.reject(
-            DioException(
-              requestOptions: error.requestOptions,
-              response: error.response,
-              type: error.type,
-              error: appException,
-              message: appException.message,
-            ),
-          );
+          if (accessToken != null && accessToken.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
+
+          handler.next(options);
         },
       ),
     );
 
-    // Refresh access token when the API returns 401.
+    // 2. Refresh access token when the API returns 401.
     _dio.interceptors.add(
       InterceptorsWrapper(
         onError: (error, handler) async {
@@ -60,7 +55,6 @@ class DioClient {
 
           final requestOptions = error.requestOptions;
 
-          // Do not try to refresh the token request itself.
           if (requestOptions.path == ApiEndpoints.tokenRefresh) {
             await _tokenStorage.clearTokens();
             handler.next(error);
@@ -91,9 +85,7 @@ class DioClient {
 
             final response = await refreshDio.post(
               ApiEndpoints.tokenRefresh,
-              data: {
-                'refresh': refreshToken,
-              },
+              data: {'refresh': refreshToken},
             );
 
             final data = response.data;
@@ -106,8 +98,7 @@ class DioClient {
 
             final newAccessToken = data['access'];
 
-            if (newAccessToken is! String ||
-                newAccessToken.isEmpty) {
+            if (newAccessToken is! String || newAccessToken.isEmpty) {
               await _tokenStorage.clearTokens();
               handler.next(error);
               return;
@@ -115,31 +106,23 @@ class DioClient {
 
             final newRefreshToken = data['refresh'];
 
-            if (newRefreshToken is String &&
-                newRefreshToken.isNotEmpty) {
-              await _tokenStorage.saveTokens(
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken,
-              );
-            } else {
-              await _tokenStorage.saveTokens(
-                accessToken: newAccessToken,
-                refreshToken: refreshToken,
-              );
-            }
-
-            requestOptions.headers['Authorization'] =
-                'Bearer $newAccessToken';
-
-            final retryResponse = await _dio.fetch(
-              requestOptions,
+            await _tokenStorage.saveTokens(
+              accessToken: newAccessToken,
+              refreshToken:
+                  newRefreshToken is String && newRefreshToken.isNotEmpty
+                  ? newRefreshToken
+                  : refreshToken,
             );
 
+            requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
+
+            final retryResponse = await _dio.fetch(requestOptions);
+
             handler.resolve(retryResponse);
-          } on DioException {
+          } on DioException catch (e) {
             await _tokenStorage.clearTokens();
             handler.next(error);
-          } catch (_) {
+          } catch (e) {
             await _tokenStorage.clearTokens();
             handler.next(error);
           }
@@ -147,18 +130,21 @@ class DioClient {
       ),
     );
 
-    // Attach access token to authenticated requests.
+    // 3. Central exception handling LAST.
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final accessToken = await _tokenStorage.getAccessToken();
+        onError: (error, handler) {
+          final appException = DioExceptionHandler.handle(error);
 
-          if (accessToken != null && accessToken.isNotEmpty) {
-            options.headers['Authorization'] =
-                'Bearer $accessToken';
-          }
-
-          handler.next(options);
+          handler.reject(
+            DioException(
+              requestOptions: error.requestOptions,
+              response: error.response,
+              type: error.type,
+              error: appException,
+              message: appException.message,
+            ),
+          );
         },
       ),
     );
