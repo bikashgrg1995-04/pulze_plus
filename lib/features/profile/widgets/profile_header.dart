@@ -29,8 +29,6 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.lg,
@@ -47,9 +45,9 @@ class ProfileHeader extends StatelessWidget {
 
     final headerHeight = ResponsiveUtils.value(
       context,
-      mobile: 160.0,
-      tablet: 165.0,
-      large: 175.0,
+      mobile: 164.0,
+      tablet: 169.0,
+      large: 179.0,
     );
 
     return SizedBox(
@@ -57,24 +55,22 @@ class ProfileHeader extends StatelessWidget {
       height: headerHeight,
       child: Stack(
         children: [
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _ProfileHeaderWavePainter(),
-            ),
+          const Positioned.fill(
+            child: CustomPaint(painter: _ProfileHeaderWavePainter()),
           ),
-
+    
           Positioned(
             top: ResponsiveUtils.value(
               context,
-              mobile: 16.0,
-              tablet: 20.0,
-              large: 24.0,
+              mobile: AppSpacing.sm,
+              tablet: AppSpacing.md,
+              large: AppSpacing.lg,
             ),
             right: ResponsiveUtils.value(
               context,
-              mobile: 20.0,
-              tablet: 28.0,
-              large: 32.0,
+              mobile: AppSpacing.lg,
+              tablet: AppSpacing.xl,
+              large: AppSpacing.xxl,
             ),
             child: Opacity(
               opacity: 0.08,
@@ -90,7 +86,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
           ),
-
+    
           Positioned.fill(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -105,79 +101,23 @@ class ProfileHeader extends StatelessWidget {
                     onTap: onAvatarTap,
                     isUploading: isUploadingAvatar,
                   ),
-
+    
                   SizedBox(
                     width: ResponsiveUtils.value(
                       context,
-                      mobile: AppSpacing.lg,
-                      tablet: AppSpacing.xl,
+                      mobile: AppSpacing.md,
+                      tablet: AppSpacing.lg,
                       large: AppSpacing.xl,
                     ),
                   ),
-
+    
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name.trim().isNotEmpty ? name.trim() : 'User',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.2,
-                            fontSize: ResponsiveUtils.value(
-                              context,
-                              mobile: 24.0,
-                              tablet: 27.0,
-                              large: 29.0,
-                            ),
-                          ),
-                        ),
-
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.location_on_outlined,
-                              size: 15,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                address.trim().isNotEmpty
-                                    ? address.trim()
-                                    : 'Address not added',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: AppSpacing.xs),
-
-                        Row(
-                          children: [
-                            _BloodGroupBadge(
-                              bloodGroup: bloodGroup,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                          ],
-                        ),
-
-                        const SizedBox(height: AppSpacing.xs),
-
-                        _AvailabilityStatus(
-                          isAvailable: isAvailable,
-                          onChanged: onAvailabilityChanged,
-                        ),
-                      ],
+                    child: _ProfileInformation(
+                      name: name,
+                      bloodGroup: bloodGroup,
+                      address: address,
+                      isAvailable: isAvailable,
+                      onAvailabilityChanged: onAvailabilityChanged,
                     ),
                   ),
                 ],
@@ -191,13 +131,98 @@ class ProfileHeader extends StatelessWidget {
 }
 
 // =============================================================================
+// Profile information
+// =============================================================================
+
+class _ProfileInformation extends StatelessWidget {
+  const _ProfileInformation({
+    required this.name,
+    required this.bloodGroup,
+    required this.address,
+    required this.isAvailable,
+    this.onAvailabilityChanged,
+  });
+
+  final String name;
+  final String bloodGroup;
+  final String address;
+  final bool isAvailable;
+  final ValueChanged<bool>? onAvailabilityChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final nameFontSize = ResponsiveUtils.value(
+      context,
+      mobile: 24.0,
+      tablet: 27.0,
+      large: 29.0,
+    );
+
+    final cleanName = name.trim();
+    final cleanAddress = address.trim();
+    final cleanBloodGroup = bloodGroup.trim();
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          cleanName.isNotEmpty ? cleanName : 'User',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+            fontSize: nameFontSize,
+          ),
+        ),
+
+        const SizedBox(height: AppSpacing.xxs),
+
+        Row(
+          children: [
+            const Icon(
+              Icons.location_on_outlined,
+              size: 15,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(width: AppSpacing.xxs),
+            Expanded(
+              child: Text(
+                cleanAddress.isNotEmpty ? cleanAddress : 'Address not added',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: AppSpacing.xs),
+
+        _BloodGroupBadge(bloodGroup: cleanBloodGroup),
+
+        const SizedBox(height: AppSpacing.xs),
+
+        _AvailabilityStatus(
+          isAvailable: isAvailable,
+          onChanged: onAvailabilityChanged,
+        ),
+      ],
+    );
+  }
+}
+
+// =============================================================================
 // Blood group badge
 // =============================================================================
 
 class _BloodGroupBadge extends StatelessWidget {
-  const _BloodGroupBadge({
-    required this.bloodGroup,
-  });
+  const _BloodGroupBadge({required this.bloodGroup});
 
   final String bloodGroup;
 
@@ -215,7 +240,7 @@ class _BloodGroupBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Text(
-        bloodGroup.trim().isNotEmpty ? bloodGroup.trim() : '--',
+        bloodGroup.isNotEmpty ? bloodGroup : '--',
         style: theme.textTheme.labelLarge?.copyWith(
           color: AppColors.primary,
           fontWeight: FontWeight.w700,
@@ -230,11 +255,7 @@ class _BloodGroupBadge extends StatelessWidget {
 // =============================================================================
 
 class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar({
-    this.avatarUrl,
-    this.onTap,
-    this.isUploading = false,
-  });
+  const _ProfileAvatar({this.avatarUrl, this.onTap, this.isUploading = false});
 
   final String? avatarUrl;
   final VoidCallback? onTap;
@@ -270,106 +291,83 @@ class _ProfileAvatar extends StatelessWidget {
       large: 17.0,
     );
 
-    final hasAvatar =
-        avatarUrl != null && avatarUrl!.trim().isNotEmpty;
+    final cleanAvatarUrl = avatarUrl?.trim();
+    final hasAvatar = cleanAvatarUrl != null && cleanAvatarUrl.isNotEmpty;
 
     return GestureDetector(
       onTap: isUploading ? null : onTap,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // -------------------------------------------------------------------
-          // Avatar
-          // -------------------------------------------------------------------
           Container(
             width: avatarSize,
             height: avatarSize,
+            padding: const EdgeInsets.all(AppSpacing.xxs),
             decoration: BoxDecoration(
               color: AppColors.surface,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.surface,
-                width: 4,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.navy.withValues(alpha: 0.10),
-                  blurRadius: 16,
+                  blurRadius: AppSpacing.md,
                   offset: const Offset(0, 6),
                 ),
               ],
             ),
-            child: Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: const BoxDecoration(
+            child: ClipOval(
+              child: Container(
                 color: AppColors.surfaceVariant,
-                shape: BoxShape.circle,
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Current avatar
-                  if (hasAvatar)
-                    Image.network(
-                      avatarUrl!,
-                      width: avatarSize,
-                      height: avatarSize,
-                      fit: BoxFit.cover,
-                      errorBuilder: (
-                        context,
-                        error,
-                        stackTrace,
-                      ) {
-                        return Icon(
-                          Icons.person_rounded,
-                          size: iconSize,
-                          color: AppColors.textSecondary,
-                        );
-                      },
-                    )
-                  else
-                    Icon(
-                      Icons.person_rounded,
-                      size: iconSize,
-                      color: AppColors.textSecondary,
-                    ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (hasAvatar)
+                      Image.network(
+                        cleanAvatarUrl,
+                        width: avatarSize,
+                        height: avatarSize,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.person_rounded,
+                            size: iconSize,
+                            color: AppColors.textSecondary,
+                          );
+                        },
+                      )
+                    else
+                      Icon(
+                        Icons.person_rounded,
+                        size: iconSize,
+                        color: AppColors.textSecondary,
+                      ),
 
-                  // Upload overlay
-                  if (isUploading)
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(
-                            alpha: 0.38,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: avatarSize * 0.28,
-                            height: avatarSize * 0.28,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 3,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                    if (isUploading)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black.withValues(alpha: 0.38),
+                          child: Center(
+                            child: SizedBox(
+                              width: avatarSize * 0.28,
+                              height: avatarSize * 0.28,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
 
-          // -------------------------------------------------------------------
-          // Edit / Upload indicator
-          // -------------------------------------------------------------------
           Positioned(
-            right: -2,
-            bottom: 2,
+            right: -AppSpacing.xxs,
+            bottom: AppSpacing.xxs,
             child: Container(
               width: editSize,
               height: editSize,
@@ -378,7 +376,7 @@ class _ProfileAvatar extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: AppColors.surface,
-                  width: 3,
+                  width: AppSpacing.xxs - 1,
                 ),
               ),
               child: isUploading
@@ -387,10 +385,7 @@ class _ProfileAvatar extends StatelessWidget {
                       height: editIconSize,
                       child: const CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(
-                          Colors.white,
-                        ),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
                   : Icon(
@@ -411,10 +406,7 @@ class _ProfileAvatar extends StatelessWidget {
 // =============================================================================
 
 class _AvailabilityStatus extends StatelessWidget {
-  const _AvailabilityStatus({
-    required this.isAvailable,
-    this.onChanged,
-  });
+  const _AvailabilityStatus({required this.isAvailable, this.onChanged});
 
   final bool isAvailable;
   final ValueChanged<bool>? onChanged;
@@ -429,28 +421,23 @@ class _AvailabilityStatus extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: statusColor,
-            shape: BoxShape.circle,
-          ),
+          width: AppSpacing.xxs,
+          height: AppSpacing.xxs,
+          decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
         ),
 
         const SizedBox(width: AppSpacing.xs),
 
         Text(
           isAvailable ? 'Available' : 'Unavailable',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: statusColor,
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
         ),
 
         const SizedBox(width: AppSpacing.xs),
 
         SizedBox(
-          height: 28,
+          height: AppSpacing.xxl,
           child: Transform.scale(
             scale: 0.75,
             alignment: Alignment.centerLeft,
@@ -471,114 +458,75 @@ class _AvailabilityStatus extends StatelessWidget {
 // =============================================================================
 
 class _ProfileHeaderWavePainter extends CustomPainter {
+  const _ProfileHeaderWavePainter();
+
   @override
   void paint(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
       ..color = AppColors.background
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(
-      Offset.zero & size,
-      backgroundPaint,
-    );
+    canvas.drawRect(Offset.zero & size, backgroundPaint);
 
     final wavePaint = Paint()
       ..color = AppColors.primary.withValues(alpha: 0.07)
       ..style = PaintingStyle.fill;
 
-    final wavePath = Path();
+    final wavePath = Path()
+      ..moveTo(0, size.height * 0.55)
+      ..cubicTo(
+        size.width * 0.18,
+        size.height * 0.68,
+        size.width * 0.38,
+        size.height * 0.80,
+        size.width * 0.58,
+        size.height * 0.64,
+      )
+      ..cubicTo(
+        size.width * 0.76,
+        size.height * 0.50,
+        size.width * 0.88,
+        size.height * 0.40,
+        size.width,
+        size.height * 0.34,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
 
-    wavePath.moveTo(
-      0,
-      size.height * 0.55,
-    );
-
-    wavePath.cubicTo(
-      size.width * 0.18,
-      size.height * 0.68,
-      size.width * 0.38,
-      size.height * 0.80,
-      size.width * 0.58,
-      size.height * 0.64,
-    );
-
-    wavePath.cubicTo(
-      size.width * 0.76,
-      size.height * 0.50,
-      size.width * 0.88,
-      size.height * 0.40,
-      size.width,
-      size.height * 0.34,
-    );
-
-    wavePath.lineTo(
-      size.width,
-      size.height,
-    );
-
-    wavePath.lineTo(
-      0,
-      size.height,
-    );
-
-    wavePath.close();
-
-    canvas.drawPath(
-      wavePath,
-      wavePaint,
-    );
+    canvas.drawPath(wavePath, wavePaint);
 
     final softWavePaint = Paint()
       ..color = AppColors.surface.withValues(alpha: 0.75)
       ..style = PaintingStyle.fill;
 
-    final softWavePath = Path();
+    final softWavePath = Path()
+      ..moveTo(0, size.height * 0.68)
+      ..cubicTo(
+        size.width * 0.22,
+        size.height * 0.78,
+        size.width * 0.42,
+        size.height * 0.84,
+        size.width * 0.60,
+        size.height * 0.72,
+      )
+      ..cubicTo(
+        size.width * 0.78,
+        size.height * 0.60,
+        size.width * 0.90,
+        size.height * 0.52,
+        size.width,
+        size.height * 0.47,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
 
-    softWavePath.moveTo(
-      0,
-      size.height * 0.68,
-    );
-
-    softWavePath.cubicTo(
-      size.width * 0.22,
-      size.height * 0.78,
-      size.width * 0.42,
-      size.height * 0.84,
-      size.width * 0.60,
-      size.height * 0.72,
-    );
-
-    softWavePath.cubicTo(
-      size.width * 0.78,
-      size.height * 0.60,
-      size.width * 0.90,
-      size.height * 0.52,
-      size.width,
-      size.height * 0.47,
-    );
-
-    softWavePath.lineTo(
-      size.width,
-      size.height,
-    );
-
-    softWavePath.lineTo(
-      0,
-      size.height,
-    );
-
-    softWavePath.close();
-
-    canvas.drawPath(
-      softWavePath,
-      softWavePaint,
-    );
+    canvas.drawPath(softWavePath, softWavePaint);
   }
 
   @override
-  bool shouldRepaint(
-    covariant CustomPainter oldDelegate,
-  ) {
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
   }
 }

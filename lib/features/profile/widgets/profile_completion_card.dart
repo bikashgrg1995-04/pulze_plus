@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/responsive_utils.dart';
 
-class ProfileCompletionCard extends StatelessWidget {
+class ProfileCompletionCard extends StatefulWidget {
   const ProfileCompletionCard({
     super.key,
     required this.completion,
@@ -16,104 +15,106 @@ class ProfileCompletionCard extends StatelessWidget {
   final VoidCallback? onPressed;
 
   @override
+  State<ProfileCompletionCard> createState() => _ProfileCompletionCardState();
+}
+
+class _ProfileCompletionCardState extends State<ProfileCompletionCard> {
+  @override
   Widget build(BuildContext context) {
-    final percentage =
-        (completion.clamp(0.0, 1.0) * 100).round();
+    final theme = Theme.of(context);
 
-    final horizontalPadding = ResponsiveUtils.value(
-      context,
-      mobile: AppSpacing.sm,
-      tablet: AppSpacing.md,
-      large: AppSpacing.lg,
-    );
+    final normalizedCompletion = widget.completion.clamp(0.0, 1.0);
 
-    final verticalPadding = ResponsiveUtils.value(
-      context,
-      mobile: AppSpacing.xs,
-      tablet: AppSpacing.sm,
-      large: AppSpacing.sm,
-    );
+    final percentage = (normalizedCompletion * 100).round();
 
-    final contentSpacing = ResponsiveUtils.value(
-      context,
-      mobile: AppSpacing.xs,
-      tablet: AppSpacing.sm,
-      large: AppSpacing.sm,
-    );
-
-    final iconSize = ResponsiveUtils.value(
-      context,
-      mobile: 19.0,
-      tablet: 20.0,
-      large: 21.0,
-    );
+    final title = percentage < 50 ? 'Complete your profile' : 'Almost there!';
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(
-          AppRadius.md,
-        ),
+        onTap: widget.onPressed,
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-            vertical: verticalPadding,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(
-              alpha: 0.05,
-            ),
-            borderRadius: BorderRadius.circular(
-              AppRadius.md,
-            ),
+            color: AppColors.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(
-              color: AppColors.primary.withValues(
-                alpha: 0.12,
-              ),
+              color: AppColors.primary.withValues(alpha: 0.14),
             ),
           ),
           child: Row(
             children: [
-              Expanded(
-                child: Text(
-                  'Complete your profile',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      value: normalizedCompletion,
+                      strokeWidth: 2.5,
+                      backgroundColor: AppColors.primary.withValues(
+                        alpha: 0.12,
                       ),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
+                    Text(
+                      '$percentage',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 9,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
-              SizedBox(
-                width: contentSpacing,
-              ),
+              const SizedBox(width: AppSpacing.sm),
 
-              Text(
-                '$percentage%',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w700,
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
+
+                    const SizedBox(height: AppSpacing.xxs),
+
+                    Text(
+                      'Add your details to get the most from Pulze+.',
+                      maxLines: 1,
+                      softWrap: false,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
-              const SizedBox(
-                width: AppSpacing.xxs,
-              ),
+              const SizedBox(width: AppSpacing.xs),
 
               Icon(
-                Icons.chevron_right_rounded,
-                size: iconSize,
-                color: AppColors.textTertiary,
+                Icons.arrow_forward_rounded,
+                size: AppSpacing.lg,
+                color: AppColors.primary,
               ),
             ],
           ),

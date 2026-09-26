@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pulze_plus/app/router/app_routes.dart';
-import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
-import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
-import 'package:pulze_plus/features/profile/models/profile_state.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/form_validators.dart';
-import '../../../core/utils/responsive_utils.dart';
-import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../models/profile_model.dart';
-import '../providers/profile_provider.dart';
+import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/core/theme/app_colors.dart';
+import 'package:pulze_plus/core/theme/app_radius.dart';
+import 'package:pulze_plus/core/theme/app_spacing.dart';
+import 'package:pulze_plus/core/utils/form_validators.dart';
+import 'package:pulze_plus/core/utils/responsive_utils.dart';
+import 'package:pulze_plus/core/widgets/app_button.dart';
+import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
+import 'package:pulze_plus/core/widgets/app_text_field.dart';
+import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/features/profile/models/profile_model.dart';
+import 'package:pulze_plus/features/profile/models/profile_state.dart';
+import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
 
 enum ProfileFormMode { create, edit }
 
@@ -75,6 +76,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     super.dispose();
   }
 
+  // ===========================================================================
+  // Date of birth
+  // ===========================================================================
+
   Future<void> _selectDateOfBirth() async {
     final now = DateTime.now();
 
@@ -105,13 +110,15 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     }
 
     final year = date.year.toString().padLeft(4, '0');
-
     final month = date.month.toString().padLeft(2, '0');
-
     final day = date.day.toString().padLeft(2, '0');
 
     return '$year-$month-$day';
   }
+
+  // ===========================================================================
+  // Location
+  // ===========================================================================
 
   Future<void> _selectLocation() async {
     await showDialog<void>(
@@ -128,13 +135,17 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Ok'),
+              child: const Text('OK'),
             ),
           ],
         );
       },
     );
   }
+
+  // ===========================================================================
+  // Submit
+  // ===========================================================================
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
@@ -176,7 +187,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           return;
         }
 
-        // Profile creation is complete.
         ref.read(authProvider.notifier).markProfileCompleted();
 
         if (!mounted) {
@@ -201,6 +211,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       if (!mounted) {
         return;
       }
+      AppSnackBar.success(context, 'Profile updated successfully.');
 
       Navigator.of(context).pop(true);
     } catch (error) {
@@ -213,6 +224,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       AppSnackBar.error(context, error.toString());
     }
   }
+
+  // ===========================================================================
+  // Build
+  // ===========================================================================
 
   @override
   Widget build(BuildContext context) {
@@ -233,7 +248,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
-            AppSpacing.lg,
+            0,
             horizontalPadding,
             AppSpacing.xxl,
           ),
@@ -307,6 +322,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     );
   }
 
+  // ===========================================================================
+  // Header
+  // ===========================================================================
+
   Widget _buildHeader() {
     final theme = Theme.of(context);
 
@@ -320,7 +339,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+
         Text(
           _isCreate
               ? 'Complete your profile to start using Pulze+.'
@@ -332,6 +351,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       ],
     );
   }
+
+  // ===========================================================================
+  // Phone
+  // ===========================================================================
 
   Widget _buildPhoneField() {
     return AppTextField(
@@ -350,6 +373,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       },
     );
   }
+
+  // ===========================================================================
+  // Blood type
+  // ===========================================================================
 
   Widget _buildBloodTypeField() {
     return DropdownButtonFormField<String>(
@@ -382,6 +409,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     );
   }
 
+  // ===========================================================================
+  // Gender
+  // ===========================================================================
+
   Widget _buildGenderField() {
     return DropdownButtonFormField<String>(
       initialValue: _selectedGender,
@@ -393,7 +424,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       items: const [
         DropdownMenuItem(value: 'male', child: Text('Male')),
         DropdownMenuItem(value: 'female', child: Text('Female')),
-
         DropdownMenuItem(value: 'other', child: Text('Other')),
         DropdownMenuItem(
           value: 'prefer_not_to_say',
@@ -412,6 +442,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       },
     );
   }
+
+  // ===========================================================================
+  // Date of birth
+  // ===========================================================================
 
   Widget _buildDateOfBirthField() {
     return FormField<DateTime>(
@@ -445,6 +479,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
                 ),
               ),
             ),
+
             if (field.hasError)
               Padding(
                 padding: const EdgeInsets.only(
@@ -463,6 +498,10 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     );
   }
 
+  // ===========================================================================
+  // Location
+  // ===========================================================================
+
   Widget _buildLocationSelector() {
     final hasLocation =
         widget.profile?.latitude != null && widget.profile?.longitude != null;
@@ -471,7 +510,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
@@ -480,30 +519,35 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: AppSpacing.huge,
+                height: AppSpacing.huge,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: const Icon(
                   Icons.location_on_outlined,
                   color: AppColors.primary,
                 ),
               ),
+
               const SizedBox(width: AppSpacing.md),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Location',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
+
+                    const SizedBox(height: AppSpacing.xxs),
+
                     Text(
                       hasLocation
                           ? 'Location selected'
@@ -519,13 +563,11 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
 
           const SizedBox(height: AppSpacing.md),
 
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: _isSubmitting ? null : _selectLocation,
-              icon: const Icon(Icons.map_outlined),
-              label: Text(hasLocation ? 'Change location' : 'Select location'),
-            ),
+          AppButton(
+            label: hasLocation ? 'Change location' : 'Select location',
+            icon: Icons.map_outlined,
+            variant: AppButtonVariant.outlined,
+            onPressed: _isSubmitting ? null : _selectLocation,
           ),
 
           const SizedBox(height: AppSpacing.xs),

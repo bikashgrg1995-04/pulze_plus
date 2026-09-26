@@ -20,9 +20,9 @@ class ProfileSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final sectionSpacing = ResponsiveUtils.value(
       context,
-      mobile: AppSpacing.md,
-      tablet: AppSpacing.lg,
-      large: AppSpacing.lg,
+      mobile: AppSpacing.sm,
+      tablet: AppSpacing.md,
+      large: AppSpacing.md,
     );
 
     final sectionRadius = ResponsiveUtils.value(

@@ -9,8 +9,9 @@ import 'package:pulze_plus/core/theme/app_colors.dart';
 import 'package:pulze_plus/core/theme/app_radius.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
 import 'package:pulze_plus/core/utils/responsive_utils.dart';
+import 'package:pulze_plus/core/widgets/app_bottom_sheet.dart';
+import 'package:pulze_plus/core/widgets/app_button.dart';
 import 'package:pulze_plus/core/widgets/app_confirmation_dialog.dart';
-import 'package:pulze_plus/core/widgets/app_section_header.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/user_model.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
@@ -44,7 +45,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final profile = profileState.profile;
 
     if (user == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     final profileCompletion = _calculateProfileCompletion(
@@ -71,176 +77,168 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(
-            horizontalPadding,
-            AppSpacing.lg,
-            horizontalPadding,
-            bottomPadding,
+          padding: EdgeInsets.only(
+            bottom: bottomPadding,
           ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // -----------------------------------------------------------------
-                  // Profile header
-                  // -----------------------------------------------------------------
-                  ProfileHeader(
-                    name: user.fullName,
-                    bloodGroup: profile?.bloodType ?? '',
-                    address: profile?.address ?? '',
-                    avatarUrl: profile?.avatar,
-                    isUploadingAvatar: _isUploadingAvatar,
-                    isAvailable: profile?.isDonor ?? false,
-                    onAvatarTap: _isUploadingAvatar
-                        ? null
-                        : () {
-                            _showAvatarSourceDialog(context);
-                          },
-                    onAvailabilityChanged: (value) async {
-                      try {
-                        await ref
-                            .read(profileProvider.notifier)
-                            .updateDonorStatus(isDonor: value);
-                      } catch (error) {
-                        if (!context.mounted) return;
+          child: Column(
+            children: [
+              ProfileHeader(
+                name: user.fullName,
+                bloodGroup: profile?.bloodType ?? '',
+                address: profile?.address ?? '',
+                avatarUrl: profile?.avatar,
+                isUploadingAvatar: _isUploadingAvatar,
+                isAvailable: profile?.isDonor ?? false,
+                onAvatarTap: _isUploadingAvatar
+                    ? null
+                    : () => _showAvatarSourceDialog(context),
+                onAvailabilityChanged: (value) async {
+                  try {
+                    await ref
+                        .read(profileProvider.notifier)
+                        .updateDonorStatus(
+                          isDonor: value,
+                        );
+                  } catch (error) {
+                    if (!context.mounted) return;
 
-                        AppSnackBar.error(context, error.toString());
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  // -----------------------------------------------------------------
-                  // Profile completion
-                  // -----------------------------------------------------------------
-                  if (profileCompletion < 1.0)
-                    ProfileCompletionCard(
-                      completion: profileCompletion,
-                      onPressed: () {
-                        _openEditProfile(context, profile);
-                      },
-                    ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  // -----------------------------------------------------------------
-                  // User details
-                  // -----------------------------------------------------------------
-                  ProfileUserCard(
-                    user: user,
-                    profile: profile,
-                    onEdit: () {
-                      _openEditProfile(context, profile);
-                    },
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // -----------------------------------------------------------------
-                  // Blood & donations
-                  // -----------------------------------------------------------------
-                  const AppSectionHeader(title: 'Blood & Donations'),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  BloodDonationCard(
-                    bloodGroup: profile?.bloodType ?? '   ',
-                    lastDonation: 'Not available',
-                    nextEligibleDate: 'Not available',
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // -----------------------------------------------------------------
-                  // Activity
-                  // -----------------------------------------------------------------
-                  ProfileSection(
-                    title: 'Activity',
-                    children: const [
-                      ProfileMenuItem(
-                        icon: Icons.description_outlined,
-                        title: 'My Requests',
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.volunteer_activism_outlined,
-                        title: 'Donation History',
-                        showDivider: false,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // -----------------------------------------------------------------
-                  // Settings
-                  // -----------------------------------------------------------------
-                  ProfileSection(
-                    title: 'Settings',
-                    children: const [
-                      ProfileMenuItem(
-                        icon: Icons.notifications_none_rounded,
-                        title: 'Notifications',
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.lock_outline_rounded,
-                        title: 'Privacy & Security',
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.help_outline_rounded,
-                        title: 'Help & Support',
-                        showDivider: false,
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  // -----------------------------------------------------------------
-                  // Sign out
-                  // -----------------------------------------------------------------
-                  SizedBox(
-                    height: ResponsiveUtils.value(
+                    AppSnackBar.error(
                       context,
-                      mobile: 48.0,
-                      tablet: 50.0,
-                      large: 52.0,
-                    ),
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        _showLogoutConfirmation(context);
-                      },
-                      icon: const Icon(Icons.logout_rounded, size: 20),
-                      label: const Text('Sign out'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.error,
-                        backgroundColor: AppColors.surface,
-                        side: BorderSide(
-                          color: AppColors.error.withValues(alpha: 0.25),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  Center(
-                    child: Text(
-                      'Pulze+',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textTertiary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
+                      error.toString(),
+                    );
+                  }
+                },
               ),
-            ),
+
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  AppSpacing.md,
+                  horizontalPadding,
+                  0,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 720,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (profileCompletion < 1.0) ...[
+                          ProfileCompletionCard(
+                            completion: profileCompletion,
+                            onPressed: () {
+                              _openEditProfile(
+                                context,
+                                profile,
+                              );
+                            },
+                          ),
+                          const SizedBox(
+                            height: AppSpacing.md,
+                          ),
+                        ],
+
+                        ProfileUserCard(
+                          user: user,
+                          profile: profile,
+                          onEdit: () {
+                            _openEditProfile(
+                              context,
+                              profile,
+                            );
+                          },
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.md,
+                        ),
+
+                        BloodDonationCard(
+                          bloodGroup: profile?.bloodType ?? 'Not added',
+                          lastDonation: 'Not available',
+                          nextEligibleDate: 'Not available',
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
+
+                        ProfileSection(
+                          title: 'Activity',
+                          children: const [
+                            ProfileMenuItem(
+                              icon: Icons.description_outlined,
+                              title: 'My Requests',
+                            ),
+                            ProfileMenuItem(
+                              icon: Icons.volunteer_activism_outlined,
+                              title: 'Donation History',
+                              showDivider: false,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
+
+                        ProfileSection(
+                          title: 'Settings',
+                          children: const [
+                            ProfileMenuItem(
+                              icon: Icons.notifications_none_rounded,
+                              title: 'Notifications',
+                            ),
+                            ProfileMenuItem(
+                              icon: Icons.lock_outline_rounded,
+                              title: 'Privacy & Security',
+                            ),
+                            ProfileMenuItem(
+                              icon: Icons.help_outline_rounded,
+                              title: 'Help & Support',
+                              showDivider: false,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
+
+                        AppButton(
+                          label: 'Sign out',
+                          icon: Icons.logout_rounded,
+                          variant: AppButtonVariant.danger,
+                          onPressed: () {
+                            _showLogoutConfirmation(context);
+                          },
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.md,
+                        ),
+
+                        Center(
+                          child: Text(
+                            'Pulze+',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textTertiary,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.3,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -248,145 +246,70 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // ===========================================================================
-  // Avatar
+  // Avatar source
   // ===========================================================================
 
-  Future<void> _showAvatarSourceDialog(BuildContext context) async {
+  Future<void> _showAvatarSourceDialog(
+    BuildContext context,
+  ) async {
     if (_isUploadingAvatar) return;
 
-    final source = await showModalBottomSheet<ImageSource>(
+    final source = await AppBottomSheet.show<ImageSource>(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.md,
-              AppSpacing.lg,
-              AppSpacing.lg,
-            ),
-            decoration: const BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // -----------------------------------------------------------------
-                // Drag handle
-                // -----------------------------------------------------------------
-                Container(
-                  width: 42,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: AppColors.textTertiary.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+      title: 'Change profile photo',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Choose how you want to update your profile photo.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
                 ),
-
-                // -----------------------------------------------------------------
-                // Header
-                // -----------------------------------------------------------------
-                Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.10),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.photo_camera_outlined,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Change profile photo',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.textPrimary,
-                                ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            'Choose a photo from your camera or gallery',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(color: AppColors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                // -----------------------------------------------------------------
-                // Camera
-                // -----------------------------------------------------------------
-                _AvatarSourceOption(
-                  icon: Icons.camera_alt_rounded,
-                  title: 'Take a photo',
-                  subtitle: 'Use your camera',
-                  onTap: () {
-                    Navigator.of(sheetContext).pop(ImageSource.camera);
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.sm),
-
-                // -----------------------------------------------------------------
-                // Gallery
-                // -----------------------------------------------------------------
-                _AvatarSourceOption(
-                  icon: Icons.photo_library_rounded,
-                  title: 'Choose from gallery',
-                  subtitle: 'Select an existing photo',
-                  onTap: () {
-                    Navigator.of(sheetContext).pop(ImageSource.gallery);
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                // -----------------------------------------------------------------
-                // Cancel
-                // -----------------------------------------------------------------
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(sheetContext).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                    ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ),
-        );
-      },
+
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
+
+          _AvatarSourceOption(
+            icon: Icons.camera_alt_rounded,
+            title: 'Take a photo',
+            subtitle: 'Use your camera',
+            onTap: () {
+              Navigator.of(context).pop(
+                ImageSource.camera,
+              );
+            },
+          ),
+
+          const SizedBox(
+            height: AppSpacing.sm,
+          ),
+
+          _AvatarSourceOption(
+            icon: Icons.photo_library_rounded,
+            title: 'Choose from gallery',
+            subtitle: 'Select an existing photo',
+            onTap: () {
+              Navigator.of(context).pop(
+                ImageSource.gallery,
+              );
+            },
+          ),
+
+          const SizedBox(
+            height: AppSpacing.sm,
+          ),
+
+          AppButton(
+            label: 'Cancel',
+            variant: AppButtonVariant.text,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
     );
 
     if (!mounted || source == null) return;
@@ -395,18 +318,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // ===========================================================================
-  // Pick & upload avatar
+  // Avatar upload
   // ===========================================================================
 
-  Future<void> _pickAndUploadAvatar(ImageSource source) async {
+  Future<void> _pickAndUploadAvatar(
+    ImageSource source,
+  ) async {
     if (_isUploadingAvatar) return;
 
     try {
-      // -------------------------------------------------------------------------
-      // Camera permission
-      // -------------------------------------------------------------------------
       if (source == ImageSource.camera) {
-        final permissionStatus = await Permission.camera.request();
+        final permissionStatus =
+            await Permission.camera.request();
 
         if (!mounted) return;
 
@@ -430,12 +353,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         }
       }
 
-      // -------------------------------------------------------------------------
-      // Pick image
-      //
-      // Gallery does NOT request Permission.photos here.
-      // Android's system Photo Picker handles photo selection.
-      // -------------------------------------------------------------------------
       final picker = ImagePicker();
 
       final pickedFile = await picker.pickImage(
@@ -445,30 +362,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         maxHeight: 1200,
       );
 
-      // User cancelled the picker.
       if (!mounted || pickedFile == null) return;
 
-      // -------------------------------------------------------------------------
-      // Start upload loading
-      // -------------------------------------------------------------------------
       setState(() {
         _isUploadingAvatar = true;
       });
 
-      // -------------------------------------------------------------------------
-      // Upload
-      // -------------------------------------------------------------------------
       await ref
           .read(profileProvider.notifier)
-          .updateAvatar(avatarFile: File(pickedFile.path));
+          .updateAvatar(
+            avatarFile: File(pickedFile.path),
+          );
 
       if (!mounted) return;
 
-      AppSnackBar.success(context, 'Profile photo updated successfully.');
+      AppSnackBar.success(
+        context,
+        'Profile photo updated successfully.',
+      );
     } catch (error) {
       if (!mounted) return;
 
-      AppSnackBar.error(context, error.toString());
+      AppSnackBar.error(
+        context,
+        error.toString(),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -477,6 +395,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       }
     }
   }
+
   // ===========================================================================
   // Profile completion
   // ===========================================================================
@@ -489,42 +408,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     var completedFields = 0;
 
-    // 1. Full name
     if (user.fullName.trim().isNotEmpty) {
       completedFields++;
     }
 
-    // 2. Email
     if (user.email.trim().isNotEmpty) {
       completedFields++;
     }
 
-    // 3. Phone
     if (user.phoneNumber?.trim().isNotEmpty ?? false) {
       completedFields++;
     }
 
     if (profile != null) {
-      // 4. Gender
       if (profile.gender.trim().isNotEmpty) {
         completedFields++;
       }
 
-      // 5. Date of birth
       completedFields++;
 
-      // 6. Address
       if (profile.address?.trim().isNotEmpty ?? false) {
         completedFields++;
       }
 
-      // 7. City
       if (profile.city?.trim().isNotEmpty ?? false) {
         completedFields++;
       }
 
-      // 8. Location coordinates
-      if (profile.latitude != null && profile.longitude != null) {
+      if (profile.latitude != null &&
+          profile.longitude != null) {
         completedFields++;
       }
     }
@@ -544,7 +456,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) {
-            return const ProfileFormScreen(mode: ProfileFormMode.create);
+            return const ProfileFormScreen(
+              mode: ProfileFormMode.create,
+            );
           },
         ),
       );
@@ -568,11 +482,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Logout
   // ===========================================================================
 
-  Future<void> _showLogoutConfirmation(BuildContext context) async {
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+  ) async {
     final confirmed = await AppConfirmationDialog.show(
       context: context,
       title: 'Sign out',
-      description: 'Are you sure you want to sign out of Pulze+?',
+      description:
+          'Are you sure you want to sign out of Pulze+?',
       confirmLabel: 'Sign out',
       cancelLabel: 'Cancel',
       icon: Icons.logout_rounded,
@@ -608,52 +525,88 @@ class _AvatarSourceOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.background,
-      borderRadius: BorderRadius.circular(AppRadius.lg),
+      borderRadius: BorderRadius.circular(
+        AppRadius.lg,
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(
+          AppRadius.lg,
+        ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
+          padding: const EdgeInsets.all(
+            AppSpacing.md,
           ),
           child: Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: AppColors.primary.withValues(
+                    alpha: 0.08,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    AppRadius.md,
+                  ),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 24),
+                child: Icon(
+                  icon,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
 
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(
+                width: AppSpacing.md,
+              ),
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(
+                            color:
+                                AppColors.textPrimary,
+                            fontWeight:
+                                FontWeight.w600,
+                          ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.bodySmall
-                          ?.copyWith(color: AppColors.textSecondary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(
+                            color:
+                                AppColors.textSecondary,
+                          ),
                     ),
                   ],
                 ),
               ),
 
+              const SizedBox(
+                width: AppSpacing.sm,
+              ),
+
               const Icon(
                 Icons.chevron_right_rounded,
+                size: 22,
                 color: AppColors.textTertiary,
               ),
             ],
