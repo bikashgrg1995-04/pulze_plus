@@ -28,4 +28,8 @@ abstract final class AppRoutes {
   static const donate = '/donate';
 
   static const notifications = '/notifications';
+
+
+  //help & support
+  static const faqs = '/faqs';
 }

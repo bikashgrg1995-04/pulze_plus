@@ -13,7 +13,7 @@ class ApiEndpoints {
   static const verifyEmail = 'auth/verify-email/';
   static const resendVerification = 'auth/resend-verification/';
 
-  //reset-passsword
+  // Reset password
   static const forgotPassword = 'auth/forgot-password/';
   static const verifyPasswordReset = 'auth/verify-password-reset/';
   static const resetPassword = 'auth/reset-password/';
@@ -22,4 +22,11 @@ class ApiEndpoints {
   static const profile = 'auth/profile/';
   static const profileAvatar = 'auth/profile/avatar/';
   static const profileDonor = 'auth/profile/donor/';
+
+  // Help & Support
+  static const faqs = 'help-support/faqs/';
+  static const contactSupport = 'help-support/contact/';
+  static const reportProblem = 'help-support/report-problem/';
+  static const feedback = 'help-support/feedback/';
+  static const aboutPulze = 'help-support/about/';
 }

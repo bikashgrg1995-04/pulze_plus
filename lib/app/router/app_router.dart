@@ -18,6 +18,7 @@ import 'package:pulze_plus/features/navigation/screens/main_navigation_screen.da
 import 'package:pulze_plus/features/onboarding/screens/onboarding_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
+import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -183,6 +184,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final chat = state.extra as ChatModel;
 
           return ChatDetailScreen(chat: chat);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.faqs,
+        builder: (context, state) {
+          return FaqScreen();
         },
       ),
     ],
