@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/auth/screens/auth_screen.dart';
 import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
@@ -23,21 +24,23 @@ class MainNavigationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.unauthenticated &&
+          previous?.status != AuthStatus.unauthenticated) {
+        ref.read(navigationIndexProvider.notifier).setIndex(4);
+      }
+    });
+
     final currentIndex = ref.watch(navigationIndexProvider);
     final authState = ref.watch(authProvider);
 
     final screens = [
-      const HomeScreen(
-        isGuest: false,
-      ),
+      const HomeScreen(isGuest: false),
       const RequestsScreen(),
       const SizedBox.shrink(),
       ChatsScreen(
         onChatTap: (chat) {
-          context.push(
-            AppRoutes.chatDetail,
-            extra: chat,
-          );
+          context.push(AppRoutes.chatDetail, extra: chat);
         },
       ),
       _buildProfileScreen(authState),
@@ -45,16 +48,11 @@ class MainNavigationScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex, children: screens),
       bottomNavigationBar: _BottomNavigation(
         currentIndex: currentIndex,
         onItemSelected: (index) {
-          ref
-              .read(navigationIndexProvider.notifier)
-              .setIndex(index);
+          ref.read(navigationIndexProvider.notifier).setIndex(index);
         },
       ),
     );
@@ -66,9 +64,7 @@ class MainNavigationScreen extends ConsumerWidget {
         return const ProfileScreen();
 
       case AuthStatus.needsProfile:
-        return const ProfileFormScreen(
-          mode: ProfileFormMode.create,
-        );
+        return const ProfileFormScreen(mode: ProfileFormMode.create);
 
       case AuthStatus.unauthenticated:
       case AuthStatus.needsVerification:
@@ -105,9 +101,7 @@ class _BottomNavigation extends StatelessWidget {
 
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                  'Blood request created successfully.',
-                ),
+                content: Text('Blood request created successfully.'),
               ),
             );
           },
@@ -173,15 +167,10 @@ class _NavigationDock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(
-          AppRadius.xl,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
@@ -217,7 +206,6 @@ class _NavigationDock extends StatelessWidget {
             ),
           ),
 
-          // Space reserved for floating Create button.
           const SizedBox(width: 64),
 
           Expanded(
@@ -261,42 +249,29 @@ class _NavigationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected
-        ? AppColors.primary
-        : AppColors.textSecondary;
+    final color = selected ? AppColors.primary : AppColors.textSecondary;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(
-          AppRadius.md,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: AnimatedContainer(
-          duration: const Duration(
-            milliseconds: 200,
-          ),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 8,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary.withValues(alpha: 0.08)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(
-              AppRadius.md,
-            ),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedScale(
                 scale: selected ? 1.05 : 1,
-                duration: const Duration(
-                  milliseconds: 200,
-                ),
+                duration: const Duration(milliseconds: 200),
                 child: Icon(
                   selected ? selectedIcon : icon,
                   size: 22,
@@ -308,17 +283,12 @@ class _NavigationItem extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(
-                      fontSize: 11,
-                      height: 16 / 11,
-                      fontWeight: selected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      color: color,
-                    ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 11,
+                  height: 16 / 11,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: color,
+                ),
               ),
             ],
           ),
@@ -329,9 +299,7 @@ class _NavigationItem extends StatelessWidget {
 }
 
 class _CreateButton extends StatelessWidget {
-  const _CreateButton({
-    required this.onTap,
-  });
+  const _CreateButton({required this.onTap});
 
   final VoidCallback onTap;
 
@@ -341,13 +309,9 @@ class _CreateButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(
-          AppRadius.pill,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
         child: AnimatedContainer(
-          duration: const Duration(
-            milliseconds: 200,
-          ),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
           width: 62,
           height: 62,
@@ -355,27 +319,19 @@ class _CreateButton extends StatelessWidget {
             color: AppColors.primary,
             shape: BoxShape.circle,
             border: Border.all(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surface,
+              color: Theme.of(context).colorScheme.surface,
               width: 5,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(
-                  alpha: 0.25,
-                ),
+                color: AppColors.primary.withValues(alpha: 0.25),
                 blurRadius: 16,
                 spreadRadius: 2,
                 offset: const Offset(0, 6),
               ),
             ],
           ),
-          child: const Icon(
-            Icons.add_rounded,
-            size: 31,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.add_rounded, size: 31, color: Colors.white),
         ),
       ),
     );

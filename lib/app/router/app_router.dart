@@ -1,7 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:pulze_plus/app/app_startup_screen.dart';
 import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/app/router/router_refresh_notifier.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
+import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/auth/screens/auth_screen.dart';
 import 'package:pulze_plus/features/auth/screens/forgot_password_screen.dart';
 import 'package:pulze_plus/features/auth/screens/reset_password_screen.dart';
@@ -16,108 +20,178 @@ import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
-final appRouter = GoRouter(
-  initialLocation: AppRoutes.startup,
-  routes: [
-    GoRoute(
-      path: AppRoutes.startup,
-      builder: (context, state) {
-        return const AppStartupScreen();
-      },
-    ),
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final routerRefreshNotifier = RouterRefreshNotifier(ref);
 
-    GoRoute(
-      path: AppRoutes.onboarding,
-      builder: (context, state) {
-        return const OnboardingScreen();
-      },
-    ),
+  final router = GoRouter(
+    initialLocation: AppRoutes.startup,
 
-    GoRoute(
-      path: AppRoutes.auth,
-      builder: (context, state) {
-        return const AuthScreen();
-      },
-    ),
+    refreshListenable: routerRefreshNotifier,
 
-    GoRoute(
-      path: AppRoutes.verifyEmail,
-      builder: (context, state) {
-        final email = state.extra as String;
+    redirect: (context, state) {
+      final authStatus = ref.read(authProvider).status;
+      final location = state.matchedLocation;
 
-        return VerifyEmailScreen(email: email);
-      },
-    ),
+      final isAuthRoute =
+          location == AppRoutes.auth ||
+          location == AppRoutes.verifyEmail ||
+          location == AppRoutes.forgotPassword ||
+          location == AppRoutes.verifyPasswordReset ||
+          location == AppRoutes.resetPassword;
 
-    GoRoute(
-      path: AppRoutes.forgotPassword,
-      builder: (context, state) {
-        final email = state.extra as String?;
+      final isPublicRoute =
+          location == AppRoutes.startup ||
+          location == AppRoutes.onboarding ||
+          isAuthRoute;
 
-        return ForgotPasswordScreen(email: email);
-      },
-    ),
+      if (authStatus == AuthStatus.initial ||
+          authStatus == AuthStatus.loading) {
+        return null;
+      }
 
-    GoRoute(
-      path: AppRoutes.verifyPasswordReset,
-      builder: (context, state) {
-        final email = state.extra as String;
+      if (authStatus == AuthStatus.unauthenticated) {
+        if (isPublicRoute || location == AppRoutes.home) {
+          return null;
+        }
 
-        return VerifyPasswordResetScreen(email: email);
-      },
-    ),
+        return AppRoutes.auth;
+      }
 
-    GoRoute(
-      path: AppRoutes.resetPassword,
-      builder: (context, state) {
-        final resetToken = state.extra as String;
+      if (authStatus == AuthStatus.needsVerification) {
+        if (location == AppRoutes.verifyEmail) {
+          return null;
+        }
 
-        return ResetPasswordScreen(resetToken: resetToken);
-      },
-    ),
+        return AppRoutes.verifyEmail;
+      }
 
-    GoRoute(
-      path: AppRoutes.profile,
-      builder: (context, state) {
-        return const ProfileScreen();
-      },
-    ),
+      if (authStatus == AuthStatus.needsProfile) {
+        if (location == AppRoutes.profileSetup) {
+          return null;
+        }
 
-    GoRoute(
-      path: AppRoutes.profileSetup,
-      builder: (context, state) {
-        return const ProfileFormScreen(mode: ProfileFormMode.create);
-      },
-    ),
+        return AppRoutes.profileSetup;
+      }
 
-    GoRoute(
-      path: AppRoutes.home,
-      builder: (context, state) {
-        return const MainNavigationScreen();
-      },
-    ),
+      if (authStatus == AuthStatus.authenticated) {
+        if (isAuthRoute ||
+            location == AppRoutes.startup ||
+            location == AppRoutes.onboarding) {
+          return AppRoutes.home;
+        }
+      }
 
-    GoRoute(
-      path: AppRoutes.requests,
-      builder: (context, state) {
-        return const RequestsScreen();
-      },
-    ),
+      return null;
+    },
 
-    GoRoute(
-      path: AppRoutes.chat,
-      builder: (context, state) {
-        return const ChatsScreen();
-      },
-    ),
+    routes: [
+      GoRoute(
+        path: AppRoutes.startup,
+        builder: (context, state) {
+          return const AppStartupScreen();
+        },
+      ),
 
-    GoRoute(
-      path: AppRoutes.chatDetail,
-      builder: (context, state) {
-        final chat = state.extra as ChatModel;
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (context, state) {
+          return const OnboardingScreen();
+        },
+      ),
 
-        return ChatDetailScreen(chat: chat);
-      },
-    ),
-  ],
-);
+      GoRoute(
+        path: AppRoutes.auth,
+        builder: (context, state) {
+          return const AuthScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.verifyEmail,
+        builder: (context, state) {
+          final email = state.extra as String;
+
+          return VerifyEmailScreen(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) {
+          final email = state.extra as String?;
+
+          return ForgotPasswordScreen(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.verifyPasswordReset,
+        builder: (context, state) {
+          final email = state.extra as String;
+
+          return VerifyPasswordResetScreen(email: email);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) {
+          final resetToken = state.extra as String;
+
+          return ResetPasswordScreen(resetToken: resetToken);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.profile,
+        builder: (context, state) {
+          return const ProfileScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.profileSetup,
+        builder: (context, state) {
+          return const ProfileFormScreen(mode: ProfileFormMode.create);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) {
+          return const MainNavigationScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.requests,
+        builder: (context, state) {
+          return const RequestsScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.chat,
+        builder: (context, state) {
+          return const ChatsScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.chatDetail,
+        builder: (context, state) {
+          final chat = state.extra as ChatModel;
+
+          return ChatDetailScreen(chat: chat);
+        },
+      ),
+    ],
+  );
+
+  ref.onDispose(() {
+    routerRefreshNotifier.dispose();
+    router.dispose();
+  });
+
+  return router;
+});

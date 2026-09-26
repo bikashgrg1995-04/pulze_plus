@@ -4,9 +4,7 @@ import 'app_exception.dart';
 import 'dio_client.dart';
 
 class ApiService {
-  ApiService({
-    DioClient? dioClient,
-  }) : _dio = (dioClient ?? DioClient()).instance;
+  ApiService({required DioClient dioClient}) : _dio = dioClient.instance;
 
   final Dio _dio;
 
@@ -15,10 +13,7 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      return await _dio.get(
-        path,
-        queryParameters: queryParameters,
-      );
+      return await _dio.get(path, queryParameters: queryParameters);
     } on DioException catch (error) {
       throw _extractAppException(error);
     }
@@ -40,43 +35,25 @@ class ApiService {
     }
   }
 
-  Future<Response<dynamic>> patch(
-    String path, {
-    dynamic data,
-  }) async {
+  Future<Response<dynamic>> patch(String path, {dynamic data}) async {
     try {
-      return await _dio.patch(
-        path,
-        data: data,
-      );
+      return await _dio.patch(path, data: data);
     } on DioException catch (error) {
       throw _extractAppException(error);
     }
   }
 
-  Future<Response<dynamic>> put(
-    String path, {
-    dynamic data,
-  }) async {
+  Future<Response<dynamic>> put(String path, {dynamic data}) async {
     try {
-      return await _dio.put(
-        path,
-        data: data,
-      );
+      return await _dio.put(path, data: data);
     } on DioException catch (error) {
       throw _extractAppException(error);
     }
   }
 
-  Future<Response<dynamic>> delete(
-    String path, {
-    dynamic data,
-  }) async {
+  Future<Response<dynamic>> delete(String path, {dynamic data}) async {
     try {
-      return await _dio.delete(
-        path,
-        data: data,
-      );
+      return await _dio.delete(path, data: data);
     } on DioException catch (error) {
       throw _extractAppException(error);
     }

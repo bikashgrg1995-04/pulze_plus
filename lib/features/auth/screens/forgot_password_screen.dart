@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -74,12 +75,6 @@ class _ForgotPasswordScreenState
       if (!mounted) {
         return;
       }
-
-      AppSnackBar.success(
-        context,
-        'If an account exists with this email, '
-        'a password reset code has been sent.',
-      );
 
       context.push(
         AppRoutes.verifyPasswordReset,
@@ -159,8 +154,7 @@ class _ForgotPasswordScreenState
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const AuthHeader(
                       title: 'Forgot password?',

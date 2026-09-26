@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -14,31 +15,24 @@ import '../widgets/auth_header.dart';
 import '../widgets/otp_code_field.dart';
 
 class VerifyEmailScreen extends ConsumerStatefulWidget {
-  const VerifyEmailScreen({
-    super.key,
-    required this.email,
-  });
+  const VerifyEmailScreen({super.key, required this.email});
 
   final String email;
 
   @override
-  ConsumerState<VerifyEmailScreen> createState() =>
-      _VerifyEmailScreenState();
+  ConsumerState<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
 }
 
-class _VerifyEmailScreenState
-    extends ConsumerState<VerifyEmailScreen> {
+class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   final _codeController = TextEditingController();
 
   Timer? _resendTimer;
 
   int _resendSecondsRemaining = 60;
 
-  bool get _isLoading =>
-      ref.watch(authProvider).status == AuthStatus.loading;
+  bool get _isLoading => ref.watch(authProvider).status == AuthStatus.loading;
 
-  bool get _canResend =>
-      _resendSecondsRemaining == 0 && !_isLoading;
+  bool get _canResend => _resendSecondsRemaining == 0 && !_isLoading;
 
   @override
   void initState() {
@@ -76,19 +70,13 @@ class _VerifyEmailScreenState
     FocusScope.of(context).unfocus();
 
     try {
-      await ref.read(authProvider.notifier).verifyEmail(
-            email: widget.email,
-            code: code,
-          );
+      await ref
+          .read(authProvider.notifier)
+          .verifyEmail(email: widget.email, code: code);
 
       if (!mounted) {
         return;
       }
-
-      AppSnackBar.success(
-        context,
-        'Email verified successfully. Please sign in.',
-      );
 
       context.pop();
     } catch (error) {
@@ -96,10 +84,7 @@ class _VerifyEmailScreenState
         return;
       }
 
-      AppSnackBar.error(
-        context,
-        error.toString(),
-      );
+      AppSnackBar.error(context, error.toString());
     }
   }
 
@@ -113,9 +98,7 @@ class _VerifyEmailScreenState
     try {
       await ref
           .read(authProvider.notifier)
-          .resendVerificationEmail(
-            email: widget.email,
-          );
+          .resendVerificationEmail(email: widget.email);
 
       if (!mounted) {
         return;
@@ -124,20 +107,12 @@ class _VerifyEmailScreenState
       _startResendTimer();
 
       _codeController.clear();
-
-      AppSnackBar.success(
-        context,
-        'A new verification code has been sent to your email.',
-      );
     } catch (error) {
       if (!mounted) {
         return;
       }
 
-      AppSnackBar.error(
-        context,
-        error.toString(),
-      );
+      AppSnackBar.error(context, error.toString());
     }
   }
 
@@ -148,29 +123,26 @@ class _VerifyEmailScreenState
       _resendSecondsRemaining = 60;
     });
 
-    _resendTimer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        if (!mounted) {
-          timer.cancel();
-          return;
-        }
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
 
-        if (_resendSecondsRemaining <= 1) {
-          timer.cancel();
-
-          setState(() {
-            _resendSecondsRemaining = 0;
-          });
-
-          return;
-        }
+      if (_resendSecondsRemaining <= 1) {
+        timer.cancel();
 
         setState(() {
-          _resendSecondsRemaining--;
+          _resendSecondsRemaining = 0;
         });
-      },
-    );
+
+        return;
+      }
+
+      setState(() {
+        _resendSecondsRemaining--;
+      });
+    });
   }
 
   @override
@@ -202,19 +174,14 @@ class _VerifyEmailScreenState
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-          ),
-          onPressed: _isLoading
-              ? null
-              : () => context.pop(),
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: _isLoading ? null : () => context.pop(),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          keyboardDismissBehavior:
-              ScrollViewKeyboardDismissBehavior.onDrag,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
             AppSpacing.lg,
@@ -223,12 +190,9 @@ class _VerifyEmailScreenState
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: contentMaxWidth,
-              ),
+              constraints: BoxConstraints(maxWidth: contentMaxWidth),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const AuthHeader(
                     title: 'Verify your email',
@@ -236,19 +200,14 @@ class _VerifyEmailScreenState
                         'Enter the 6-digit verification code '
                         'we sent to your email address.',
                   ),
-                  const SizedBox(
-                    height: AppSpacing.xl,
-                  ),
+
+                  const SizedBox(height: AppSpacing.xl),
+
                   Container(
-                    padding: const EdgeInsets.all(
-                      AppSpacing.md,
-                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(
-                        alpha: 0.06,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(12),
+                      color: AppColors.primary.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
@@ -256,87 +215,68 @@ class _VerifyEmailScreenState
                           Icons.email_outlined,
                           color: AppColors.primary,
                         ),
-                        const SizedBox(
-                          width: AppSpacing.sm,
-                        ),
+                        const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Text(
                             widget.email,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
-                                  fontWeight:
-                                      FontWeight.w600,
-                                  color:
-                                      AppColors.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
                                 ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: AppSpacing.xl,
-                  ),
+
+                  const SizedBox(height: AppSpacing.xl),
+
                   OtpCodeField(
                     controller: _codeController,
                     enabled: !_isLoading,
                     onCompleted: _verifyEmail,
                   ),
-                  const SizedBox(
-                    height: AppSpacing.lg,
-                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
                   AppButton(
                     label: 'Verify email',
-                    icon:
-                        Icons.check_circle_outline_rounded,
+                    icon: Icons.check_circle_outline_rounded,
                     isLoading: _isLoading,
                     onPressed: _verifyEmail,
                   ),
-                  const SizedBox(
-                    height: AppSpacing.lg,
-                  ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
                   Text(
                     'Didn’t receive the code?',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(
-                          color:
-                              AppColors.textSecondary,
-                        ),
+                    style: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(color: AppColors.textSecondary),
                   ),
-                  const SizedBox(
-                    height: AppSpacing.xs,
-                  ),
+
+                  const SizedBox(height: AppSpacing.xs),
+
                   Center(
                     child: TextButton(
-                      onPressed: _canResend
-                          ? _resendCode
-                          : null,
+                      onPressed: _canResend ? _resendCode : null,
                       child: Text(
                         _resendSecondsRemaining > 0
                             ? 'Resend code in '
-                                '$_resendSecondsRemaining s'
+                                  '$_resendSecondsRemaining s'
                             : 'Resend code',
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: AppSpacing.sm,
-                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
                   Text(
                     'The verification code expires in 10 minutes.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(
-                          color:
-                              AppColors.textSecondary,
-                        ),
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: AppColors.textSecondary),
                   ),
                 ],
               ),

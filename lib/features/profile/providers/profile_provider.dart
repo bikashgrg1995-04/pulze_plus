@@ -1,8 +1,8 @@
-
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:pulze_plus/core/network/network_providers.dart';
 import 'package:pulze_plus/features/profile/data/profile_repository.dart';
 import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/models/profile_state.dart';
@@ -12,22 +12,16 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
   @override
   ProfileState build() {
-    _profileRepository = ref.read(
-      profileRepositoryProvider,
-    );
+    _profileRepository = ref.read(profileRepositoryProvider);
 
     return const ProfileState.initial();
   }
 
   Future<ProfileResponseModel> loadProfile() async {
-    state = state.copyWith(
-      status: ProfileStatus.loading,
-      clearMessage: true,
-    );
+    state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final response =
-          await _profileRepository.getMe();
+      final response = await _profileRepository.getMe();
 
       if (response.profile == null) {
         state = const ProfileState.initial();
@@ -62,14 +56,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
     double? latitude,
     double? longitude,
   }) async {
-    state = state.copyWith(
-      status: ProfileStatus.loading,
-      clearMessage: true,
-    );
+    state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final profile =
-          await _profileRepository.createProfile(
+      final profile = await _profileRepository.createProfile(
         gender: gender,
         dateOfBirth: dateOfBirth,
         phoneNumber: phoneNumber,
@@ -80,10 +70,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
         longitude: longitude,
       );
 
-      state = ProfileState(
-        status: ProfileStatus.loaded,
-        profile: profile,
-      );
+      state = ProfileState(status: ProfileStatus.loaded, profile: profile);
     } catch (error) {
       state = ProfileState(
         status: ProfileStatus.error,
@@ -105,14 +92,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
     double? latitude,
     double? longitude,
   }) async {
-    state = state.copyWith(
-      status: ProfileStatus.loading,
-      clearMessage: true,
-    );
+    state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final profile =
-          await _profileRepository.updateProfile(
+      final profile = await _profileRepository.updateProfile(
         gender: gender,
         dateOfBirth: dateOfBirth,
         phoneNumber: phoneNumber,
@@ -123,10 +106,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
         longitude: longitude,
       );
 
-      state = ProfileState(
-        status: ProfileStatus.loaded,
-        profile: profile,
-      );
+      state = ProfileState(status: ProfileStatus.loaded, profile: profile);
     } catch (error) {
       state = ProfileState(
         status: ProfileStatus.error,
@@ -138,33 +118,23 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  Future<void> updateDonorStatus({
-    required bool isDonor,
-  }) async {
+  Future<void> updateDonorStatus({required bool isDonor}) async {
     final currentProfile = state.profile;
 
     if (currentProfile == null) {
-      throw StateError(
-        'Profile is not loaded.',
-      );
+      throw StateError('Profile is not loaded.');
     }
 
-    state = state.copyWith(
-      status: ProfileStatus.loading,
-      clearMessage: true,
-    );
+    state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final updatedIsDonor =
-          await _profileRepository.updateDonorStatus(
+      final updatedIsDonor = await _profileRepository.updateDonorStatus(
         isDonor: isDonor,
       );
 
       state = ProfileState(
         status: ProfileStatus.loaded,
-        profile: currentProfile.copyWith(
-          isDonor: updatedIsDonor,
-        ),
+        profile: currentProfile.copyWith(isDonor: updatedIsDonor),
       );
     } catch (error) {
       state = ProfileState(
@@ -177,33 +147,23 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  Future<void> updateAvatar({
-    required File avatarFile,
-  }) async {
+  Future<void> updateAvatar({required File avatarFile}) async {
     final currentProfile = state.profile;
 
     if (currentProfile == null) {
-      throw StateError(
-        'Profile is not loaded.',
-      );
+      throw StateError('Profile is not loaded.');
     }
 
-    state = state.copyWith(
-      status: ProfileStatus.loading,
-      clearMessage: true,
-    );
+    state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final avatarUrl =
-          await _profileRepository.updateAvatar(
+      final avatarUrl = await _profileRepository.updateAvatar(
         avatarFile: avatarFile,
       );
 
       state = ProfileState(
         status: ProfileStatus.loaded,
-        profile: currentProfile.copyWith(
-          avatar: avatarUrl,
-        ),
+        profile: currentProfile.copyWith(avatar: avatarUrl),
       );
     } catch (error) {
       state = ProfileState(
@@ -217,10 +177,7 @@ class ProfileNotifier extends Notifier<ProfileState> {
   }
 
   void setProfile(ProfileModel profile) {
-    state = ProfileState(
-      status: ProfileStatus.loaded,
-      profile: profile,
-    );
+    state = ProfileState(status: ProfileStatus.loaded, profile: profile);
   }
 
   void clearProfile() {
@@ -228,12 +185,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
   }
 }
 
-final profileRepositoryProvider =
-    Provider<ProfileRepository>((ref) {
-  return ProfileRepository();
+final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
+  return ProfileRepository(apiService: ref.read(apiServiceProvider));
 });
 
-final profileProvider =
-    NotifierProvider<ProfileNotifier, ProfileState>(
+final profileProvider = NotifierProvider<ProfileNotifier, ProfileState>(
   ProfileNotifier.new,
 );

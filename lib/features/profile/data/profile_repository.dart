@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -9,21 +8,15 @@ import 'package:pulze_plus/features/auth/models/user_model.dart';
 import 'package:pulze_plus/features/profile/models/profile_model.dart';
 
 class ProfileRepository {
-  ProfileRepository({
-    ApiService? apiService,
-  }) : _apiService = apiService ?? ApiService();
+  const ProfileRepository({required this._apiService});
 
   final ApiService _apiService;
 
   Future<ProfileResponseModel> getMe() async {
-    final response = await _apiService.get(
-      ApiEndpoints.me,
-    );
+    final response = await _apiService.get(ApiEndpoints.me);
 
     return ProfileResponseModel.fromJson(
-      Map<String, dynamic>.from(
-        response.data,
-      ),
+      Map<String, dynamic>.from(response.data),
     );
   }
 
@@ -51,14 +44,10 @@ class ProfileRepository {
       },
     );
 
-    final data = Map<String, dynamic>.from(
-      response.data,
-    );
+    final data = Map<String, dynamic>.from(response.data);
 
     return ProfileModel.fromJson(
-      Map<String, dynamic>.from(
-        data['profile'] as Map,
-      ),
+      Map<String, dynamic>.from(data['profile'] as Map),
     );
   }
 
@@ -79,8 +68,7 @@ class ProfileRepository {
     }
 
     if (dateOfBirth != null) {
-      data['date_of_birth'] =
-          _formatDate(dateOfBirth);
+      data['date_of_birth'] = _formatDate(dateOfBirth);
     }
 
     if (phoneNumber != null) {
@@ -107,43 +95,27 @@ class ProfileRepository {
       data['longitude'] = longitude;
     }
 
-    final response = await _apiService.patch(
-      ApiEndpoints.profile,
-      data: data,
-    );
+    final response = await _apiService.patch(ApiEndpoints.profile, data: data);
 
-    final responseData =
-        Map<String, dynamic>.from(
-      response.data,
-    );
+    final responseData = Map<String, dynamic>.from(response.data);
 
     return ProfileModel.fromJson(
-      Map<String, dynamic>.from(
-        responseData['profile'] as Map,
-      ),
+      Map<String, dynamic>.from(responseData['profile'] as Map),
     );
   }
 
-  Future<bool> updateDonorStatus({
-    required bool isDonor,
-  }) async {
+  Future<bool> updateDonorStatus({required bool isDonor}) async {
     final response = await _apiService.patch(
       ApiEndpoints.profileDonor,
-      data: {
-        'is_donor': isDonor,
-      },
+      data: {'is_donor': isDonor},
     );
 
-    final data = Map<String, dynamic>.from(
-      response.data,
-    );
+    final data = Map<String, dynamic>.from(response.data);
 
     return data['is_donor'] as bool;
   }
 
-  Future<String> updateAvatar({
-    required File avatarFile,
-  }) async {
+  Future<String> updateAvatar({required File avatarFile}) async {
     final formData = FormData.fromMap({
       'avatar': await MultipartFile.fromFile(
         avatarFile.path,
@@ -156,55 +128,34 @@ class ProfileRepository {
       data: formData,
     );
 
-    final data = Map<String, dynamic>.from(
-      response.data,
-    );
+    final data = Map<String, dynamic>.from(response.data);
 
     return data['avatar'] as String;
   }
 
   static String _formatDate(DateTime date) {
-    final year =
-        date.year.toString().padLeft(4, '0');
-
-    final month =
-        date.month.toString().padLeft(2, '0');
-
-    final day =
-        date.day.toString().padLeft(2, '0');
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
 
     return '$year-$month-$day';
   }
 }
 
 class ProfileResponseModel {
-  const ProfileResponseModel({
-    required this.user,
-    this.profile,
-  });
+  const ProfileResponseModel({required this.user, this.profile});
 
   final UserModel user;
   final ProfileModel? profile;
 
-  factory ProfileResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    final profileData =
-        json['profile'] as Map?;
+  factory ProfileResponseModel.fromJson(Map<String, dynamic> json) {
+    final profileData = json['profile'] as Map?;
 
     return ProfileResponseModel(
-      user: UserModel.fromJson(
-        Map<String, dynamic>.from(
-          json['user'] as Map,
-        ),
-      ),
+      user: UserModel.fromJson(Map<String, dynamic>.from(json['user'] as Map)),
       profile: profileData == null
           ? null
-          : ProfileModel.fromJson(
-              Map<String, dynamic>.from(
-                profileData,
-              ),
-            ),
+          : ProfileModel.fromJson(Map<String, dynamic>.from(profileData)),
     );
   }
 }

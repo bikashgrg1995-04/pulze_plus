@@ -4,19 +4,17 @@ import '../../../core/network/token_storage.dart';
 import '../models/auth_response_model.dart';
 
 class AuthRepository {
-  AuthRepository({ApiService? apiService, TokenStorage? tokenStorage})
-    : _apiService = apiService ?? ApiService(),
-      _tokenStorage = tokenStorage ?? TokenStorage();
+  const AuthRepository({required this.apiService, required this.tokenStorage});
 
-  final ApiService _apiService;
-  final TokenStorage _tokenStorage;
+  final ApiService apiService;
+  final TokenStorage tokenStorage;
 
   Future<AuthResponseModel> register({
     required String fullName,
     required String email,
     required String password,
   }) async {
-    final response = await _apiService.post(
+    final response = await apiService.post(
       ApiEndpoints.register,
       data: {'full_name': fullName, 'email': email, 'password': password},
     );
@@ -28,28 +26,28 @@ class AuthRepository {
     required String email,
     required String code,
   }) async {
-    await _apiService.post(
+    await apiService.post(
       ApiEndpoints.verifyEmail,
       data: {'email': email, 'code': code},
     );
   }
 
   Future<void> resendVerificationEmail({required String email}) async {
-    await _apiService.post(
+    await apiService.post(
       ApiEndpoints.resendVerification,
       data: {'email': email},
     );
   }
 
   Future<void> forgotPassword({required String email}) async {
-    await _apiService.post(ApiEndpoints.forgotPassword, data: {'email': email});
+    await apiService.post(ApiEndpoints.forgotPassword, data: {'email': email});
   }
 
   Future<String> verifyPasswordReset({
     required String email,
     required String code,
   }) async {
-    final response = await _apiService.post(
+    final response = await apiService.post(
       ApiEndpoints.verifyPasswordReset,
       data: {'email': email, 'code': code},
     );
@@ -62,7 +60,7 @@ class AuthRepository {
     required String newPassword,
     required String confirmPassword,
   }) async {
-    await _apiService.post(
+    await apiService.post(
       ApiEndpoints.resetPassword,
       data: {
         'reset_token': resetToken,
@@ -76,7 +74,7 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final response = await _apiService.post(
+    final response = await apiService.post(
       ApiEndpoints.login,
       data: {'email': email, 'password': password},
     );
@@ -94,7 +92,7 @@ class AuthRepository {
       );
     }
 
-    await _tokenStorage.saveTokens(
+    await tokenStorage.saveTokens(
       accessToken: tokens.access,
       refreshToken: tokens.refresh,
     );
@@ -103,6 +101,6 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
-    await _tokenStorage.clearTokens();
+    await tokenStorage.clearTokens();
   }
 }

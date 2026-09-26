@@ -27,6 +27,7 @@ class VerifyPasswordResetScreen extends ConsumerStatefulWidget {
 class _VerifyPasswordResetScreenState
     extends ConsumerState<VerifyPasswordResetScreen> {
   static const _resendCooldownSeconds = 60;
+
   final _otpController = TextEditingController();
 
   Timer? _timer;
@@ -137,12 +138,6 @@ class _VerifyPasswordResetScreenState
       if (!mounted) {
         return;
       }
-
-      AppSnackBar.success(
-        context,
-        'If an account exists with this email, '
-        'a new password reset code has been sent.',
-      );
 
       _startResendCooldown();
     } catch (error) {

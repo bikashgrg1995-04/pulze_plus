@@ -1,71 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
 
+import '../../../core/network/network_providers.dart';
 import '../../../core/network/token_storage.dart';
 import '../../profile/providers/profile_provider.dart';
 import '../data/auth_repository.dart';
-import '../models/user_model.dart';
-
-enum AuthStatus {
-  initial,
-  loading,
-  unauthenticated,
-  needsVerification,
-  needsProfile,
-  authenticated,
-}
-
-class AuthState {
-  const AuthState({required this.status, this.user, this.message});
-
-  const AuthState.initial()
-    : status = AuthStatus.initial,
-      user = null,
-      message = null;
-
-  final AuthStatus status;
-  final UserModel? user;
-  final String? message;
-
-  AuthState copyWith({
-    AuthStatus? status,
-    UserModel? user,
-    String? message,
-    bool clearUser = false,
-    bool clearMessage = false,
-  }) {
-    return AuthState(
-      status: status ?? this.status,
-      user: clearUser ? null : user ?? this.user,
-      message: clearMessage ? null : message ?? this.message,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AuthState('
-        'status: $status, '
-        'user: $user, '
-        'message: $message'
-        ')';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is AuthState &&
-        other.status == status &&
-        other.user == user &&
-        other.message == message;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(status, user, message);
-  }
-}
 
 class AuthNotifier extends Notifier<AuthState> {
   late final AuthRepository _authRepository;
@@ -74,17 +13,43 @@ class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
     _authRepository = ref.read(authRepositoryProvider);
-
     _tokenStorage = ref.read(tokenStorageProvider);
+
+    ref.listen<int>(sessionExpirySignalProvider, (previous, next) {
+      if (previous == next) {
+        return;
+      }
+
+      handleSessionExpired();
+    });
 
     return const AuthState.initial();
   }
+
+  // ===========================================================================
+  // Session expired
+  // ===========================================================================
+
+  Future<void> handleSessionExpired() async {
+    await _tokenStorage.clearTokens();
+
+    ref.read(profileProvider.notifier).clearProfile();
+
+    state = const AuthState(
+      status: AuthStatus.unauthenticated,
+      message: 'Your session has expired. Please log in again.',
+      messageType: AuthMessageType.warning,
+    );
+  }
+
+  // ===========================================================================
+  // Check auth
+  // ===========================================================================
 
   Future<void> checkAuth() async {
     state = state.copyWith(status: AuthStatus.loading, clearMessage: true);
 
     final accessToken = await _tokenStorage.getAccessToken();
-
     final refreshToken = await _tokenStorage.getRefreshToken();
 
     if (accessToken == null ||
@@ -117,6 +82,10 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  // ===========================================================================
+  // Register
+  // ===========================================================================
+
   Future<String?> register({
     required String fullName,
     required String email,
@@ -137,6 +106,7 @@ class AuthNotifier extends Notifier<AuthState> {
         status: AuthStatus.needsVerification,
         user: response.user,
         message: response.message,
+        messageType: AuthMessageType.success,
       );
 
       return response.message;
@@ -146,6 +116,10 @@ class AuthNotifier extends Notifier<AuthState> {
       rethrow;
     }
   }
+
+  // ===========================================================================
+  // Email verification
+  // ===========================================================================
 
   Future<void> verifyEmail({
     required String email,
@@ -159,7 +133,8 @@ class AuthNotifier extends Notifier<AuthState> {
       state = AuthState(
         status: AuthStatus.unauthenticated,
         user: state.user,
-        message: 'Email verified successfully.',
+        message: 'Email verified successfully. You can now log in.',
+        messageType: AuthMessageType.success,
       );
     } catch (_) {
       state = state.copyWith(status: AuthStatus.needsVerification);
@@ -168,18 +143,27 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  // ===========================================================================
+  // Resend verification email
+  // ===========================================================================
+
   Future<void> resendVerificationEmail({required String email}) async {
     try {
       await _authRepository.resendVerificationEmail(email: email);
 
       state = state.copyWith(
-        message: 'If your email is not verified, a new verification email has been sent.',
-        clearMessage: false,
+        message:
+            'Verification email sent successfully. Please check your inbox.',
+        messageType: AuthMessageType.success,
       );
     } catch (_) {
       rethrow;
     }
   }
+
+  // ===========================================================================
+  // Profile
+  // ===========================================================================
 
   void markProfileCompleted() {
     if (state.user == null) {
@@ -188,6 +172,10 @@ class AuthNotifier extends Notifier<AuthState> {
 
     state = AuthState(status: AuthStatus.authenticated, user: state.user);
   }
+
+  // ===========================================================================
+  // Login
+  // ===========================================================================
 
   Future<void> login({required String email, required String password}) async {
     state = state.copyWith(status: AuthStatus.loading, clearMessage: true);
@@ -198,12 +186,22 @@ class AuthNotifier extends Notifier<AuthState> {
       final response = await ref.read(profileProvider.notifier).loadProfile();
 
       if (response.profile == null) {
-        state = AuthState(status: AuthStatus.needsProfile, user: response.user);
+        state = AuthState(
+          status: AuthStatus.needsProfile,
+          user: response.user,
+          message: 'Login successful. Please complete your profile.',
+          messageType: AuthMessageType.success,
+        );
 
         return;
       }
 
-      state = AuthState(status: AuthStatus.authenticated, user: response.user);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        user: response.user,
+        message: 'Login successful. Welcome back!',
+        messageType: AuthMessageType.success,
+      );
     } catch (_) {
       await _tokenStorage.clearTokens();
 
@@ -215,27 +213,53 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  // ===========================================================================
+  // Forgot password
+  // ===========================================================================
+
   Future<void> forgotPassword({required String email}) async {
     try {
       await _authRepository.forgotPassword(email: email);
+
+      state = state.copyWith(
+        message:
+            'If an account exists with this email, '
+            'a password reset code has been sent.',
+        messageType: AuthMessageType.info,
+      );
     } catch (_) {
       rethrow;
     }
   }
+
+  // ===========================================================================
+  // Verify password reset
+  // ===========================================================================
 
   Future<String> verifyPasswordReset({
     required String email,
     required String code,
   }) async {
     try {
-      return await _authRepository.verifyPasswordReset(
+      final resetToken = await _authRepository.verifyPasswordReset(
         email: email,
         code: code,
       );
+
+      state = state.copyWith(
+        message: 'Code verified successfully. You can reset your password.',
+        messageType: AuthMessageType.success,
+      );
+
+      return resetToken;
     } catch (_) {
       rethrow;
     }
   }
+
+  // ===========================================================================
+  // Reset password
+  // ===========================================================================
 
   Future<void> resetPassword({
     required String resetToken,
@@ -248,27 +272,49 @@ class AuthNotifier extends Notifier<AuthState> {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       );
+
+      state = state.copyWith(
+        message:
+            'Password reset successfully. '
+            'You can now log in with your new password.',
+        messageType: AuthMessageType.success,
+      );
     } catch (_) {
       rethrow;
     }
   }
+
+  // ===========================================================================
+  // Logout
+  // ===========================================================================
 
   Future<void> logout() async {
     await _authRepository.logout();
 
     ref.read(profileProvider.notifier).clearProfile();
 
-    state = const AuthState(status: AuthStatus.unauthenticated);
+    state = const AuthState(
+      status: AuthStatus.unauthenticated,
+      message: 'You have been logged out successfully.',
+      messageType: AuthMessageType.success,
+    );
   }
 }
 
-final tokenStorageProvider = Provider<TokenStorage>((ref) {
-  return TokenStorage();
-});
+// ============================================================================
+// Auth repository provider
+// ============================================================================
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(tokenStorage: ref.read(tokenStorageProvider));
+  return AuthRepository(
+    apiService: ref.read(apiServiceProvider),
+    tokenStorage: ref.read(tokenStorageProvider),
+  );
 });
+
+// ============================================================================
+// Auth provider
+// ============================================================================
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(
   AuthNotifier.new,

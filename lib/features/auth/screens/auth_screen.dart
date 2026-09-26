@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/core/widgets/app_divider.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';

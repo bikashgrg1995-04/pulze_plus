@@ -15,10 +15,7 @@ import '../providers/auth_provider.dart';
 import '../widgets/auth_header.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
-  const ResetPasswordScreen({
-    super.key,
-    required this.resetToken,
-  });
+  const ResetPasswordScreen({super.key, required this.resetToken});
 
   final String resetToken;
 
@@ -27,8 +24,7 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
       _ResetPasswordScreenState();
 }
 
-class _ResetPasswordScreenState
-    extends ConsumerState<ResetPasswordScreen> {
+class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _passwordController = TextEditingController();
@@ -72,11 +68,6 @@ class _ResetPasswordScreenState
       if (!mounted) {
         return;
       }
-
-      AppSnackBar.success(
-        context,
-        'Password reset successfully. Please sign in.',
-      );
 
       context.go(AppRoutes.auth);
     } catch (error) {
@@ -151,8 +142,7 @@ class _ResetPasswordScreenState
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          keyboardDismissBehavior:
-              ScrollViewKeyboardDismissBehavior.onDrag,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
             topPadding,
@@ -161,9 +151,7 @@ class _ResetPasswordScreenState
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: contentMaxWidth,
-              ),
+              constraints: BoxConstraints(maxWidth: contentMaxWidth),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -218,8 +206,7 @@ class _ResetPasswordScreenState
                         }
 
                         setState(() {
-                          _obscureConfirmPassword =
-                              !_obscureConfirmPassword;
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
                         });
                       },
                     ),
