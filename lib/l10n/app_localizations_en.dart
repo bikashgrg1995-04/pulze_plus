@@ -486,4 +486,124 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileUpdatedSuccessfully => 'Profile updated successfully.';
+
+  @override
+  String get bloodTypeIsRequired => 'Blood type is required.';
+
+  @override
+  String get genderIsRequired => 'Gender is required.';
+
+  @override
+  String get welcomeBack => 'Welcome back.';
+
+  @override
+  String get createYourAccount => 'Create your account.';
+
+  @override
+  String get signInToContinueHelpingYourCommunity =>
+      'Sign in to continue helping your community.';
+
+  @override
+  String get joinPulzeAndBeThereWhenSomeoneNeedsBlood =>
+      'Join Pulze+ and be there when someone needs blood.';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get signUpWithGoogle => 'Sign up with Google';
+
+  @override
+  String get dontHaveAnAccount => 'Don\'t have an account?';
+
+  @override
+  String get alreadyHaveAnAccount => 'Already have an account?';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get enterYourEmail => 'Enter your email';
+
+  @override
+  String get enterYourPassword => 'Enter your password';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get enterYourFullName => 'Enter your full name';
+
+  @override
+  String get createAPassword => 'Create a password';
+
+  @override
+  String get emailIsRequired => 'Email is required.';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get passwordIsRequired => 'Password is required.';
+
+  @override
+  String get passwordMustBeAtLeast8Characters =>
+      'Password must be at least 8 characters.';
+
+  @override
+  String get fullNameIsRequired => 'Full name is required.';
+
+  @override
+  String get fullNameMustBeAtLeast2Characters =>
+      'Full name must be at least 2 characters.';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match.';
+
+  @override
+  String get createNewPassword => 'Create new password';
+
+  @override
+  String get chooseAStrongPasswordForYourPulzeAccount =>
+      'Choose a strong password for your Pulze+ account.';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get enterYourNewPassword => 'Enter your new password';
+
+  @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
+  String get reEnterYourNewPassword => 'Re-enter your new password';
+
+  @override
+  String get resetPassword => 'Reset password';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get addressNotAdded => 'Address not added';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get unavailable => 'Unavailable';
+
+  @override
+  String get isDonor => 'I am a donor';
+
+  @override
+  String get availableForBloodDonation =>
+      'Make yourself available for blood donation';
 }

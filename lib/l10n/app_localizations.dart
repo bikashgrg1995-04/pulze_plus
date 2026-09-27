@@ -991,6 +991,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile updated successfully.'**
   String get profileUpdatedSuccessfully;
+
+  /// Validation message shown when blood type is not selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood type is required.'**
+  String get bloodTypeIsRequired;
+
+  /// Validation message shown when gender is not selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender is required.'**
+  String get genderIsRequired;
+
+  /// Title shown on the sign-in screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back.'**
+  String get welcomeBack;
+
+  /// Title shown on the account creation screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account.'**
+  String get createYourAccount;
+
+  /// Subtitle shown on the sign-in screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue helping your community.'**
+  String get signInToContinueHelpingYourCommunity;
+
+  /// Subtitle shown on the account creation screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Pulze+ and be there when someone needs blood.'**
+  String get joinPulzeAndBeThereWhenSomeoneNeedsBlood;
+
+  /// Button label for continuing authentication with Google.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// Button label for signing up with Google.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up with Google'**
+  String get signUpWithGoogle;
+
+  /// Text shown when the user does not have an account.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get dontHaveAnAccount;
+
+  /// Text shown when the user already has an account.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAnAccount;
+
+  /// Button label for creating a new account.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// Button label for signing in to an existing account.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signIn;
+
+  /// Hint text for the email input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get enterYourEmail;
+
+  /// Hint text for the password input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get enterYourPassword;
+
+  /// Button label for starting password recovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// Hint text for the full name input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get enterYourFullName;
+
+  /// Hint text for creating a password.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a password'**
+  String get createAPassword;
+
+  /// Validation message shown when email is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required.'**
+  String get emailIsRequired;
+
+  /// Validation message shown when the email format is invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get invalidEmail;
+
+  /// Validation message shown when password is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required.'**
+  String get passwordIsRequired;
+
+  /// Validation message shown when password is shorter than 8 characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters.'**
+  String get passwordMustBeAtLeast8Characters;
+
+  /// Validation message shown when full name is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name is required.'**
+  String get fullNameIsRequired;
+
+  /// Validation message shown when full name is shorter than 2 characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name must be at least 2 characters.'**
+  String get fullNameMustBeAtLeast2Characters;
+
+  /// Label shown above the password input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// Validation message shown when the confirmation password does not match the new password.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get passwordsDoNotMatch;
+
+  /// Title shown on the reset password screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new password'**
+  String get createNewPassword;
+
+  /// Subtitle shown on the reset password screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a strong password for your Pulze+ account.'**
+  String get chooseAStrongPasswordForYourPulzeAccount;
+
+  /// Label shown for the new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// Hint shown in the new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password'**
+  String get enterYourNewPassword;
+
+  /// Label shown for the password confirmation field.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// Hint shown in the password confirmation field.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your new password'**
+  String get reEnterYourNewPassword;
+
+  /// Button label for resetting the password.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPassword;
+
+  /// Fallback name shown when a user's name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// Fallback address shown when no address has been added.
+  ///
+  /// In en, this message translates to:
+  /// **'Address not added'**
+  String get addressNotAdded;
+
+  /// Status shown when the donor is available for blood donation.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// Status shown when the donor is not available for blood donation.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get unavailable;
+
+  /// Settings label for the user's donor status.
+  ///
+  /// In en, this message translates to:
+  /// **'I am a donor'**
+  String get isDonor;
+
+  /// Description shown below the donor status setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Make yourself available for blood donation'**
+  String get availableForBloodDonation;
 }
 
 class _AppLocalizationsDelegate

@@ -46,7 +46,7 @@ class PreferenceSwitchRow extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  size: 18,
+                  size: 22,
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -84,8 +84,8 @@ class PreferenceSwitchRow extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
 
               SizedBox(
-                width: 38,
-                height: 32,
+                width: 70,
+                height: 50,
                 child: FittedBox(
                   fit: BoxFit.contain,
                   child: AppSwitch(

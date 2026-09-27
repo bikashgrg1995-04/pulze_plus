@@ -6,6 +6,7 @@ import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/core/widgets/app_divider.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -210,6 +211,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final horizontalPadding = ResponsiveUtils.value(
       context,
@@ -258,18 +260,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AuthHeader(
-                    title: _isLogin ? 'Welcome back' : 'Create your account',
+                    title: _isLogin ? l10n.welcomeBack : l10n.createYourAccount,
                     subtitle: _isLogin
-                        ? 'Sign in to continue helping your community.'
-                        : 'Join Pulze+ and be there when someone needs blood.',
+                        ? l10n.signInToContinueHelpingYourCommunity
+                        : l10n.joinPulzeAndBeThereWhenSomeoneNeedsBlood,
                   ),
 
                   const SizedBox(height: AppSpacing.xl),
 
                   GoogleAuthButton(
                     label: _isLogin
-                        ? 'Continue with Google'
-                        : 'Sign up with Google',
+                        ? l10n.continueWithGoogle
+                        : l10n.signUpWithGoogle,
                     onPressed: _continueWithGoogle,
                   ),
 
@@ -289,8 +291,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       Flexible(
                         child: Text(
                           _isLogin
-                              ? "Don't have an account?"
-                              : 'Already have an account?',
+                              ? l10n.dontHaveAnAccount
+                              : l10n.alreadyHaveAnAccount,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: AppColors.textSecondary,
@@ -308,7 +310,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: Text(_isLogin ? 'Create account' : 'Sign in'),
+                        child: Text(
+                          _isLogin ? l10n.createAccount : l10n.signIn,
+                        ),
                       ),
                     ],
                   ),
@@ -322,6 +326,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildLoginForm() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _loginFormKey,
       child: Column(
@@ -329,24 +335,36 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         children: [
           AppTextField(
             controller: _loginEmailController,
-            label: 'Email',
-            hint: 'Enter your email',
+            label: l10n.email,
+            hint: l10n.enterYourEmail,
             prefixIcon: Icons.alternate_email_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            validator: FormValidators.email,
+            validator: (value) {
+              return FormValidators.email(
+                value,
+                requiredMessage: l10n.emailIsRequired,
+                invalidMessage: l10n.invalidEmail,
+              );
+            },
           ),
 
           const SizedBox(height: AppSpacing.md),
 
           AppTextField(
             controller: _loginPasswordController,
-            label: 'Password',
-            hint: 'Enter your password',
+            label: l10n.password,
+            hint: l10n.enterYourPassword,
             prefixIcon: Icons.lock_outline_rounded,
             obscureText: _obscureLoginPassword,
             textInputAction: TextInputAction.done,
-            validator: FormValidators.password,
+            validator: (value) {
+              return FormValidators.password(
+                value,
+                requiredMessage: l10n.passwordIsRequired,
+                minLengthMessage: l10n.passwordMustBeAtLeast8Characters,
+              );
+            },
             suffixIcon: _obscureLoginPassword
                 ? Icons.visibility_outlined
                 : Icons.visibility_off_outlined,
@@ -374,14 +392,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Forgot password?'),
+              child: Text(l10n.forgotPassword),
             ),
           ),
 
           const SizedBox(height: AppSpacing.sm),
 
           AppButton(
-            label: 'Sign in',
+            label: l10n.signIn,
             icon: Icons.arrow_forward_rounded,
             isLoading: _isLoading,
             onPressed: _signIn,
@@ -392,6 +410,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildSignupForm() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _signupFormKey,
       child: Column(
@@ -399,35 +419,53 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         children: [
           AppTextField(
             controller: _signupNameController,
-            label: 'Full name',
-            hint: 'Enter your full name',
+            label: l10n.fullName,
+            hint: l10n.enterYourFullName,
             prefixIcon: Icons.person_outline_rounded,
             textInputAction: TextInputAction.next,
-            validator: FormValidators.fullName,
+            validator: (value) {
+              return FormValidators.fullName(
+                value,
+                requiredMessage: l10n.fullNameIsRequired,
+                minLengthMessage: l10n.fullNameMustBeAtLeast2Characters,
+              );
+            },
           ),
 
           const SizedBox(height: AppSpacing.md),
 
           AppTextField(
             controller: _signupEmailController,
-            label: 'Email',
-            hint: 'Enter your email',
+            label: l10n.email,
+            hint: l10n.enterYourEmail,
             prefixIcon: Icons.alternate_email_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            validator: FormValidators.email,
+            validator: (value) {
+              return FormValidators.email(
+                value,
+                requiredMessage: l10n.emailIsRequired,
+                invalidMessage: l10n.invalidEmail,
+              );
+            },
           ),
 
           const SizedBox(height: AppSpacing.md),
 
           AppTextField(
             controller: _signupPasswordController,
-            label: 'Password',
-            hint: 'Create a password',
+            label: l10n.password,
+            hint: l10n.createAPassword,
             prefixIcon: Icons.lock_outline_rounded,
             obscureText: _obscureSignupPassword,
             textInputAction: TextInputAction.done,
-            validator: FormValidators.password,
+            validator: (value) {
+              return FormValidators.password(
+                value,
+                requiredMessage: l10n.passwordIsRequired,
+                minLengthMessage: l10n.passwordMustBeAtLeast8Characters,
+              );
+            },
             suffixIcon: _obscureSignupPassword
                 ? Icons.visibility_outlined
                 : Icons.visibility_off_outlined,
@@ -445,7 +483,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           const SizedBox(height: AppSpacing.lg),
 
           AppButton(
-            label: 'Create account',
+            label: l10n.createAccount,
             icon: Icons.arrow_forward_rounded,
             isLoading: _isLoading,
             onPressed: _createAccount,

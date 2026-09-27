@@ -495,4 +495,124 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get profileUpdatedSuccessfully => 'प्रोफाइल सफलतापूर्वक अपडेट भयो।';
+
+  @override
+  String get bloodTypeIsRequired => 'रक्त समूह आवश्यक छ।';
+
+  @override
+  String get genderIsRequired => 'लिङ्ग आवश्यक छ।';
+
+  @override
+  String get welcomeBack => 'फेरि स्वागत छ।';
+
+  @override
+  String get createYourAccount => 'आफ्नो खाता सिर्जना गर्नुहोस्।';
+
+  @override
+  String get signInToContinueHelpingYourCommunity =>
+      'आफ्नो समुदायलाई सहयोग गर्न जारी राख्न साइन इन गर्नुहोस्।';
+
+  @override
+  String get joinPulzeAndBeThereWhenSomeoneNeedsBlood =>
+      'Pulze+ मा जोडिनुहोस् र कसैलाई रगत आवश्यक पर्दा सहयोग गर्नुहोस्।';
+
+  @override
+  String get continueWithGoogle => 'Google मार्फत जारी राख्नुहोस्';
+
+  @override
+  String get signUpWithGoogle => 'Google मार्फत साइन अप गर्नुहोस्';
+
+  @override
+  String get dontHaveAnAccount => 'खाता छैन?';
+
+  @override
+  String get alreadyHaveAnAccount => 'पहिले नै खाता छ?';
+
+  @override
+  String get createAccount => 'खाता सिर्जना गर्नुहोस्';
+
+  @override
+  String get signIn => 'साइन इन गर्नुहोस्';
+
+  @override
+  String get enterYourEmail => 'आफ्नो इमेल लेख्नुहोस्';
+
+  @override
+  String get enterYourPassword => 'आफ्नो पासवर्ड लेख्नुहोस्';
+
+  @override
+  String get forgotPassword => 'पासवर्ड बिर्सनुभयो?';
+
+  @override
+  String get enterYourFullName => 'आफ्नो पूरा नाम लेख्नुहोस्';
+
+  @override
+  String get createAPassword => 'पासवर्ड सिर्जना गर्नुहोस्';
+
+  @override
+  String get emailIsRequired => 'इमेल आवश्यक छ।';
+
+  @override
+  String get invalidEmail => 'कृपया मान्य इमेल ठेगाना लेख्नुहोस्।';
+
+  @override
+  String get passwordIsRequired => 'पासवर्ड आवश्यक छ।';
+
+  @override
+  String get passwordMustBeAtLeast8Characters =>
+      'पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ।';
+
+  @override
+  String get fullNameIsRequired => 'पूरा नाम आवश्यक छ।';
+
+  @override
+  String get fullNameMustBeAtLeast2Characters =>
+      'पूरा नाम कम्तीमा २ अक्षरको हुनुपर्छ।';
+
+  @override
+  String get password => 'पासवर्ड';
+
+  @override
+  String get passwordsDoNotMatch => 'पासवर्डहरू मिलेनन्।';
+
+  @override
+  String get createNewPassword => 'नयाँ पासवर्ड सिर्जना गर्नुहोस्';
+
+  @override
+  String get chooseAStrongPasswordForYourPulzeAccount =>
+      'आफ्नो Pulze+ खाताका लागि बलियो पासवर्ड छान्नुहोस्।';
+
+  @override
+  String get newPassword => 'नयाँ पासवर्ड';
+
+  @override
+  String get enterYourNewPassword => 'आफ्नो नयाँ पासवर्ड लेख्नुहोस्';
+
+  @override
+  String get confirmPassword => 'पासवर्ड पुष्टि गर्नुहोस्';
+
+  @override
+  String get reEnterYourNewPassword => 'आफ्नो नयाँ पासवर्ड फेरि लेख्नुहोस्';
+
+  @override
+  String get resetPassword => 'पासवर्ड reset गर्नुहोस्';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get addressNotAdded => 'Address not added';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get unavailable => 'Unavailable';
+
+  @override
+  String get isDonor => 'I am a donor';
+
+  @override
+  String get availableForBloodDonation =>
+      'Make yourself available for blood donation';
 }

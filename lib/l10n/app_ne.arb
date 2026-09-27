@@ -480,5 +480,194 @@
   "profileUpdatedSuccessfully": "प्रोफाइल सफलतापूर्वक अपडेट भयो।",
   "@profileUpdatedSuccessfully": {
     "description": "प्रोफाइल सफलतापूर्वक अपडेट भएपछि देखाइने सन्देश।"
+  },
+
+  "bloodTypeIsRequired": "रक्त समूह आवश्यक छ।",
+  "@bloodTypeIsRequired": {
+    "description": "रक्त समूह चयन नगर्दा देखाइने validation message।"
+  },
+
+  "genderIsRequired": "लिङ्ग आवश्यक छ।",
+  "@genderIsRequired": {
+    "description": "लिङ्ग चयन नगर्दा देखाइने validation message।"
+  },
+
+  "welcomeBack": "फेरि स्वागत छ।",
+  "@welcomeBack": {
+    "description": "साइन इन स्क्रिनमा देखाइने शीर्षक।"
+  },
+
+  "createYourAccount": "आफ्नो खाता सिर्जना गर्नुहोस्।",
+  "@createYourAccount": {
+    "description": "खाता सिर्जना गर्ने स्क्रिनमा देखाइने शीर्षक।"
+  },
+
+  "signInToContinueHelpingYourCommunity": "आफ्नो समुदायलाई सहयोग गर्न जारी राख्न साइन इन गर्नुहोस्।",
+  "@signInToContinueHelpingYourCommunity": {
+    "description": "साइन इन स्क्रिनमा देखाइने विवरण।"
+  },
+
+  "joinPulzeAndBeThereWhenSomeoneNeedsBlood": "Pulze+ मा जोडिनुहोस् र कसैलाई रगत आवश्यक पर्दा सहयोग गर्नुहोस्।",
+  "@joinPulzeAndBeThereWhenSomeoneNeedsBlood": {
+    "description": "खाता सिर्जना गर्ने स्क्रिनमा देखाइने विवरण।"
+  },
+
+  "continueWithGoogle": "Google मार्फत जारी राख्नुहोस्",
+  "@continueWithGoogle": {
+    "description": "Google मार्फत authentication जारी राख्ने बटनको लेबल।"
+  },
+
+  "signUpWithGoogle": "Google मार्फत साइन अप गर्नुहोस्",
+  "@signUpWithGoogle": {
+    "description": "Google मार्फत नयाँ खाता सिर्जना गर्ने बटनको लेबल।"
+  },
+
+  "dontHaveAnAccount": "खाता छैन?",
+  "@dontHaveAnAccount": {
+    "description": "खाता नभएको अवस्थामा देखाइने पाठ।"
+  },
+
+  "alreadyHaveAnAccount": "पहिले नै खाता छ?",
+  "@alreadyHaveAnAccount": {
+    "description": "खाता भएको अवस्थामा देखाइने पाठ।"
+  },
+
+  "createAccount": "खाता सिर्जना गर्नुहोस्",
+  "@createAccount": {
+    "description": "नयाँ खाता सिर्जना गर्ने बटनको लेबल।"
+  },
+
+  "signIn": "साइन इन गर्नुहोस्",
+  "@signIn": {
+    "description": "पहिले नै भएको खातामा साइन इन गर्ने बटनको लेबल।"
+  },
+
+  "enterYourEmail": "आफ्नो इमेल लेख्नुहोस्",
+  "@enterYourEmail": {
+    "description": "इमेल input field मा देखाइने hint text।"
+  },
+
+  "enterYourPassword": "आफ्नो पासवर्ड लेख्नुहोस्",
+  "@enterYourPassword": {
+    "description": "पासवर्ड input field मा देखाइने hint text।"
+  },
+
+  "forgotPassword": "पासवर्ड बिर्सनुभयो?",
+  "@forgotPassword": {
+    "description": "पासवर्ड recovery सुरु गर्ने बटनको लेबल।"
+  },
+
+  "enterYourFullName": "आफ्नो पूरा नाम लेख्नुहोस्",
+  "@enterYourFullName": {
+    "description": "पूरा नाम input field मा देखाइने hint text।"
+  },
+
+  "createAPassword": "पासवर्ड सिर्जना गर्नुहोस्",
+  "@createAPassword": {
+    "description": "नयाँ पासवर्ड सिर्जना गर्ने input field मा देखाइने hint text।"
+  },
+
+  "emailIsRequired": "इमेल आवश्यक छ।",
+  "@emailIsRequired": {
+    "description": "इमेल खाली हुँदा देखाइने validation message।"
+  },
+
+  "invalidEmail": "कृपया मान्य इमेल ठेगाना लेख्नुहोस्।",
+  "@invalidEmail": {
+    "description": "इमेलको format गलत हुँदा देखाइने validation message।"
+  },
+
+  "passwordIsRequired": "पासवर्ड आवश्यक छ।",
+  "@passwordIsRequired": {
+    "description": "पासवर्ड खाली हुँदा देखाइने validation message।"
+  },
+
+  "passwordMustBeAtLeast8Characters": "पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ।",
+  "@passwordMustBeAtLeast8Characters": {
+    "description": "पासवर्ड ८ अक्षरभन्दा छोटो हुँदा देखाइने validation message।"
+  },
+
+  "fullNameIsRequired": "पूरा नाम आवश्यक छ।",
+  "@fullNameIsRequired": {
+    "description": "पूरा नाम खाली हुँदा देखाइने validation message।"
+  },
+
+  "fullNameMustBeAtLeast2Characters": "पूरा नाम कम्तीमा २ अक्षरको हुनुपर्छ।",
+  "@fullNameMustBeAtLeast2Characters": {
+    "description": "पूरा नाम २ अक्षरभन्दा छोटो हुँदा देखाइने validation message।"
+  },
+
+  "password": "पासवर्ड",
+  "@password": {
+    "description": "पासवर्ड input field माथि देखाइने लेबल।"
+  },
+
+  "passwordsDoNotMatch": "पासवर्डहरू मिलेनन्।",
+  "@passwordsDoNotMatch": {
+    "description": "पुष्टि गरिएको पासवर्ड र नयाँ पासवर्ड नमिल्दा देखाइने validation message।"
+  },
+
+  "createNewPassword": "नयाँ पासवर्ड सिर्जना गर्नुहोस्",
+  "@createNewPassword": {
+    "description": "पासवर्ड reset गर्ने स्क्रिनमा देखाइने शीर्षक।"
+  },
+
+  "chooseAStrongPasswordForYourPulzeAccount": "आफ्नो Pulze+ खाताका लागि बलियो पासवर्ड छान्नुहोस्।",
+  "@chooseAStrongPasswordForYourPulzeAccount": {
+    "description": "पासवर्ड reset गर्ने स्क्रिनमा देखाइने विवरण।"
+  },
+
+  "newPassword": "नयाँ पासवर्ड",
+  "@newPassword": {
+    "description": "नयाँ पासवर्ड field मा देखाइने लेबल।"
+  },
+
+  "enterYourNewPassword": "आफ्नो नयाँ पासवर्ड लेख्नुहोस्",
+  "@enterYourNewPassword": {
+    "description": "नयाँ पासवर्ड field मा देखाइने hint।"
+  },
+
+  "confirmPassword": "पासवर्ड पुष्टि गर्नुहोस्",
+  "@confirmPassword": {
+    "description": "पासवर्ड पुष्टि गर्ने field मा देखाइने लेबल।"
+  },
+
+  "reEnterYourNewPassword": "आफ्नो नयाँ पासवर्ड फेरि लेख्नुहोस्",
+  "@reEnterYourNewPassword": {
+    "description": "पासवर्ड पुष्टि गर्ने field मा देखाइने hint।"
+  },
+
+  "resetPassword": "पासवर्ड reset गर्नुहोस्",
+  "@resetPassword": {
+    "description": "पासवर्ड reset गर्ने बटनको लेबल।"
+  },
+
+  "user": "User",
+  "@user": {
+    "description": "Fallback name shown when a user's name is unavailable."
+  },
+
+  "addressNotAdded": "Address not added",
+  "@addressNotAdded": {
+    "description": "Fallback address shown when no address has been added."
+  },
+
+  "available": "Available",
+  "@available": {
+    "description": "Status shown when the donor is available for blood donation."
+  },
+
+  "unavailable": "Unavailable",
+  "@unavailable": {
+    "description": "Status shown when the donor is not available for blood donation."
+  },
+
+  "isDonor": "I am a donor",
+  "@isDonor": {
+    "description": "Settings label for the user's donor status."
+  },
+  "availableForBloodDonation": "Make yourself available for blood donation",
+  "@availableForBloodDonation": {
+    "description": "Description shown below the donor status setting."
   }
 }

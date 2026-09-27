@@ -6,7 +6,6 @@ import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/core/theme/app_colors.dart';
 import 'package:pulze_plus/core/theme/app_radius.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
-import 'package:pulze_plus/core/utils/form_validators.dart';
 import 'package:pulze_plus/core/utils/responsive_utils.dart';
 import 'package:pulze_plus/core/widgets/app_button.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
@@ -20,22 +19,16 @@ import 'package:pulze_plus/l10n/app_localizations.dart';
 enum ProfileFormMode { create, edit }
 
 class ProfileFormScreen extends ConsumerStatefulWidget {
-  const ProfileFormScreen({
-    super.key,
-    required this.mode,
-    this.profile,
-  });
+  const ProfileFormScreen({super.key, required this.mode, this.profile});
 
   final ProfileFormMode mode;
   final ProfileModel? profile;
 
   @override
-  ConsumerState<ProfileFormScreen> createState() =>
-      _ProfileFormScreenState();
+  ConsumerState<ProfileFormScreen> createState() => _ProfileFormScreenState();
 }
 
-class _ProfileFormScreenState
-    extends ConsumerState<ProfileFormScreen> {
+class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _phoneController;
@@ -47,14 +40,11 @@ class _ProfileFormScreenState
   String? _selectedBloodType;
   DateTime? _selectedDateOfBirth;
 
-  bool get _isCreate =>
-      widget.mode == ProfileFormMode.create;
+  bool get _isCreate => widget.mode == ProfileFormMode.create;
 
-  ProfileState get _profileState =>
-      ref.watch(profileProvider);
+  ProfileState get _profileState => ref.watch(profileProvider);
 
-  bool get _isSubmitting =>
-      _profileState.status == ProfileStatus.loading;
+  bool get _isSubmitting => _profileState.status == ProfileStatus.loading;
 
   @override
   void initState() {
@@ -62,9 +52,7 @@ class _ProfileFormScreenState
 
     final profile = widget.profile;
 
-    _phoneController = TextEditingController(
-      text: profile?.phoneNumber ?? '',
-    );
+    _phoneController = TextEditingController(text: profile?.phoneNumber ?? '');
 
     _selectedGender = profile?.gender;
     _selectedBloodType = profile?.bloodType;
@@ -74,13 +62,9 @@ class _ProfileFormScreenState
       text: _formatDate(_selectedDateOfBirth),
     );
 
-    _addressController = TextEditingController(
-      text: profile?.address ?? '',
-    );
+    _addressController = TextEditingController(text: profile?.address ?? '');
 
-    _cityController = TextEditingController(
-      text: profile?.city ?? '',
-    );
+    _cityController = TextEditingController(text: profile?.city ?? '');
   }
 
   @override
@@ -100,12 +84,8 @@ class _ProfileFormScreenState
     final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
 
-    final initialDate = _selectedDateOfBirth ??
-        DateTime(
-          now.year - 18,
-          now.month,
-          now.day,
-        );
+    final initialDate =
+        _selectedDateOfBirth ?? DateTime(now.year - 18, now.month, now.day);
 
     final selectedDate = await showDatePicker(
       context: context,
@@ -121,8 +101,7 @@ class _ProfileFormScreenState
 
     setState(() {
       _selectedDateOfBirth = selectedDate;
-      _dateOfBirthController.text =
-          _formatDate(selectedDate);
+      _dateOfBirthController.text = _formatDate(selectedDate);
     });
   }
 
@@ -132,10 +111,8 @@ class _ProfileFormScreenState
     }
 
     final year = date.year.toString().padLeft(4, '0');
-    final month =
-        date.month.toString().padLeft(2, '0');
-    final day =
-        date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
 
     return '$year-$month-$day';
   }
@@ -152,9 +129,7 @@ class _ProfileFormScreenState
       builder: (context) {
         return AlertDialog(
           title: Text(l10n.selectLocation),
-          content: Text(
-            l10n.mapLocationSelectionWillBeAvailable,
-          ),
+          content: Text(l10n.mapLocationSelectionWillBeAvailable),
           actions: [
             TextButton(
               onPressed: () {
@@ -184,23 +159,18 @@ class _ProfileFormScreenState
     }
 
     try {
-      final notifier =
-          ref.read(profileProvider.notifier);
+      final notifier = ref.read(profileProvider.notifier);
 
-      final phoneNumber =
-          _phoneController.text.trim();
-      final address =
-          _addressController.text.trim();
-      final city =
-          _cityController.text.trim();
+      final phoneNumber = _phoneController.text.trim();
+      final address = _addressController.text.trim();
+      final city = _cityController.text.trim();
 
       if (_isCreate) {
         await notifier.createProfile(
           gender: _selectedGender!,
           dateOfBirth: _selectedDateOfBirth!,
           bloodType: _selectedBloodType!,
-          phoneNumber:
-              phoneNumber.isEmpty ? null : phoneNumber,
+          phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
           address: address,
           city: city,
           latitude: widget.profile?.latitude,
@@ -217,9 +187,7 @@ class _ProfileFormScreenState
           return;
         }
 
-        ref
-            .read(authProvider.notifier)
-            .markProfileCompleted();
+        ref.read(authProvider.notifier).markProfileCompleted();
 
         if (!mounted) {
           return;
@@ -233,8 +201,7 @@ class _ProfileFormScreenState
         gender: _selectedGender,
         dateOfBirth: _selectedDateOfBirth,
         bloodType: _selectedBloodType,
-        phoneNumber:
-            phoneNumber.isEmpty ? null : phoneNumber,
+        phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
         address: address,
         city: city,
         latitude: widget.profile?.latitude,
@@ -247,25 +214,17 @@ class _ProfileFormScreenState
 
       final l10n = AppLocalizations.of(context)!;
 
-      AppSnackBar.success(
-        context,
-        l10n.profileUpdatedSuccessfully,
-      );
+      AppSnackBar.success(context, l10n.profileUpdatedSuccessfully);
 
       Navigator.of(context).pop(true);
     } catch (error) {
-      debugPrint(
-        'PROFILE SUBMIT ERROR: $error',
-      );
+      debugPrint('PROFILE SUBMIT ERROR: $error');
 
       if (!mounted) {
         return;
       }
 
-      AppSnackBar.error(
-        context,
-        error.toString(),
-      );
+      AppSnackBar.error(context, error.toString());
     }
   }
 
@@ -278,8 +237,7 @@ class _ProfileFormScreenState
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    final horizontalPadding =
-        ResponsiveUtils.value(
+    final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.xl,
       tablet: AppSpacing.xxl,
@@ -287,19 +245,13 @@ class _ProfileFormScreenState
     );
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          _isCreate
-              ? l10n.completeYourProfile
-              : l10n.editProfile,
-        ),
+        title: Text(_isCreate ? l10n.completeYourProfile : l10n.editProfile),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          physics:
-              const BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
             0,
@@ -308,79 +260,55 @@ class _ProfileFormScreenState
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 520,
-              ),
+              constraints: const BoxConstraints(maxWidth: 520),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildHeader(),
 
-                    const SizedBox(
-                      height: AppSpacing.xl,
-                    ),
+                    const SizedBox(height: AppSpacing.xl),
 
                     _buildPhoneField(),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     _buildBloodTypeField(),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     _buildGenderField(),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     _buildDateOfBirthField(),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     AppTextField(
-                      controller:
-                          _addressController,
+                      controller: _addressController,
                       label: l10n.address,
                       hint: l10n.enterYourAddress,
-                      prefixIcon:
-                          Icons.location_on_outlined,
-                      textInputAction:
-                          TextInputAction.next,
+                      prefixIcon: Icons.location_on_outlined,
+                      textInputAction: TextInputAction.next,
                     ),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     AppTextField(
                       controller: _cityController,
                       label: l10n.city,
                       hint: l10n.enterYourCity,
-                      prefixIcon:
-                          Icons.location_city_outlined,
-                      textInputAction:
-                          TextInputAction.done,
+                      prefixIcon: Icons.location_city_outlined,
+                      textInputAction: TextInputAction.done,
                     ),
 
-                    const SizedBox(
-                      height: AppSpacing.md,
-                    ),
+                    const SizedBox(height: AppSpacing.md),
 
                     _buildLocationSelector(),
 
-                    const SizedBox(
-                      height: AppSpacing.xl,
-                    ),
+                    const SizedBox(height: AppSpacing.xl),
 
                     AppButton(
                       label: _isCreate
@@ -389,10 +317,7 @@ class _ProfileFormScreenState
                       icon: _isCreate
                           ? Icons.arrow_forward_rounded
                           : Icons.check_rounded,
-                      onPressed:
-                          _isSubmitting
-                              ? null
-                              : _submit,
+                      onPressed: _isSubmitting ? null : _submit,
                       isLoading: _isSubmitting,
                     ),
                   ],
@@ -415,15 +340,11 @@ class _ProfileFormScreenState
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _isCreate
-              ? l10n.tellUsALittleAboutYou
-              : l10n.updateYourProfile,
-          style:
-              theme.textTheme.headlineSmall?.copyWith(
+          _isCreate ? l10n.tellUsALittleAboutYou : l10n.updateYourProfile,
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
           ),
@@ -432,8 +353,7 @@ class _ProfileFormScreenState
           _isCreate
               ? l10n.completeYourProfileToStartUsingPulze
               : l10n.keepYourInformationUpToDate,
-          style:
-              theme.textTheme.bodyMedium?.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
         ),
@@ -456,8 +376,7 @@ class _ProfileFormScreenState
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
       validator: (value) {
-        if (value == null ||
-            value.trim().isEmpty) {
+        if (value == null || value.trim().isEmpty) {
           return null;
         }
 
@@ -478,42 +397,17 @@ class _ProfileFormScreenState
       decoration: InputDecoration(
         labelText: l10n.bloodType,
         hintText: l10n.selectYourBloodType,
-        prefixIcon:
-            const Icon(Icons.bloodtype_outlined),
+        prefixIcon: const Icon(Icons.bloodtype_outlined),
       ),
       items: const [
-        DropdownMenuItem(
-          value: 'A+',
-          child: Text('A+'),
-        ),
-        DropdownMenuItem(
-          value: 'A-',
-          child: Text('A-'),
-        ),
-        DropdownMenuItem(
-          value: 'B+',
-          child: Text('B+'),
-        ),
-        DropdownMenuItem(
-          value: 'B-',
-          child: Text('B-'),
-        ),
-        DropdownMenuItem(
-          value: 'AB+',
-          child: Text('AB+'),
-        ),
-        DropdownMenuItem(
-          value: 'AB-',
-          child: Text('AB-'),
-        ),
-        DropdownMenuItem(
-          value: 'O+',
-          child: Text('O+'),
-        ),
-        DropdownMenuItem(
-          value: 'O-',
-          child: Text('O-'),
-        ),
+        DropdownMenuItem(value: 'A+', child: Text('A+')),
+        DropdownMenuItem(value: 'A-', child: Text('A-')),
+        DropdownMenuItem(value: 'B+', child: Text('B+')),
+        DropdownMenuItem(value: 'B-', child: Text('B-')),
+        DropdownMenuItem(value: 'AB+', child: Text('AB+')),
+        DropdownMenuItem(value: 'AB-', child: Text('AB-')),
+        DropdownMenuItem(value: 'O+', child: Text('O+')),
+        DropdownMenuItem(value: 'O-', child: Text('O-')),
       ],
       onChanged: _isSubmitting
           ? null
@@ -523,10 +417,11 @@ class _ProfileFormScreenState
               });
             },
       validator: (value) {
-        return FormValidators.required(
-          value,
-          fieldName: l10n.bloodType,
-        );
+        if (value == null || value.trim().isEmpty) {
+          return l10n.bloodTypeIsRequired;
+        }
+
+        return null;
       },
     );
   }
@@ -543,22 +438,12 @@ class _ProfileFormScreenState
       decoration: InputDecoration(
         labelText: l10n.gender,
         hintText: l10n.selectYourGender,
-        prefixIcon:
-            const Icon(Icons.person_outline_rounded),
+        prefixIcon: const Icon(Icons.person_outline_rounded),
       ),
       items: [
-        DropdownMenuItem(
-          value: 'male',
-          child: Text(l10n.male),
-        ),
-        DropdownMenuItem(
-          value: 'female',
-          child: Text(l10n.female),
-        ),
-        DropdownMenuItem(
-          value: 'other',
-          child: Text(l10n.other),
-        ),
+        DropdownMenuItem(value: 'male', child: Text(l10n.male)),
+        DropdownMenuItem(value: 'female', child: Text(l10n.female)),
+        DropdownMenuItem(value: 'other', child: Text(l10n.other)),
         DropdownMenuItem(
           value: 'prefer_not_to_say',
           child: Text(l10n.preferNotToSay),
@@ -572,14 +457,14 @@ class _ProfileFormScreenState
               });
             },
       validator: (value) {
-        return FormValidators.required(
-          value,
-          fieldName: l10n.gender,
-        );
+        if (value == null || value.trim().isEmpty) {
+          return l10n.genderIsRequired;
+        }
+
+        return null;
       },
     );
   }
-
   // ===========================================================================
   // Date of birth
   // ===========================================================================
@@ -597,12 +482,10 @@ class _ProfileFormScreenState
         return null;
       },
       builder: (field) {
-        final colorScheme =
-            Theme.of(context).colorScheme;
+        final colorScheme = Theme.of(context).colorScheme;
 
         return Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: _isSubmitting
@@ -610,19 +493,14 @@ class _ProfileFormScreenState
                   : () async {
                       await _selectDateOfBirth();
 
-                      field.didChange(
-                        _selectedDateOfBirth,
-                      );
+                      field.didChange(_selectedDateOfBirth);
                     },
               child: AbsorbPointer(
                 child: AppTextField(
-                  controller:
-                      _dateOfBirthController,
+                  controller: _dateOfBirthController,
                   label: l10n.dateOfBirth,
-                  hint:
-                      l10n.selectYourDateOfBirth,
-                  prefixIcon:
-                      Icons.calendar_today_outlined,
+                  hint: l10n.selectYourDateOfBirth,
+                  prefixIcon: Icons.calendar_today_outlined,
                   readOnly: true,
                 ),
               ),
@@ -635,12 +513,8 @@ class _ProfileFormScreenState
                 ),
                 child: Text(
                   field.errorText!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(
-                    color: colorScheme.error,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: colorScheme.error),
                 ),
               ),
           ],
@@ -659,25 +533,17 @@ class _ProfileFormScreenState
     final l10n = AppLocalizations.of(context)!;
 
     final hasLocation =
-        widget.profile?.latitude != null &&
-        widget.profile?.longitude != null;
+        widget.profile?.latitude != null && widget.profile?.longitude != null;
 
     return Container(
-      padding: const EdgeInsets.all(
-        AppSpacing.md,
-      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(
-          AppRadius.lg,
-        ),
-        border: Border.all(
-          color: colorScheme.outline,
-        ),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -685,54 +551,34 @@ class _ProfileFormScreenState
                 width: AppSpacing.huge,
                 height: AppSpacing.huge,
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.primary.withValues(
-                    alpha: 0.10,
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(
-                    AppRadius.md,
-                  ),
+                  color: AppColors.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: const Icon(
                   Icons.location_on_outlined,
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(
-                width: AppSpacing.md,
-              ),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.location,
-                      style: theme
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 16,
-                        fontWeight:
-                            FontWeight.w700,
-                        color:
-                            colorScheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(
-                      height: AppSpacing.xxs,
-                    ),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       hasLocation
                           ? l10n.locationSelected
                           : l10n.selectYourLocation,
-                      style: theme
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(
-                        color: colorScheme
-                            .onSurfaceVariant,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -740,30 +586,18 @@ class _ProfileFormScreenState
               ),
             ],
           ),
-          const SizedBox(
-            height: AppSpacing.md,
-          ),
+          const SizedBox(height: AppSpacing.md),
           AppButton(
-            label: hasLocation
-                ? l10n.changeLocation
-                : l10n.selectLocation,
+            label: hasLocation ? l10n.changeLocation : l10n.selectLocation,
             icon: Icons.map_outlined,
-            variant:
-                AppButtonVariant.outlined,
-            onPressed: _isSubmitting
-                ? null
-                : _selectLocation,
+            variant: AppButtonVariant.outlined,
+            onPressed: _isSubmitting ? null : _selectLocation,
           ),
-          const SizedBox(
-            height: AppSpacing.xs,
-          ),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             l10n.mapSelectionWillBeConnectedLater,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(
-              color: colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.7),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
             ),
           ),
         ],

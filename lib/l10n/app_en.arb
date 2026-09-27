@@ -698,5 +698,194 @@
   "profileUpdatedSuccessfully": "Profile updated successfully.",
   "@profileUpdatedSuccessfully": {
     "description": "Success message shown after a profile is updated."
+  },
+
+  "bloodTypeIsRequired": "Blood type is required.",
+  "@bloodTypeIsRequired": {
+    "description": "Validation message shown when blood type is not selected."
+  },
+
+  "genderIsRequired": "Gender is required.",
+  "@genderIsRequired": {
+    "description": "Validation message shown when gender is not selected."
+  },
+
+  "welcomeBack": "Welcome back.",
+  "@welcomeBack": {
+    "description": "Title shown on the sign-in screen."
+  },
+
+  "createYourAccount": "Create your account.",
+  "@createYourAccount": {
+    "description": "Title shown on the account creation screen."
+  },
+
+  "signInToContinueHelpingYourCommunity": "Sign in to continue helping your community.",
+  "@signInToContinueHelpingYourCommunity": {
+    "description": "Subtitle shown on the sign-in screen."
+  },
+
+  "joinPulzeAndBeThereWhenSomeoneNeedsBlood": "Join Pulze+ and be there when someone needs blood.",
+  "@joinPulzeAndBeThereWhenSomeoneNeedsBlood": {
+    "description": "Subtitle shown on the account creation screen."
+  },
+
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": {
+    "description": "Button label for continuing authentication with Google."
+  },
+
+  "signUpWithGoogle": "Sign up with Google",
+  "@signUpWithGoogle": {
+    "description": "Button label for signing up with Google."
+  },
+
+  "dontHaveAnAccount": "Don't have an account?",
+  "@dontHaveAnAccount": {
+    "description": "Text shown when the user does not have an account."
+  },
+
+  "alreadyHaveAnAccount": "Already have an account?",
+  "@alreadyHaveAnAccount": {
+    "description": "Text shown when the user already has an account."
+  },
+
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "Button label for creating a new account."
+  },
+
+  "signIn": "Sign in",
+  "@signIn": {
+    "description": "Button label for signing in to an existing account."
+  },
+
+  "enterYourEmail": "Enter your email",
+  "@enterYourEmail": {
+    "description": "Hint text for the email input field."
+  },
+
+  "enterYourPassword": "Enter your password",
+  "@enterYourPassword": {
+    "description": "Hint text for the password input field."
+  },
+
+  "forgotPassword": "Forgot password?",
+  "@forgotPassword": {
+    "description": "Button label for starting password recovery."
+  },
+
+  "enterYourFullName": "Enter your full name",
+  "@enterYourFullName": {
+    "description": "Hint text for the full name input field."
+  },
+
+  "createAPassword": "Create a password",
+  "@createAPassword": {
+    "description": "Hint text for creating a password."
+  },
+
+  "emailIsRequired": "Email is required.",
+  "@emailIsRequired": {
+    "description": "Validation message shown when email is empty."
+  },
+
+  "invalidEmail": "Please enter a valid email address.",
+  "@invalidEmail": {
+    "description": "Validation message shown when the email format is invalid."
+  },
+
+  "passwordIsRequired": "Password is required.",
+  "@passwordIsRequired": {
+    "description": "Validation message shown when password is empty."
+  },
+
+  "passwordMustBeAtLeast8Characters": "Password must be at least 8 characters.",
+  "@passwordMustBeAtLeast8Characters": {
+    "description": "Validation message shown when password is shorter than 8 characters."
+  },
+
+  "fullNameIsRequired": "Full name is required.",
+  "@fullNameIsRequired": {
+    "description": "Validation message shown when full name is empty."
+  },
+
+  "fullNameMustBeAtLeast2Characters": "Full name must be at least 2 characters.",
+  "@fullNameMustBeAtLeast2Characters": {
+    "description": "Validation message shown when full name is shorter than 2 characters."
+  },
+
+  "password": "Password",
+  "@password": {
+    "description": "Label shown above the password input field."
+  },
+
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "@passwordsDoNotMatch": {
+    "description": "Validation message shown when the confirmation password does not match the new password."
+  },
+
+  "createNewPassword": "Create new password",
+  "@createNewPassword": {
+    "description": "Title shown on the reset password screen."
+  },
+
+  "chooseAStrongPasswordForYourPulzeAccount": "Choose a strong password for your Pulze+ account.",
+  "@chooseAStrongPasswordForYourPulzeAccount": {
+    "description": "Subtitle shown on the reset password screen."
+  },
+
+  "newPassword": "New password",
+  "@newPassword": {
+    "description": "Label shown for the new password field."
+  },
+
+  "enterYourNewPassword": "Enter your new password",
+  "@enterYourNewPassword": {
+    "description": "Hint shown in the new password field."
+  },
+
+  "confirmPassword": "Confirm password",
+  "@confirmPassword": {
+    "description": "Label shown for the password confirmation field."
+  },
+
+  "reEnterYourNewPassword": "Re-enter your new password",
+  "@reEnterYourNewPassword": {
+    "description": "Hint shown in the password confirmation field."
+  },
+
+  "resetPassword": "Reset password",
+  "@resetPassword": {
+    "description": "Button label for resetting the password."
+  },
+
+  "user": "User",
+  "@user": {
+    "description": "Fallback name shown when a user's name is unavailable."
+  },
+
+  "addressNotAdded": "Address not added",
+  "@addressNotAdded": {
+    "description": "Fallback address shown when no address has been added."
+  },
+
+  "available": "Available",
+  "@available": {
+    "description": "Status shown when the donor is available for blood donation."
+  },
+
+  "unavailable": "Unavailable",
+  "@unavailable": {
+    "description": "Status shown when the donor is not available for blood donation."
+  },
+
+  "isDonor": "I am a donor",
+  "@isDonor": {
+    "description": "Settings label for the user's donor status."
+  },
+  "availableForBloodDonation": "Make yourself available for blood donation",
+  "@availableForBloodDonation": {
+    "description": "Description shown below the donor status setting."
   }
 }

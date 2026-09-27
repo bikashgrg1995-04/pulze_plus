@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,15 +10,13 @@ import 'package:pulze_plus/core/utils/responsive_utils.dart';
 import 'package:pulze_plus/core/widgets/app_button.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/core/widgets/app_text_field.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 import '../providers/auth_provider.dart';
 import '../widgets/auth_header.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
-  const ForgotPasswordScreen({
-    super.key,
-    this.email,
-  });
+  const ForgotPasswordScreen({super.key, this.email});
 
   final String? email;
 
@@ -28,8 +25,7 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
       _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState
-    extends ConsumerState<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _emailController;
 
@@ -39,9 +35,7 @@ class _ForgotPasswordScreenState
   void initState() {
     super.initState();
 
-    _emailController = TextEditingController(
-      text: widget.email ?? '',
-    );
+    _emailController = TextEditingController(text: widget.email ?? '');
   }
 
   @override
@@ -68,18 +62,13 @@ class _ForgotPasswordScreenState
     final email = _emailController.text.trim();
 
     try {
-      await ref
-          .read(authProvider.notifier)
-          .forgotPassword(email: email);
+      await ref.read(authProvider.notifier).forgotPassword(email: email);
 
       if (!mounted) {
         return;
       }
 
-      context.push(
-        AppRoutes.verifyPasswordReset,
-        extra: email,
-      );
+      context.push(AppRoutes.verifyPasswordReset, extra: email);
     } catch (error) {
       if (!mounted) {
         return;
@@ -97,6 +86,8 @@ class _ForgotPasswordScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.xl,
@@ -138,8 +129,7 @@ class _ForgotPasswordScreenState
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          keyboardDismissBehavior:
-              ScrollViewKeyboardDismissBehavior.onDrag,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
             topPadding,
@@ -148,9 +138,7 @@ class _ForgotPasswordScreenState
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: contentMaxWidth,
-              ),
+              constraints: BoxConstraints(maxWidth: contentMaxWidth),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -169,13 +157,16 @@ class _ForgotPasswordScreenState
                       controller: _emailController,
                       label: 'Email',
                       hint: 'Enter your email',
-                      prefixIcon:
-                          Icons.alternate_email_rounded,
-                      keyboardType:
-                          TextInputType.emailAddress,
-                      textInputAction:
-                          TextInputAction.done,
-                      validator: FormValidators.email,
+                      prefixIcon: Icons.alternate_email_rounded,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      validator: (value) {
+                        return FormValidators.email(
+                          value,
+                          requiredMessage: l10n.emailIsRequired,
+                          invalidMessage: l10n.invalidEmail,
+                        );
+                      },
                     ),
 
                     const SizedBox(height: AppSpacing.lg),
@@ -190,9 +181,7 @@ class _ForgotPasswordScreenState
                     const SizedBox(height: AppSpacing.lg),
 
                     TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () => context.pop(),
+                      onPressed: _isLoading ? null : () => context.pop(),
                       child: const Text('Back to sign in'),
                     ),
                   ],

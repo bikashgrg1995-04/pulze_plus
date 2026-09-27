@@ -10,6 +10,7 @@ import 'package:pulze_plus/core/utils/responsive_utils.dart';
 import 'package:pulze_plus/core/widgets/app_button.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/core/widgets/app_text_field.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 import '../providers/auth_provider.dart';
 import '../widgets/auth_header.dart';
@@ -86,14 +87,20 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   }
 
   String? _validateConfirmPassword(String? value) {
-    final error = FormValidators.password(value);
+    final l10n = AppLocalizations.of(context)!;
+
+    final error = FormValidators.password(
+      value,
+      requiredMessage: l10n.passwordIsRequired,
+      minLengthMessage: l10n.passwordMustBeAtLeast8Characters,
+    );
 
     if (error != null) {
       return error;
     }
 
     if (value != _passwordController.text) {
-      return 'Passwords do not match.';
+      return l10n.passwordsDoNotMatch;
     }
 
     return null;
@@ -101,6 +108,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.xl,
@@ -157,22 +165,28 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const AuthHeader(
-                      title: 'Create new password',
-                      subtitle:
-                          'Choose a strong password for your Pulze+ account.',
+                    AuthHeader(
+                      title: l10n.createNewPassword,
+                      subtitle: l10n.chooseAStrongPasswordForYourPulzeAccount,
                     ),
 
                     const SizedBox(height: AppSpacing.xxl),
 
                     AppTextField(
                       controller: _passwordController,
-                      label: 'New password',
-                      hint: 'Enter your new password',
+                      label: l10n.newPassword,
+                      hint: l10n.enterYourNewPassword,
                       prefixIcon: Icons.lock_outline_rounded,
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.next,
-                      validator: FormValidators.password,
+                      validator: (value) {
+                        return FormValidators.password(
+                          value,
+                          requiredMessage: l10n.passwordIsRequired,
+                          minLengthMessage:
+                              l10n.passwordMustBeAtLeast8Characters,
+                        );
+                      },
                       suffixIcon: _obscurePassword
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
@@ -191,8 +205,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
                     AppTextField(
                       controller: _confirmPasswordController,
-                      label: 'Confirm password',
-                      hint: 'Re-enter your new password',
+                      label: l10n.confirmPassword,
+                      hint: l10n.reEnterYourNewPassword,
                       prefixIcon: Icons.lock_outline_rounded,
                       obscureText: _obscureConfirmPassword,
                       textInputAction: TextInputAction.done,
@@ -214,7 +228,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     const SizedBox(height: AppSpacing.lg),
 
                     AppButton(
-                      label: 'Reset password',
+                      label: l10n.resetPassword,
                       icon: Icons.check_rounded,
                       isLoading: _isLoading,
                       onPressed: _resetPassword,

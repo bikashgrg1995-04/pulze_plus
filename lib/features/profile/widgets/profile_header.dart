@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pulze_plus/core/widgets/app_switch.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -163,6 +164,7 @@ class _ProfileInformation extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final nameFontSize = ResponsiveUtils.value(
       context,
@@ -180,7 +182,7 @@ class _ProfileInformation extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          cleanName.isNotEmpty ? cleanName : 'User',
+          cleanName.isNotEmpty ? cleanName : l10n.user,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.headlineSmall?.copyWith(
@@ -204,7 +206,7 @@ class _ProfileInformation extends StatelessWidget {
               child: Text(
                 cleanAddress.isNotEmpty
                     ? cleanAddress
-                    : 'Address not added',
+                    : l10n.addressNotAdded,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -462,7 +464,9 @@ class _AvailabilityStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final statusColor = isAvailable
         ? AppColors.success
@@ -479,18 +483,21 @@ class _AvailabilityStatus extends StatelessWidget {
             shape: BoxShape.circle,
           ),
         ),
+
         const SizedBox(width: AppSpacing.xs),
+
         Text(
-          isAvailable ? 'Available' : 'Unavailable',
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-              ),
+          isAvailable
+              ? l10n.available
+              : l10n.unavailable,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: statusColor,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+
         const SizedBox(width: AppSpacing.xs),
+
         SizedBox(
           height: AppSpacing.xxl,
           child: AppSwitch(
