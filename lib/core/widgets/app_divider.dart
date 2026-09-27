@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
 class AppDivider extends StatelessWidget {
@@ -19,11 +18,15 @@ class AppDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final dividerColor = color ?? colorScheme.outline;
+
     if (label == null) {
       return Padding(
         padding: padding ?? EdgeInsets.zero,
         child: Divider(
-          color: color ?? AppColors.border,
+          color: dividerColor,
           thickness: thickness,
           height: thickness,
         ),
@@ -36,7 +39,7 @@ class AppDivider extends StatelessWidget {
         children: [
           Expanded(
             child: Divider(
-              color: color ?? AppColors.border,
+              color: dividerColor,
               thickness: thickness,
               height: thickness,
             ),
@@ -48,13 +51,13 @@ class AppDivider extends StatelessWidget {
             child: Text(
               label!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textTertiary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
             ),
           ),
           Expanded(
             child: Divider(
-              color: color ?? AppColors.border,
+              color: dividerColor,
               thickness: thickness,
               height: thickness,
             ),

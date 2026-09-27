@@ -21,6 +21,7 @@ class ProfileSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -36,7 +37,11 @@ class ProfileSettingsSheet extends StatelessWidget {
                 color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
-              child: Icon(icon, size: 20, color: AppColors.primary),
+              child: Icon(
+                icon,
+                size: 20,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
@@ -48,7 +53,7 @@ class ProfileSettingsSheet extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -58,7 +63,7 @@ class ProfileSettingsSheet extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -71,11 +76,16 @@ class ProfileSettingsSheet extends StatelessWidget {
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(
+              color: colorScheme.outline,
+            ),
           ),
-          child: Column(mainAxisSize: MainAxisSize.min, children: children),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: children,
+          ),
         ),
       ],
     );
@@ -105,12 +115,15 @@ class ProfileSettingsSheetItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final foregroundColor = isDestructive
         ? AppColors.error
-        : AppColors.textPrimary;
+        : colorScheme.onSurface;
 
-    final iconColor = isDestructive ? AppColors.error : AppColors.textSecondary;
+    final iconColor = isDestructive
+        ? AppColors.error
+        : colorScheme.onSurfaceVariant;
 
     return Column(
       children: [
@@ -132,10 +145,14 @@ class ProfileSettingsSheetItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isDestructive
                           ? AppColors.error.withValues(alpha: 0.08)
-                          : AppColors.surfaceVariant,
+                          : colorScheme.surface,
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: Icon(icon, size: 19, color: iconColor),
+                    child: Icon(
+                      icon,
+                      size: 19,
+                      color: iconColor,
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
@@ -161,7 +178,7 @@ class ProfileSettingsSheetItem extends StatelessWidget {
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: isDestructive
                                   ? AppColors.error.withValues(alpha: 0.75)
-                                  : AppColors.textSecondary,
+                                  : colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -173,10 +190,10 @@ class ProfileSettingsSheetItem extends StatelessWidget {
                     trailing!,
                   ] else ...[
                     const SizedBox(width: AppSpacing.xs),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
                       size: 20,
-                      color: AppColors.textTertiary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ],
                 ],
@@ -185,9 +202,12 @@ class ProfileSettingsSheetItem extends StatelessWidget {
           ),
         ),
         if (showDivider)
-          const Padding(
-            padding: EdgeInsets.only(left: 60),
-            child: Divider(height: 1, color: AppColors.border),
+          Padding(
+            padding: const EdgeInsets.only(left: 60),
+            child: Divider(
+              height: 1,
+              color: colorScheme.outline,
+            ),
           ),
       ],
     );

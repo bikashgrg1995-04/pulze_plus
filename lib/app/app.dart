@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:pulze_plus/app/router/app_router.dart';
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/core/theme/app_theme.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
@@ -13,16 +13,23 @@ class PulzeApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final preferences = ref.watch(appPreferencesProvider);
 
     return MaterialApp.router(
       title: 'Pulze+',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: preferences.theme == 'dark'
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      themeAnimationDuration: Duration.zero,
+      themeAnimationCurve: Curves.easeInOut,
       routerConfig: router,
       builder: (context, child) {
-        return _AuthMessageListener(child: child ?? const SizedBox.shrink());
+        return _AuthMessageListener(
+          child: child ?? const SizedBox.shrink(),
+        );
       },
     );
   }

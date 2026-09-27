@@ -15,25 +15,35 @@ class ProfileCompletionCard extends StatefulWidget {
   final VoidCallback? onPressed;
 
   @override
-  State<ProfileCompletionCard> createState() => _ProfileCompletionCardState();
+  State<ProfileCompletionCard> createState() =>
+      _ProfileCompletionCardState();
 }
 
-class _ProfileCompletionCardState extends State<ProfileCompletionCard> {
+class _ProfileCompletionCardState
+    extends State<ProfileCompletionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    final normalizedCompletion = widget.completion.clamp(0.0, 1.0);
+    final normalizedCompletion =
+        widget.completion.clamp(0.0, 1.0);
 
-    final percentage = (normalizedCompletion * 100).round();
+    final percentage =
+        (normalizedCompletion * 100).round();
 
-    final title = percentage < 50 ? 'Complete your profile' : 'Almost there!';
+    final title =
+        percentage < 50
+            ? 'Complete your profile'
+            : 'Almost there!';
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: widget.onPressed,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderRadius: BorderRadius.circular(
+          AppRadius.md,
+        ),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
@@ -41,10 +51,16 @@ class _ProfileCompletionCardState extends State<ProfileCompletionCard> {
             vertical: AppSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            color: AppColors.primary.withValues(
+              alpha: 0.06,
+            ),
+            borderRadius: BorderRadius.circular(
+              AppRadius.md,
+            ),
             border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.14),
+              color: AppColors.primary.withValues(
+                alpha: 0.14,
+              ),
             ),
           ),
           child: Row(
@@ -58,10 +74,12 @@ class _ProfileCompletionCardState extends State<ProfileCompletionCard> {
                     CircularProgressIndicator(
                       value: normalizedCompletion,
                       strokeWidth: 2.5,
-                      backgroundColor: AppColors.primary.withValues(
+                      backgroundColor:
+                          AppColors.primary.withValues(
                         alpha: 0.12,
                       ),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(
                         AppColors.primary,
                       ),
                     ),
@@ -82,26 +100,30 @@ class _ProfileCompletionCardState extends State<ProfileCompletionCard> {
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textPrimary,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
 
-                    const SizedBox(height: AppSpacing.xxs),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
 
                     Text(
                       'Add your details to get the most from Pulze+.',
                       maxLines: 1,
                       softWrap: false,
+                      overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                         fontSize: 10,
                       ),
                     ),

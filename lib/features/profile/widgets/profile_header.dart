@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pulze_plus/core/widgets/app_switch.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -29,6 +30,9 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.lg,
@@ -55,10 +59,15 @@ class ProfileHeader extends StatelessWidget {
       height: headerHeight,
       child: Stack(
         children: [
-          const Positioned.fill(
-            child: CustomPaint(painter: _ProfileHeaderWavePainter()),
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _ProfileHeaderWavePainter(
+                backgroundColor: theme.scaffoldBackgroundColor,
+                surfaceColor: colorScheme.surface,
+              ),
+            ),
           ),
-    
+
           Positioned(
             top: ResponsiveUtils.value(
               context,
@@ -86,7 +95,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
           ),
-    
+
           Positioned.fill(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -101,7 +110,7 @@ class ProfileHeader extends StatelessWidget {
                     onTap: onAvatarTap,
                     isUploading: isUploadingAvatar,
                   ),
-    
+
                   SizedBox(
                     width: ResponsiveUtils.value(
                       context,
@@ -110,14 +119,15 @@ class ProfileHeader extends StatelessWidget {
                       large: AppSpacing.xl,
                     ),
                   ),
-    
+
                   Expanded(
                     child: _ProfileInformation(
                       name: name,
                       bloodGroup: bloodGroup,
                       address: address,
                       isAvailable: isAvailable,
-                      onAvailabilityChanged: onAvailabilityChanged,
+                      onAvailabilityChanged:
+                          onAvailabilityChanged,
                     ),
                   ),
                 ],
@@ -152,6 +162,7 @@ class _ProfileInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final nameFontSize = ResponsiveUtils.value(
       context,
@@ -173,7 +184,7 @@ class _ProfileInformation extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: AppColors.textPrimary,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
             fontSize: nameFontSize,
           ),
@@ -183,19 +194,21 @@ class _ProfileInformation extends StatelessWidget {
 
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.location_on_outlined,
               size: 15,
-              color: AppColors.textSecondary,
+              color: colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: AppSpacing.xxs),
             Expanded(
               child: Text(
-                cleanAddress.isNotEmpty ? cleanAddress : 'Address not added',
+                cleanAddress.isNotEmpty
+                    ? cleanAddress
+                    : 'Address not added',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -204,7 +217,9 @@ class _ProfileInformation extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.xs),
 
-        _BloodGroupBadge(bloodGroup: cleanBloodGroup),
+        _BloodGroupBadge(
+          bloodGroup: cleanBloodGroup,
+        ),
 
         const SizedBox(height: AppSpacing.xs),
 
@@ -222,7 +237,9 @@ class _ProfileInformation extends StatelessWidget {
 // =============================================================================
 
 class _BloodGroupBadge extends StatelessWidget {
-  const _BloodGroupBadge({required this.bloodGroup});
+  const _BloodGroupBadge({
+    required this.bloodGroup,
+  });
 
   final String bloodGroup;
 
@@ -236,8 +253,12 @@ class _BloodGroupBadge extends StatelessWidget {
         vertical: AppSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(AppRadius.pill),
+        color: AppColors.primary.withValues(
+          alpha: 0.10,
+        ),
+        borderRadius: BorderRadius.circular(
+          AppRadius.pill,
+        ),
       ),
       child: Text(
         bloodGroup.isNotEmpty ? bloodGroup : '--',
@@ -255,7 +276,11 @@ class _BloodGroupBadge extends StatelessWidget {
 // =============================================================================
 
 class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar({this.avatarUrl, this.onTap, this.isUploading = false});
+  const _ProfileAvatar({
+    this.avatarUrl,
+    this.onTap,
+    this.isUploading = false,
+  });
 
   final String? avatarUrl;
   final VoidCallback? onTap;
@@ -263,6 +288,9 @@ class _ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final avatarSize = ResponsiveUtils.value(
       context,
       mobile: 88.0,
@@ -292,7 +320,9 @@ class _ProfileAvatar extends StatelessWidget {
     );
 
     final cleanAvatarUrl = avatarUrl?.trim();
-    final hasAvatar = cleanAvatarUrl != null && cleanAvatarUrl.isNotEmpty;
+    final hasAvatar =
+        cleanAvatarUrl != null &&
+        cleanAvatarUrl.isNotEmpty;
 
     return GestureDetector(
       onTap: isUploading ? null : onTap,
@@ -302,13 +332,17 @@ class _ProfileAvatar extends StatelessWidget {
           Container(
             width: avatarSize,
             height: avatarSize,
-            padding: const EdgeInsets.all(AppSpacing.xxs),
+            padding: const EdgeInsets.all(
+              AppSpacing.xxs,
+            ),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colorScheme.surface,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.10),
+                  color: AppColors.navy.withValues(
+                    alpha: 0.10,
+                  ),
                   blurRadius: AppSpacing.md,
                   offset: const Offset(0, 6),
                 ),
@@ -316,7 +350,7 @@ class _ProfileAvatar extends StatelessWidget {
             ),
             child: ClipOval(
               child: Container(
-                color: AppColors.surfaceVariant,
+                color: colorScheme.surfaceContainerHighest,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -326,11 +360,15 @@ class _ProfileAvatar extends StatelessWidget {
                         width: avatarSize,
                         height: avatarSize,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
+                        errorBuilder: (
+                          context,
+                          error,
+                          stackTrace,
+                        ) {
                           return Icon(
                             Icons.person_rounded,
                             size: iconSize,
-                            color: AppColors.textSecondary,
+                            color: colorScheme.onSurfaceVariant,
                           );
                         },
                       )
@@ -338,20 +376,24 @@ class _ProfileAvatar extends StatelessWidget {
                       Icon(
                         Icons.person_rounded,
                         size: iconSize,
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                       ),
 
                     if (isUploading)
                       Positioned.fill(
                         child: Container(
-                          color: Colors.black.withValues(alpha: 0.38),
+                          color: Colors.black.withValues(
+                            alpha: 0.38,
+                          ),
                           child: Center(
                             child: SizedBox(
                               width: avatarSize * 0.28,
                               height: avatarSize * 0.28,
-                              child: const CircularProgressIndicator(
+                              child:
+                                  const CircularProgressIndicator(
                                 strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation<Color>(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(
                                   Colors.white,
                                 ),
                               ),
@@ -375,7 +417,7 @@ class _ProfileAvatar extends StatelessWidget {
                 color: AppColors.primary,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.surface,
+                  color: colorScheme.surface,
                   width: AppSpacing.xxs - 1,
                 ),
               ),
@@ -383,9 +425,13 @@ class _ProfileAvatar extends StatelessWidget {
                   ? SizedBox(
                       width: editIconSize,
                       height: editIconSize,
-                      child: const CircularProgressIndicator(
+                      child:
+                          const CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
                       ),
                     )
                   : Icon(
@@ -406,16 +452,21 @@ class _ProfileAvatar extends StatelessWidget {
 // =============================================================================
 
 class _AvailabilityStatus extends StatelessWidget {
-  const _AvailabilityStatus({required this.isAvailable, this.onChanged});
+  const _AvailabilityStatus({
+    required this.isAvailable,
+    this.onChanged,
+  });
 
   final bool isAvailable;
   final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final statusColor = isAvailable
         ? AppColors.success
-        : AppColors.textSecondary;
+        : colorScheme.onSurfaceVariant;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -423,29 +474,30 @@ class _AvailabilityStatus extends StatelessWidget {
         Container(
           width: AppSpacing.xxs,
           height: AppSpacing.xxs,
-          decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: statusColor,
+            shape: BoxShape.circle,
+          ),
         ),
-
         const SizedBox(width: AppSpacing.xs),
-
         Text(
           isAvailable ? 'Available' : 'Unavailable',
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
         ),
-
         const SizedBox(width: AppSpacing.xs),
-
         SizedBox(
           height: AppSpacing.xxl,
-          child: Transform.scale(
+          child: AppSwitch(
+            value: isAvailable,
+            onChanged: onChanged,
+            activeTrackColor: AppColors.success,
             scale: 0.75,
-            alignment: Alignment.centerLeft,
-            child: Switch.adaptive(
-              value: isAvailable,
-              onChanged: onChanged,
-              activeTrackColor: AppColors.success,
-            ),
           ),
         ),
       ],
@@ -458,18 +510,29 @@ class _AvailabilityStatus extends StatelessWidget {
 // =============================================================================
 
 class _ProfileHeaderWavePainter extends CustomPainter {
-  const _ProfileHeaderWavePainter();
+  const _ProfileHeaderWavePainter({
+    required this.backgroundColor,
+    required this.surfaceColor,
+  });
+
+  final Color backgroundColor;
+  final Color surfaceColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final backgroundPaint = Paint()
-      ..color = AppColors.background
+      ..color = backgroundColor
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(Offset.zero & size, backgroundPaint);
+    canvas.drawRect(
+      Offset.zero & size,
+      backgroundPaint,
+    );
 
     final wavePaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.07)
+      ..color = AppColors.primary.withValues(
+        alpha: 0.07,
+      )
       ..style = PaintingStyle.fill;
 
     final wavePath = Path()
@@ -494,10 +557,15 @@ class _ProfileHeaderWavePainter extends CustomPainter {
       ..lineTo(0, size.height)
       ..close();
 
-    canvas.drawPath(wavePath, wavePaint);
+    canvas.drawPath(
+      wavePath,
+      wavePaint,
+    );
 
     final softWavePaint = Paint()
-      ..color = AppColors.surface.withValues(alpha: 0.75)
+      ..color = surfaceColor.withValues(
+        alpha: 0.75,
+      )
       ..style = PaintingStyle.fill;
 
     final softWavePath = Path()
@@ -522,11 +590,18 @@ class _ProfileHeaderWavePainter extends CustomPainter {
       ..lineTo(0, size.height)
       ..close();
 
-    canvas.drawPath(softWavePath, softWavePaint);
+    canvas.drawPath(
+      softWavePath,
+      softWavePaint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(
+    covariant _ProfileHeaderWavePainter oldDelegate,
+  ) {
+    return oldDelegate.backgroundColor !=
+            backgroundColor ||
+        oldDelegate.surfaceColor != surfaceColor;
   }
 }

@@ -29,9 +29,10 @@ class AboutPulzeDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Dialog(
-      backgroundColor: AppColors.surface,
+      backgroundColor: colorScheme.surface,
       insetPadding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.xl,
@@ -80,7 +81,7 @@ class AboutPulzeDialog extends StatelessWidget {
                         Text(
                           _title,
                           style: theme.textTheme.titleLarge?.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -88,7 +89,7 @@ class AboutPulzeDialog extends StatelessWidget {
                         Text(
                           'Connecting people through blood donation.',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colorScheme.onSurfaceVariant,
                             height: 1.4,
                           ),
                         ),
@@ -100,9 +101,9 @@ class AboutPulzeDialog extends StatelessWidget {
                     tooltip: 'Close',
                     onPressed: () => Navigator.of(context).pop(),
                     visualDensity: VisualDensity.compact,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.close_rounded,
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -117,7 +118,7 @@ class AboutPulzeDialog extends StatelessWidget {
                   child: Text(
                     _content,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                       height: 1.65,
                     ),
                   ),
@@ -133,26 +134,26 @@ class AboutPulzeDialog extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(
                     AppRadius.md,
                   ),
                   border: Border.all(
-                    color: AppColors.border,
+                    color: colorScheme.outline,
                   ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline_rounded,
                       size: 18,
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
                       'Version',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const Spacer(),
@@ -173,7 +174,7 @@ class AboutPulzeDialog extends StatelessWidget {
                         return Text(
                           snapshot.data ?? '1.0.0',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         );

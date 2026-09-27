@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 
 class AppIconButton extends StatelessWidget {
@@ -31,6 +30,8 @@ class AppIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final button = Material(
       color: backgroundColor ?? Colors.transparent,
       borderRadius: BorderRadius.circular(
@@ -57,7 +58,7 @@ class AppIconButton extends StatelessWidget {
           child: Icon(
             icon,
             size: iconSize,
-            color: foregroundColor ?? AppColors.textPrimary,
+            color: foregroundColor ?? colorScheme.onSurface,
           ),
         ),
       ),

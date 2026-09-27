@@ -30,13 +30,15 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Stack(
         children: [
@@ -54,7 +56,6 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                     });
                   },
                 ),
-
                 AnimatedSize(
                   duration: const Duration(milliseconds: 280),
                   curve: Curves.easeInOut,
@@ -84,15 +85,12 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                                 ),
                               ),
                             ],
-
                             _DetailRow(
                               icon: Icons.person_outline_rounded,
                               label: 'Full Name',
                               value: widget.user.fullName,
                             ),
-
                             const SizedBox(height: AppSpacing.sm),
-
                             _DetailRow(
                               icon: Icons.email_outlined,
                               label: 'Email',
@@ -101,9 +99,7 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                                 isVerified: widget.user.isEmailVerified,
                               ),
                             ),
-
                             const SizedBox(height: AppSpacing.sm),
-
                             _DetailRow(
                               icon: Icons.phone_outlined,
                               label: 'Phone',
@@ -113,25 +109,19 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                                     widget.profile?.isPhoneVerified == true,
                               ),
                             ),
-
                             const SizedBox(height: AppSpacing.sm),
-
                             _DetailRow(
                               icon: Icons.person_outline_rounded,
                               label: 'Gender',
                               value: _formatGender(widget.profile?.gender),
                             ),
-
                             const SizedBox(height: AppSpacing.sm),
-
                             _DetailRow(
                               icon: Icons.calendar_today_outlined,
                               label: 'Date of Birth',
                               value: _formatDate(widget.profile?.dateOfBirth),
                             ),
-
                             const SizedBox(height: AppSpacing.sm),
-
                             _DetailRow(
                               icon: Icons.location_city_outlined,
                               label: 'City',
@@ -189,6 +179,8 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -196,32 +188,30 @@ class _SectionHeader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppSectionHeader(title: 'Personal Details'),
-                  SizedBox(height: AppSpacing.xxs),
+                  const AppSectionHeader(title: 'Personal Details'),
+                  const SizedBox(height: AppSpacing.xxs),
                   Text(
                     'View your personal information',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
                 ],
               ),
             ),
-
             const SizedBox(width: AppSpacing.sm),
-
             AnimatedRotation(
               turns: isExpanded ? 0.5 : 0,
               duration: const Duration(milliseconds: 280),
-              child: const Icon(
+              child: Icon(
                 Icons.expand_more_rounded,
                 size: 24,
-                color: AppColors.textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -247,6 +237,7 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -261,9 +252,7 @@ class _DetailRow extends StatelessWidget {
           ),
           child: Icon(icon, size: 18, color: AppColors.primary),
         ),
-
         const SizedBox(width: AppSpacing.sm),
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +262,7 @@ class _DetailRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.4,
                 ),
@@ -284,7 +273,7 @@ class _DetailRow extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textPrimary,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -304,21 +293,21 @@ class _VerificationStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusColor = isVerified ? AppColors.success : AppColors.error;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           isVerified ? Icons.verified_rounded : Icons.info_outline_rounded,
           size: 13,
-          color: isVerified ? AppColors.success : AppColors.textTertiary,
+          color: statusColor,
         ),
         const SizedBox(width: 4),
         Text(
           isVerified ? 'Verified' : 'Unverified',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: isVerified ? AppColors.success : AppColors.textTertiary,
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
         ),
       ],
     );

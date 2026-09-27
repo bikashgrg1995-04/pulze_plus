@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pulze_plus/app/router/app_routes.dart';
-
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/core/theme/app_colors.dart';
 import 'package:pulze_plus/core/theme/app_radius.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
@@ -21,6 +21,8 @@ import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
 import 'package:pulze_plus/features/profile/widgets/about_pulze_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/blood_donation_card.dart';
+import 'package:pulze_plus/features/profile/widgets/preference_segmented_tile.dart';
+import 'package:pulze_plus/features/profile/widgets/preference_switch_row.dart';
 import 'package:pulze_plus/features/profile/widgets/support_request_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/profile_completion_card.dart';
 import 'package:pulze_plus/features/profile/widgets/profile_details_card.dart';
@@ -49,10 +51,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = authState.user;
     final profile = profileState.profile;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (user == null) {
-      return const Scaffold(
-        backgroundColor: AppColors.background,
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -76,7 +81,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -114,6 +119,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   }
                 },
               ),
+
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   horizontalPadding,
@@ -229,12 +235,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Center(
                           child: Text(
                             'Pulze+',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: AppColors.textTertiary,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.3,
-                                ),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.3,
+                            ),
                           ),
                         ),
                       ],
@@ -353,51 +360,77 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     await AppBottomSheet.show<void>(
       context: context,
       title: 'App Preferences',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ProfileMenuItem(
-            icon: Icons.notifications_active_outlined,
-            title: 'Blood Request Notifications',
-            subtitle: 'Get notified about nearby blood requests',
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ProfileMenuItem(
-            icon: Icons.alarm_outlined,
-            title: 'Donation Reminders',
-            subtitle: 'Manage donation eligibility reminders',
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ProfileMenuItem(
-            icon: Icons.palette_outlined,
-            title: 'Theme',
-            subtitle: 'Choose your preferred app appearance',
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ProfileMenuItem(
-            icon: Icons.language_outlined,
-            title: 'Language',
-            subtitle: 'Choose your preferred language',
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          ProfileMenuItem(
-            icon: Icons.location_on_outlined,
-            title: 'Location & Search Radius',
-            subtitle: 'Manage donor and blood bank search area',
-            showDivider: false,
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+      child: Consumer(
+        builder: (context, ref, child) {
+          final preferences = ref.watch(appPreferencesProvider);
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PreferenceSwitchRow(
+                icon: Icons.notifications_outlined,
+                title: 'Notifications',
+                subtitle: 'Receive important app notifications',
+                value: preferences.notificationsEnabled,
+                onChanged: (value) {
+                  ref
+                      .read(appPreferencesProvider.notifier)
+                      .setNotificationsEnabled(value);
+                },
+              ),
+
+              PreferenceSwitchRow(
+                icon: Icons.bloodtype_outlined,
+                title: 'Donation Reminder',
+                subtitle: 'Get reminded when you can donate again',
+                value: preferences.donationRemindersEnabled,
+                onChanged: (value) {
+                  ref
+                      .read(appPreferencesProvider.notifier)
+                      .setDonationRemindersEnabled(value);
+                },
+              ),
+
+              PreferenceSegmentedTile<String>(
+                icon: Icons.palette_outlined,
+                title: 'Theme',
+                subtitle: 'Choose your preferred appearance',
+                value: preferences.theme,
+                options: const [
+                  PreferenceSegment(
+                    value: 'light',
+                    label: 'Light',
+                    icon: Icons.light_mode_outlined,
+                  ),
+                  PreferenceSegment(
+                    value: 'dark',
+                    label: 'Dark',
+                    icon: Icons.dark_mode_outlined,
+                  ),
+                ],
+                onChanged: (value) {
+                  ref.read(appPreferencesProvider.notifier).setTheme(value);
+                },
+              ),
+
+              PreferenceSegmentedTile<String>(
+                icon: Icons.language_outlined,
+                title: 'Language',
+                subtitle: 'Choose your preferred language',
+                value: preferences.language,
+                showDivider: false,
+                options: const [
+                  PreferenceSegment(value: 'english', label: 'English'),
+                  PreferenceSegment(value: 'nepali', label: 'नेपाली'),
+                ],
+                onChanged: (value) {
+                  ref.read(appPreferencesProvider.notifier).setLanguage(value);
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -520,6 +553,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _showAvatarSourceDialog(BuildContext context) async {
     if (_isUploadingAvatar) return;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final source = await AppBottomSheet.show<ImageSource>(
       context: context,
       title: 'Change profile photo',
@@ -528,8 +564,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             'Choose how you want to update your profile photo.',
-            style: Theme.of(context).textTheme.bodySmall
-                ?.copyWith(color: AppColors.textSecondary),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           _AvatarSourceOption(
@@ -744,8 +781,11 @@ class _AvatarSourceOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Material(
-      color: AppColors.background,
+      color: colorScheme.surface,
       borderRadius: BorderRadius.circular(AppRadius.lg),
       child: InkWell(
         onTap: onTap,
@@ -773,8 +813,8 @@ class _AvatarSourceOption extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textPrimary,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -783,17 +823,18 @@ class _AvatarSourceOption extends StatelessWidget {
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall
-                          ?.copyWith(color: AppColors.textSecondary),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
                 size: 22,
-                color: AppColors.textTertiary,
+                color: colorScheme.onSurfaceVariant,
               ),
             ],
           ),

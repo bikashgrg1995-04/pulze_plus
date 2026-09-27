@@ -32,11 +32,11 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final button = switch (variant) {
-      AppButtonVariant.primary => _buildPrimaryButton(),
-      AppButtonVariant.secondary => _buildSecondaryButton(),
-      AppButtonVariant.outlined => _buildOutlinedButton(),
-      AppButtonVariant.danger => _buildDangerButton(),
-      AppButtonVariant.text => _buildTextButton(),
+      AppButtonVariant.primary => _buildPrimaryButton(context),
+      AppButtonVariant.secondary => _buildSecondaryButton(context),
+      AppButtonVariant.outlined => _buildOutlinedButton(context),
+      AppButtonVariant.danger => _buildDangerButton(context),
+      AppButtonVariant.text => _buildTextButton(context),
     };
 
     if (!isExpanded) {
@@ -50,14 +50,14 @@ class AppButton extends StatelessWidget {
     );
   }
 
-  Widget _buildChild() {
+  Widget _buildChild(Color foregroundColor) {
     if (isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: Colors.white,
+          color: foregroundColor,
         ),
       );
     }
@@ -80,7 +80,7 @@ class AppButton extends StatelessWidget {
     );
   }
 
-  Widget _buildPrimaryButton() {
+  Widget _buildPrimaryButton(BuildContext context) {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
@@ -95,26 +95,28 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      child: _buildChild(),
+      child: _buildChild(Colors.white),
     );
   }
 
-  Widget _buildSecondaryButton() {
+  Widget _buildSecondaryButton(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.surfaceVariant,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      child: _buildChild(),
+      child: _buildChild(colorScheme.onSurface),
     );
   }
 
-  Widget _buildOutlinedButton() {
+  Widget _buildOutlinedButton(BuildContext context) {
     return OutlinedButton(
       onPressed: isLoading ? null : onPressed,
       style: OutlinedButton.styleFrom(
@@ -126,11 +128,11 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      child: _buildChild(),
+      child: _buildChild(AppColors.primary),
     );
   }
 
-  Widget _buildDangerButton() {
+  Widget _buildDangerButton(BuildContext context) {
     return OutlinedButton(
       onPressed: isLoading ? null : onPressed,
       style: OutlinedButton.styleFrom(
@@ -142,11 +144,11 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      child: _buildChild(),
+      child: _buildChild(AppColors.error),
     );
   }
 
-  Widget _buildTextButton() {
+  Widget _buildTextButton(BuildContext context) {
     return TextButton(
       onPressed: isLoading ? null : onPressed,
       style: TextButton.styleFrom(
@@ -155,7 +157,7 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      child: _buildChild(),
+      child: _buildChild(AppColors.primary),
     );
   }
 }

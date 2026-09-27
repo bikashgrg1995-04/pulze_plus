@@ -28,6 +28,9 @@ class AppSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return TextField(
       controller: controller,
       focusNode: focusNode,
@@ -36,56 +39,64 @@ class AppSearchField extends StatelessWidget {
       textInputAction: TextInputAction.search,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: colorScheme.onSurface,
+      ),
       cursorColor: AppColors.primary,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textTertiary,
-            ),
-        prefixIcon: const Icon(
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
+        prefixIcon: Icon(
           Icons.search_rounded,
           size: 22,
+          color: colorScheme.onSurfaceVariant,
         ),
-        suffixIcon: _buildSuffixIcon(),
+        suffixIcon: _buildSuffixIcon(context),
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: 14,
         ),
-        border: _border(),
-        enabledBorder: _border(),
+        border: _border(
+          color: colorScheme.outline,
+        ),
+        enabledBorder: _border(
+          color: colorScheme.outline,
+        ),
         focusedBorder: _border(
           color: AppColors.primary,
           width: 1.5,
         ),
         disabledBorder: _border(
-          color: AppColors.border.withValues(alpha: 0.6),
+          color: colorScheme.outline.withValues(alpha: 0.6),
         ),
       ),
     );
   }
 
-  Widget? _buildSuffixIcon() {
+  Widget? _buildSuffixIcon(BuildContext context) {
     if (onClear == null) {
       return null;
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return IconButton(
       onPressed: onClear,
       tooltip: 'Clear',
-      icon: const Icon(
+      icon: Icon(
         Icons.close_rounded,
         size: 20,
+        color: colorScheme.onSurfaceVariant,
       ),
     );
   }
 
   OutlineInputBorder _border({
-    Color color = AppColors.border,
+    required Color color,
     double width = 1,
   }) {
     return OutlineInputBorder(

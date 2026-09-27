@@ -26,7 +26,8 @@ class SupportRequestDialog extends ConsumerStatefulWidget {
       _SupportRequestDialogState();
 }
 
-class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
+class _SupportRequestDialogState
+    extends ConsumerState<SupportRequestDialog> {
   final _formKey = GlobalKey<FormState>();
 
   final _subjectController = TextEditingController();
@@ -161,7 +162,10 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
       if (widget.parentContext.mounted) {
         Navigator.of(widget.parentContext).pop();
 
-        AppSnackBar.success(widget.parentContext, _successMessage);
+        AppSnackBar.success(
+          widget.parentContext,
+          _successMessage,
+        );
       }
     } catch (error) {
       if (!mounted) {
@@ -186,10 +190,11 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final mediaQuery = MediaQuery.of(context);
 
     return Dialog(
-      backgroundColor: AppColors.surface,
+      backgroundColor: colorScheme.surface,
       insetPadding: EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
         vertical: mediaQuery.viewInsets.bottom > 0
@@ -200,7 +205,10 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
         borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 520, maxHeight: 680),
+        constraints: const BoxConstraints(
+          maxWidth: 520,
+          maxHeight: 680,
+        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
@@ -215,28 +223,40 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        color: AppColors.primary.withValues(
+                          alpha: 0.10,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          AppRadius.lg,
+                        ),
                       ),
-                      child: Icon(_icon, color: AppColors.primary, size: 28),
+                      child: Icon(
+                        _icon,
+                        color: AppColors.primary,
+                        size: 28,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Text(
                             _title,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              color: AppColors.textPrimary,
+                            style:
+                                theme.textTheme.titleLarge?.copyWith(
+                              color: colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             _subtitle,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textSecondary,
+                            style:
+                                theme.textTheme.bodyMedium?.copyWith(
+                              color:
+                                  colorScheme.onSurfaceVariant,
                               height: 1.4,
                             ),
                           ),
@@ -250,16 +270,14 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                           ? null
                           : () => Navigator.of(context).pop(),
                       visualDensity: VisualDensity.compact,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.close_rounded,
-                        color: AppColors.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
-
                 const SizedBox(height: AppSpacing.xl),
-
                 AppTextField(
                   controller: _subjectController,
                   label: 'Subject',
@@ -280,15 +298,13 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: AppSpacing.md),
-
                 AppTextField(
                   controller: _messageController,
                   label: 'Message',
                   hint: _messageHint,
-                  prefixIcon: Icons.chat_bubble_outline_rounded,
-
+                  prefixIcon:
+                      Icons.chat_bubble_outline_rounded,
                   minLines: 5,
                   maxLines: 8,
                   textInputAction: TextInputAction.newline,
@@ -306,20 +322,23 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    color: AppColors.primary.withValues(
+                      alpha: 0.05,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      AppRadius.md,
+                    ),
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
                     children: [
                       const Icon(
                         Icons.info_outline_rounded,
@@ -330,8 +349,10 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                       Expanded(
                         child: Text(
                           'Please provide enough details so we can respond appropriately.',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
+                          style:
+                              theme.textTheme.bodySmall?.copyWith(
+                            color:
+                                colorScheme.onSurfaceVariant,
                             height: 1.4,
                           ),
                         ),
@@ -339,14 +360,13 @@ class _SupportRequestDialogState extends ConsumerState<SupportRequestDialog> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: AppSpacing.lg),
-
                 SizedBox(
                   width: double.infinity,
                   child: AppButton(
                     label: _buttonText,
-                    onPressed: _isSubmitting ? null : _submit,
+                    onPressed:
+                        _isSubmitting ? null : _submit,
                     isLoading: _isSubmitting,
                   ),
                 ),

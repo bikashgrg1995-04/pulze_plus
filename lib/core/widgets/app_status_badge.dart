@@ -30,7 +30,7 @@ class AppStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = _statusStyle();
+    final style = _statusStyle(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -66,67 +66,69 @@ class AppStatusBadge extends StatelessWidget {
     );
   }
 
-  _StatusStyle _statusStyle() {
+  _StatusStyle _statusStyle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     switch (type) {
       case AppStatusType.urgent:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFFEE2E2),
+        return _StatusStyle(
+          backgroundColor: AppColors.error.withValues(alpha: 0.12),
           foregroundColor: AppColors.error,
           icon: Icons.priority_high_rounded,
         );
 
       case AppStatusType.open:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFDCFCE7),
+        return _StatusStyle(
+          backgroundColor: AppColors.success.withValues(alpha: 0.12),
           foregroundColor: AppColors.success,
           icon: Icons.radio_button_checked_rounded,
         );
 
       case AppStatusType.pending:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFFEF3C7),
+        return _StatusStyle(
+          backgroundColor: AppColors.warning.withValues(alpha: 0.12),
           foregroundColor: AppColors.warning,
           icon: Icons.schedule_rounded,
         );
 
       case AppStatusType.accepted:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFDBEAFE),
+        return _StatusStyle(
+          backgroundColor: AppColors.info.withValues(alpha: 0.12),
           foregroundColor: AppColors.info,
           icon: Icons.check_circle_outline_rounded,
         );
 
       case AppStatusType.completed:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFDCFCE7),
+        return _StatusStyle(
+          backgroundColor: AppColors.success.withValues(alpha: 0.12),
           foregroundColor: AppColors.success,
           icon: Icons.check_circle_rounded,
         );
 
       case AppStatusType.cancelled:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFF3F4F6),
-          foregroundColor: AppColors.textSecondary,
+        return _StatusStyle(
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          foregroundColor: colorScheme.onSurfaceVariant,
           icon: Icons.cancel_outlined,
         );
 
       case AppStatusType.available:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFDCFCE7),
+        return _StatusStyle(
+          backgroundColor: AppColors.success.withValues(alpha: 0.12),
           foregroundColor: AppColors.success,
           icon: Icons.circle,
         );
 
       case AppStatusType.unavailable:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFF3F4F6),
-          foregroundColor: AppColors.textSecondary,
+        return _StatusStyle(
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          foregroundColor: colorScheme.onSurfaceVariant,
           icon: Icons.circle,
         );
 
       case AppStatusType.info:
-        return const _StatusStyle(
-          backgroundColor: Color(0xFFDBEAFE),
+        return _StatusStyle(
+          backgroundColor: AppColors.info.withValues(alpha: 0.12),
           foregroundColor: AppColors.info,
           icon: Icons.info_outline_rounded,
         );

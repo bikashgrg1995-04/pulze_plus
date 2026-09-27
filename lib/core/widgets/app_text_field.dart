@@ -60,6 +60,9 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final field = TextFormField(
       controller: controller,
       focusNode: focusNode,
@@ -74,9 +77,9 @@ class AppTextField extends StatelessWidget {
       onChanged: onChanged,
       onTap: onTap,
       validator: validator,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textPrimary,
-          ),
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: colorScheme.onSurface,
+      ),
       cursorColor: AppColors.primary,
       decoration: InputDecoration(
         hintText: hint,
@@ -87,6 +90,7 @@ class AppTextField extends StatelessWidget {
             : Icon(
                 prefixIcon,
                 size: 21,
+                color: colorScheme.onSurfaceVariant,
               ),
         suffixIcon: suffixIcon == null
             ? null
@@ -95,16 +99,21 @@ class AppTextField extends StatelessWidget {
                 icon: Icon(
                   suffixIcon,
                   size: 21,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: 14,
         ),
-        border: _border(),
-        enabledBorder: _border(),
+        border: _border(
+          color: colorScheme.outline,
+        ),
+        enabledBorder: _border(
+          color: colorScheme.outline,
+        ),
         focusedBorder: _border(
           color: AppColors.primary,
           width: 1.5,
@@ -117,7 +126,7 @@ class AppTextField extends StatelessWidget {
           width: 1.5,
         ),
         disabledBorder: _border(
-          color: AppColors.border.withValues(alpha: 0.6),
+          color: colorScheme.outline.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -131,10 +140,10 @@ class AppTextField extends StatelessWidget {
       children: [
         Text(
           label!,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: AppSpacing.xs),
         field,
@@ -143,7 +152,7 @@ class AppTextField extends StatelessWidget {
   }
 
   OutlineInputBorder _border({
-    Color color = AppColors.border,
+    required Color color,
     double width = 1,
   }) {
     return OutlineInputBorder(

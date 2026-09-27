@@ -27,20 +27,22 @@ class AppChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final effectiveBackgroundColor = backgroundColor ??
         (selected
             ? AppColors.primary.withValues(alpha: 0.08)
-            : AppColors.surfaceVariant);
+            : colorScheme.surfaceContainerHighest);
 
     final effectiveForegroundColor = foregroundColor ??
         (selected
             ? AppColors.primary
-            : AppColors.textSecondary);
+            : colorScheme.onSurfaceVariant);
 
     final effectiveBorderColor = borderColor ??
         (selected
             ? AppColors.primary.withValues(alpha: 0.25)
-            : AppColors.border);
+            : colorScheme.outline);
 
     final content = Container(
       padding: const EdgeInsets.symmetric(

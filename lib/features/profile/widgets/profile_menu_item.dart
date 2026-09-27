@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/responsive_utils.dart';
@@ -24,6 +23,7 @@ class ProfileMenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final horizontalPadding = ResponsiveUtils.value(
       context,
@@ -86,7 +86,7 @@ class ProfileMenuItem extends StatelessWidget {
                     height: iconContainerSize,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant,
+                      color: colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(
                         AppRadius.md,
                       ),
@@ -94,12 +94,10 @@ class ProfileMenuItem extends StatelessWidget {
                     child: Icon(
                       icon,
                       size: iconSize,
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
-
                   SizedBox(width: contentSpacing),
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +107,7 @@ class ProfileMenuItem extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -121,27 +119,24 @@ class ProfileMenuItem extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
                       ],
                     ),
                   ),
-
                   const SizedBox(width: AppSpacing.xs),
-
                   Icon(
                     Icons.chevron_right_rounded,
                     size: chevronSize,
-                    color: AppColors.textTertiary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ],
               ),
             ),
           ),
         ),
-
         if (showDivider)
           Padding(
             padding: EdgeInsets.only(
@@ -149,9 +144,9 @@ class ProfileMenuItem extends StatelessWidget {
                   iconContainerSize +
                   contentSpacing,
             ),
-            child: const Divider(
+            child: Divider(
               height: 1,
-              color: AppColors.border,
+              color: colorScheme.outline,
             ),
           ),
       ],

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
 class AppAvatar extends StatelessWidget {
   const AppAvatar({
     super.key,
@@ -29,8 +27,13 @@ class AppAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = backgroundColor ?? AppColors.surfaceVariant;
-    final foreground = foregroundColor ?? AppColors.textSecondary;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final background =
+        backgroundColor ?? colorScheme.surfaceContainerHighest;
+
+    final foreground =
+        foregroundColor ?? colorScheme.onSurfaceVariant;
 
     return Container(
       width: size,
@@ -39,7 +42,9 @@ class AppAvatar extends StatelessWidget {
         color: background,
         shape: BoxShape.circle,
         border: showBorder
-            ? Border.all(color: borderColor ?? AppColors.border)
+            ? Border.all(
+                color: borderColor ?? colorScheme.outline,
+              )
             : null,
       ),
       clipBehavior: Clip.antiAlias,
@@ -79,6 +84,10 @@ class AppAvatar extends StatelessWidget {
       );
     }
 
-    return Icon(icon, size: size * 0.48, color: foregroundColor);
+    return Icon(
+      icon,
+      size: size * 0.48,
+      color: foregroundColor,
+    );
   }
 }
