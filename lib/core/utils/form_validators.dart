@@ -4,18 +4,24 @@ class FormValidators {
   static String? required(
     String? value, {
     required String fieldName,
+    required String errorMessage,
   }) {
     if (value == null || value.trim().isEmpty) {
-      return '$fieldName is required.';
+      return errorMessage;
     }
 
     return null;
   }
 
-  static String? fullName(String? value) {
+  static String? fullName(
+    String? value, {
+    required String requiredMessage,
+    required String minLengthMessage,
+  }) {
     final requiredError = required(
       value,
-      fieldName: 'Full name',
+      fieldName: '',
+      errorMessage: requiredMessage,
     );
 
     if (requiredError != null) {
@@ -23,16 +29,21 @@ class FormValidators {
     }
 
     if (value!.trim().length < 2) {
-      return 'Full name must be at least 2 characters.';
+      return minLengthMessage;
     }
 
     return null;
   }
 
-  static String? email(String? value) {
+  static String? email(
+    String? value, {
+    required String requiredMessage,
+    required String invalidMessage,
+  }) {
     final requiredError = required(
       value,
-      fieldName: 'Email',
+      fieldName: '',
+      errorMessage: requiredMessage,
     );
 
     if (requiredError != null) {
@@ -46,16 +57,21 @@ class FormValidators {
     );
 
     if (!emailRegex.hasMatch(email)) {
-      return 'Please enter a valid email address.';
+      return invalidMessage;
     }
 
     return null;
   }
 
-  static String? password(String? value) {
+  static String? password(
+    String? value, {
+    required String requiredMessage,
+    required String minLengthMessage,
+  }) {
     final requiredError = required(
       value,
-      fieldName: 'Password',
+      fieldName: '',
+      errorMessage: requiredMessage,
     );
 
     if (requiredError != null) {
@@ -63,13 +79,16 @@ class FormValidators {
     }
 
     if (value!.length < 8) {
-      return 'Password must be at least 8 characters.';
+      return minLengthMessage;
     }
 
     return null;
   }
 
-  static String? phone(String? value) {
+  static String? phone(
+    String? value, {
+    required String invalidMessage,
+  }) {
     if (value == null || value.trim().isEmpty) {
       return null;
     }
@@ -81,7 +100,7 @@ class FormValidators {
     );
 
     if (!phoneRegex.hasMatch(phone)) {
-      return 'Please enter a valid phone number.';
+      return invalidMessage;
     }
 
     return null;

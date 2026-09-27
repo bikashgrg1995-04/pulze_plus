@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ProfileCompletionCard extends StatefulWidget {
   const ProfileCompletionCard({
@@ -25,6 +26,7 @@ class _ProfileCompletionCardState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final normalizedCompletion =
         widget.completion.clamp(0.0, 1.0);
@@ -32,10 +34,9 @@ class _ProfileCompletionCardState
     final percentage =
         (normalizedCompletion * 100).round();
 
-    final title =
-        percentage < 50
-            ? 'Complete your profile'
-            : 'Almost there!';
+    final title = percentage < 50
+        ? l10n.completeYourProfile
+        : l10n.almostThere;
 
     return Material(
       color: Colors.transparent,
@@ -85,7 +86,8 @@ class _ProfileCompletionCardState
                     ),
                     Text(
                       '$percentage',
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      style:
+                          theme.textTheme.labelSmall?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w700,
                         fontSize: 9,
@@ -94,9 +96,9 @@ class _ProfileCompletionCardState
                   ],
                 ),
               ),
-
-              const SizedBox(width: AppSpacing.sm),
-
+              const SizedBox(
+                width: AppSpacing.sm,
+              ),
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -107,32 +109,33 @@ class _ProfileCompletionCardState
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style:
+                          theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-
                     const SizedBox(
                       height: AppSpacing.xxs,
                     ),
-
                     Text(
-                      'Add your details to get the most from Pulze+.',
+                      l10n.addDetailsToGetMostFromPulze,
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                      style:
+                          theme.textTheme.bodySmall?.copyWith(
+                        color:
+                            colorScheme.onSurfaceVariant,
                         fontSize: 10,
                       ),
                     ),
                   ],
                 ),
               ),
-
-              const SizedBox(width: AppSpacing.xs),
-
+              const SizedBox(
+                width: AppSpacing.xs,
+              ),
               Icon(
                 Icons.arrow_forward_rounded,
                 size: AppSpacing.lg,

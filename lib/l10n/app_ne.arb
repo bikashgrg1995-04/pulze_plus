@@ -1,0 +1,484 @@
+{
+  "@@locale": "ne",
+
+  "appPreferences": "एप प्राथमिकताहरू",
+  "notifications": "सूचनाहरू",
+  "donationReminder": "रक्तदान सम्झना",
+  "theme": "थिम",
+  "language": "भाषा",
+
+  "activity": "गतिविधि",
+  "viewRequestsAndDonations": "तपाईंका अनुरोध र रक्तदानहरू हेर्नुहोस्",
+  "myRequests": "मेरा अनुरोधहरू",
+  "donationHistory": "रक्तदान इतिहास",
+
+  "settings": "सेटिङहरू",
+  "manageAccountAndPreferences": "आफ्नो खाता र प्राथमिकताहरू व्यवस्थापन गर्नुहोस्",
+
+  "privacySecurity": "गोपनीयता र सुरक्षा",
+  "accountSettings": "खाता सेटिङहरू",
+  "helpSupport": "सहायता र समर्थन",
+
+  "signOut": "साइन आउट",
+
+  "changePassword": "पासवर्ड परिवर्तन गर्नुहोस्",
+  "updateAccountPassword": "आफ्नो खाता पासवर्ड अपडेट गर्नुहोस्",
+
+  "appPermissions": "एप अनुमतिहरू",
+  "manageCameraLocationPermissions": "क्यामेरा र स्थान अनुमतिहरू व्यवस्थापन गर्नुहोस्",
+
+  "privacyPolicy": "गोपनीयता नीति",
+  "learnHowPulzeHandlesInformation": "Pulze+ ले तपाईंको जानकारी कसरी व्यवस्थापन गर्छ जान्नुहोस्",
+
+  "termsConditions": "नियम तथा सर्तहरू",
+  "reviewPulzeTerms": "Pulze+ का प्रयोगका नियमहरू हेर्नुहोस्",
+
+  "donorStatus": "रक्तदाता स्थिति",
+  "currentlyAvailableDonor": "तपाईं हाल रक्तदाताका रूपमा उपलब्ध हुनुहुन्छ",
+  "currentlyNotAvailableDonor": "तपाईं हाल रक्तदाताका रूपमा उपलब्ध हुनुहुन्न",
+
+  "changePhoneNumber": "फोन नम्बर परिवर्तन गर्नुहोस्",
+  "updateRegisteredPhone": "दर्ता गरिएको फोन नम्बर अपडेट गर्नुहोस्",
+
+  "deleteAccount": "खाता मेटाउनुहोस्",
+  "permanentlyDeleteAccount": "आफ्नो Pulze+ खाता स्थायी रूपमा मेटाउनुहोस्",
+
+  "receiveImportantNotifications": "महत्त्वपूर्ण एप सूचनाहरू प्राप्त गर्नुहोस्",
+  "getRemindedWhenCanDonate": "फेरि रक्तदान गर्न मिल्ने भएपछि सम्झना प्राप्त गर्नुहोस्",
+
+  "choosePreferredAppearance": "आफ्नो मनपर्ने रूप चयन गर्नुहोस्",
+  "choosePreferredLanguage": "आफ्नो मनपर्ने भाषा चयन गर्नुहोस्",
+
+  "light": "लाइट",
+  "dark": "डार्क",
+  "english": "English",
+  "nepali": "नेपाली",
+
+  "faqs": "सामान्य प्रश्नहरू",
+  "findAnswersCommonQuestions": "सामान्य प्रश्नहरूको उत्तर खोज्नुहोस्",
+
+  "contactSupport": "सहायता सम्पर्क गर्नुहोस्",
+  "getHelpFromSupportTeam": "Pulze+ सहायता टोलीबाट सहयोग प्राप्त गर्नुहोस्",
+
+  "reportProblem": "समस्या रिपोर्ट गर्नुहोस्",
+  "tellUsAboutIssue": "एपमा भएको समस्याबारे हामीलाई बताउनुहोस्",
+
+  "feedback": "प्रतिक्रिया",
+  "shareIdeasSuggestions": "आफ्ना विचार र सुझावहरू साझा गर्नुहोस्",
+
+  "aboutPulze": "Pulze+ बारेमा",
+  "learnMoreAboutPulze": "Pulze+ बारे थप जान्नुहोस्",
+
+  "changeProfilePhoto": "प्रोफाइल फोटो परिवर्तन गर्नुहोस्",
+  "chooseProfilePhotoMethod": "आफ्नो प्रोफाइल फोटो कसरी अपडेट गर्ने छनोट गर्नुहोस्।",
+
+  "takePhoto": "फोटो खिच्नुहोस्",
+  "useCamera": "क्यामेरा प्रयोग गर्नुहोस्",
+
+  "chooseFromGallery": "ग्यालरीबाट छनोट गर्नुहोस्",
+  "selectExistingPhoto": "पहिलेको फोटो चयन गर्नुहोस्",
+
+  "cancel": "रद्द गर्नुहोस्",
+
+  "cameraPermissionRequiredSettings": "क्यामेरा अनुमति आवश्यक छ। कृपया Settings मा गएर अनुमति दिनुहोस्।",
+  "cameraPermissionRequired": "फोटो खिच्न क्यामेरा अनुमति आवश्यक छ।",
+
+  "profilePhotoUpdated": "प्रोफाइल फोटो सफलतापूर्वक अपडेट भयो।",
+
+  "donorAvailableMessage": "तपाईं अब रक्तदाताका रूपमा उपलब्ध हुनुहुन्छ।",
+  "donorUnavailableMessage": "तपाईं अब रक्तदाताका रूपमा उपलब्ध हुनुहुन्न।",
+
+  "signOutConfirmation": "के तपाईं Pulze+ बाट साइन आउट गर्न निश्चित हुनुहुन्छ?",
+
+  "bloodGroupNotAdded": "थपिएको छैन",
+  "@bloodGroupNotAdded": {
+    "description": "प्रयोगकर्ताको रक्त समूह थपिएको छैन भने देखाइने वैकल्पिक पाठ।"
+  },
+
+  "notAvailable": "उपलब्ध छैन",
+  "@notAvailable": {
+    "description": "जानकारी उपलब्ध नभएको अवस्थामा देखाइने वैकल्पिक पाठ।"
+  },
+
+  "managePrivacySecurity": "आफ्नो गोपनीयता र सुरक्षा व्यवस्थापन गर्नुहोस्",
+  "@managePrivacySecurity": {
+    "description": "गोपनीयता र सुरक्षा व्यवस्थापनसम्बन्धी विवरण।"
+  },
+
+  "connectingPeopleThroughBloodDonation": "रक्तदानमार्फत मानिसहरूलाई जोड्दै।",
+  "@connectingPeopleThroughBloodDonation": {
+    "description": "Pulze+ बारे संवादमा देखाइने उपशीर्षक।"
+  },
+
+  "aboutPulzeDescription": "Pulze+ मानिसहरूलाई नजिकै रहेका योग्य रक्तदातासँग जोड्न मद्दत गर्ने रक्तदाता मिलान प्लेटफर्म हो।\n\nयस प्लेटफर्मले प्रयोगकर्ताहरूलाई उपयुक्त रक्तदाता खोज्न, रक्तदाता उपलब्धता व्यवस्थापन गर्न र रक्त अनुरोधहरूमा अझ प्रभावकारी रूपमा प्रतिक्रिया दिन मद्दत गर्छ।\n\nहाम्रो लक्ष्य रक्तदान र रक्त अनुरोध प्रक्रियालाई सबैका लागि सरल, छिटो र सहज बनाउनु हो।",
+  "@aboutPulzeDescription": {
+    "description": "Pulze+ बारे संवादमा देखाइने मुख्य विवरण।"
+  },
+
+  "version": "संस्करण",
+  "@version": {
+    "description": "एपको संस्करणसँगै देखाइने लेबल।"
+  },
+
+  "close": "बन्द गर्नुहोस्",
+  "@close": {
+    "description": "बन्द गर्ने बटनको tooltip।"
+  },
+
+  "frequentlyAskedQuestions": "बारम्बार सोधिने प्रश्नहरू",
+  "@frequentlyAskedQuestions": {
+    "description": "FAQ स्क्रिनको माथि देखाइने शीर्षक।"
+  },
+
+  "findQuickAnswersAboutPulze": "Pulze+, रक्तदान र आफ्नो खातासम्बन्धी सामान्य प्रश्नहरूको छिटो उत्तर खोज्नुहोस्।",
+  "@findQuickAnswersAboutPulze": {
+    "description": "FAQ स्क्रिनको शीर्षक मुनि देखाइने विवरण।"
+  },
+
+  "unableToLoadFaqs": "बारम्बार सोधिने प्रश्नहरू लोड गर्न सकिएन।",
+  "@unableToLoadFaqs": {
+    "description": "FAQ लोड गर्न नसक्दा देखाइने त्रुटि सन्देश।"
+  },
+
+  "tryAgain": "पुनः प्रयास गर्नुहोस्",
+  "@tryAgain": {
+    "description": "FAQ पुनः लोड गर्न प्रयोग हुने बटनको लेबल।"
+  },
+
+  "noFaqsAvailableRightNow": "अहिले कुनै पनि बारम्बार सोधिने प्रश्नहरू उपलब्ध छैनन्।",
+  "@noFaqsAvailableRightNow": {
+    "description": "कुनै FAQ उपलब्ध नभएको अवस्थामा देखाइने सन्देश।"
+  },
+
+  "reportAProblem": "समस्या रिपोर्ट गर्नुहोस्",
+  "@reportAProblem": {
+    "description": "समस्या रिपोर्ट गर्न प्रयोग हुने शीर्षक वा कार्य लेबल।"
+  },
+
+  "sendFeedback": "प्रतिक्रिया पठाउनुहोस्",
+  "@sendFeedback": {
+    "description": "प्रतिक्रिया पठाउन प्रयोग हुने कार्य लेबल।"
+  },
+
+  "tellUsHowWeCanHelp": "हामी तपाईंलाई कसरी सहयोग गर्न सक्छौँ भन्नुहोस्।",
+  "@tellUsHowWeCanHelp": {
+    "description": "समर्थन टोलीसँग सम्पर्क गर्दा देखाइने उपशीर्षक।"
+  },
+
+  "tellUsWhatWentWrong": "के समस्या भयो हामीलाई बताउनुहोस्, ताकि हामी यसलाई समाधान गर्न सकौँ।",
+  "@tellUsWhatWentWrong": {
+    "description": "समस्या रिपोर्ट गर्दा देखाइने उपशीर्षक।"
+  },
+
+  "shareYourThoughtsAndHelpUsImprove": "आफ्ना विचारहरू साझा गर्नुहोस् र Pulze+ लाई अझ राम्रो बनाउन सहयोग गर्नुहोस्।",
+  "@shareYourThoughtsAndHelpUsImprove": {
+    "description": "प्रतिक्रिया पठाउँदा देखाइने उपशीर्षक।"
+  },
+
+  "whatDoYouNeedHelpWith": "तपाईंलाई के कुरामा सहयोग चाहिन्छ?",
+  "@whatDoYouNeedHelpWith": {
+    "description": "समर्थन अनुरोधको विषयका लागि hint।"
+  },
+
+  "whatProblemAreYouExperiencing": "तपाईंले कस्तो समस्या अनुभव गरिरहनुभएको छ?",
+  "@whatProblemAreYouExperiencing": {
+    "description": "समस्या रिपोर्टको विषयका लागि hint।"
+  },
+
+  "whatWouldYouLikeToShare": "तपाईं के साझा गर्न चाहनुहुन्छ?",
+  "@whatWouldYouLikeToShare": {
+    "description": "प्रतिक्रियाको विषयका लागि hint।"
+  },
+
+  "describeYourQuestionOrIssue": "आफ्नो प्रश्न वा समस्या वर्णन गर्नुहोस्...",
+  "@describeYourQuestionOrIssue": {
+    "description": "समर्थन अनुरोधको सन्देशका लागि hint।"
+  },
+
+  "describeTheProblemAndWhatHappened": "समस्या र के भएको थियो भन्ने विवरण दिनुहोस्...",
+  "@describeTheProblemAndWhatHappened": {
+    "description": "समस्या रिपोर्टको सन्देशका लागि hint।"
+  },
+
+  "tellUsAboutYourExperienceOrSuggestion": "आफ्नो अनुभव वा सुझावबारे हामीलाई बताउनुहोस्...",
+  "@tellUsAboutYourExperienceOrSuggestion": {
+    "description": "प्रतिक्रियाको सन्देशका लागि hint।"
+  },
+
+  "sendMessage": "सन्देश पठाउनुहोस्",
+  "@sendMessage": {
+    "description": "समर्थन सन्देश पठाउने बटनको लेबल।"
+  },
+
+  "submitReport": "रिपोर्ट पठाउनुहोस्",
+  "@submitReport": {
+    "description": "समस्या रिपोर्ट पठाउने बटनको लेबल।"
+  },
+
+  "supportRequestSubmittedSuccessfully": "तपाईंको समर्थन अनुरोध सफलतापूर्वक पठाइएको छ।",
+  "@supportRequestSubmittedSuccessfully": {
+    "description": "समर्थन अनुरोध सफलतापूर्वक पठाएपछि देखाइने सन्देश।"
+  },
+
+  "problemReportSubmittedSuccessfully": "तपाईंको समस्या रिपोर्ट सफलतापूर्वक पठाइएको छ।",
+  "@problemReportSubmittedSuccessfully": {
+    "description": "समस्या रिपोर्ट सफलतापूर्वक पठाएपछि देखाइने सन्देश।"
+  },
+
+  "thankYouForYourFeedback": "तपाईंको प्रतिक्रियाका लागि धन्यवाद।",
+  "@thankYouForYourFeedback": {
+    "description": "प्रतिक्रिया सफलतापूर्वक पठाएपछि देखाइने सन्देश।"
+  },
+
+  "subject": "विषय",
+  "@subject": {
+    "description": "समर्थन अनुरोधको विषय field को लेबल।"
+  },
+
+  "message": "सन्देश",
+  "@message": {
+    "description": "समर्थन अनुरोधको सन्देश field को लेबल।"
+  },
+
+  "pleaseEnterASubject": "कृपया विषय लेख्नुहोस्।",
+  "@pleaseEnterASubject": {
+    "description": "विषय खाली हुँदा देखाइने validation message।"
+  },
+
+  "subjectMustBeAtLeast3Characters": "विषय कम्तीमा ३ अक्षरको हुनुपर्छ।",
+  "@subjectMustBeAtLeast3Characters": {
+    "description": "विषय धेरै छोटो हुँदा देखाइने validation message।"
+  },
+
+  "pleaseEnterYourMessage": "कृपया आफ्नो सन्देश लेख्नुहोस्।",
+  "@pleaseEnterYourMessage": {
+    "description": "सन्देश खाली हुँदा देखाइने validation message।"
+  },
+
+  "messageMustBeAtLeast10Characters": "सन्देश कम्तीमा १० अक्षरको हुनुपर्छ।",
+  "@messageMustBeAtLeast10Characters": {
+    "description": "सन्देश धेरै छोटो हुँदा देखाइने validation message।"
+  },
+
+  "provideEnoughDetailsToRespond": "कृपया हामीले उचित रूपमा प्रतिक्रिया दिन सक्ने गरी पर्याप्त विवरण दिनुहोस्।",
+  "@provideEnoughDetailsToRespond": {
+    "description": "पर्याप्त विवरण दिन प्रोत्साहित गर्ने जानकारी सन्देश।"
+  },
+
+  "bloodAndDonations": "रक्त तथा रक्तदान",
+  "@bloodAndDonations": {
+    "description": "प्रयोगकर्ताको रक्त तथा रक्तदानसम्बन्धी जानकारीको खण्ड शीर्षक।"
+  },
+  "viewYourBloodDonationInformation": "आफ्नो रक्तदानसम्बन्धी जानकारी हेर्नुहोस्",
+  "@viewYourBloodDonationInformation": {
+    "description": "रक्तदानसम्बन्धी जानकारीको खण्डको विवरण।"
+  },
+  "bloodGroup": "रक्त समूह",
+  "@bloodGroup": {
+    "description": "प्रयोगकर्ताको रक्त समूहको लेबल।"
+  },
+  "lastDonation": "अन्तिम रक्तदान",
+  "@lastDonation": {
+    "description": "प्रयोगकर्ताले पछिल्लो पटक गरेको रक्तदानको लेबल।"
+  },
+  "nextEligibleDate": "अर्को रक्तदान गर्न योग्य मिति",
+  "@nextEligibleDate": {
+    "description": "प्रयोगकर्ता अर्को पटक रक्तदान गर्न योग्य हुने मितिको लेबल।"
+  },
+  "editDonationDetails": "रक्तदान विवरण सम्पादन गर्नुहोस्",
+  "@editDonationDetails": {
+    "description": "रक्तदान विवरण सम्पादन गर्ने बटनको लेबल।"
+  },
+
+  "personalDetails": "व्यक्तिगत विवरण",
+  "@personalDetails": {
+    "description": "प्रयोगकर्ताको व्यक्तिगत जानकारीको खण्ड शीर्षक।"
+  },
+  "viewYourPersonalInformation": "आफ्नो व्यक्तिगत जानकारी हेर्नुहोस्",
+  "@viewYourPersonalInformation": {
+    "description": "व्यक्तिगत जानकारीको खण्डको विवरण।"
+  },
+  "edit": "सम्पादन गर्नुहोस्",
+  "@edit": {
+    "description": "व्यक्तिगत जानकारी सम्पादन गर्ने बटनको लेबल।"
+  },
+  "fullName": "पूरा नाम",
+  "@fullName": {
+    "description": "प्रयोगकर्ताको पूरा नामको लेबल।"
+  },
+  "email": "इमेल",
+  "@email": {
+    "description": "प्रयोगकर्ताको इमेल ठेगानाको लेबल।"
+  },
+  "phone": "फोन",
+  "@phone": {
+    "description": "प्रयोगकर्ताको फोन नम्बरको लेबल।"
+  },
+  "gender": "लिङ्ग",
+  "@gender": {
+    "description": "प्रयोगकर्ताको लिङ्गको लेबल।"
+  },
+  "dateOfBirth": "जन्म मिति",
+  "@dateOfBirth": {
+    "description": "प्रयोगकर्ताको जन्म मितिको लेबल।"
+  },
+  "city": "शहर",
+  "@city": {
+    "description": "प्रयोगकर्ताको शहरको लेबल।"
+  },
+  "male": "पुरुष",
+  "@male": {
+    "description": "पुरुषका लागि प्रयोग हुने लिङ्ग मान।"
+  },
+  "female": "महिला",
+  "@female": {
+    "description": "महिलाका लागि प्रयोग हुने लिङ्ग मान।"
+  },
+  "other": "अन्य",
+  "@other": {
+    "description": "अन्य लिङ्गका लागि प्रयोग हुने मान।"
+  },
+  "notSpecified": "उल्लेख गरिएको छैन",
+  "@notSpecified": {
+    "description": "लिङ्ग उल्लेख नगरिएको अवस्थामा देखाइने वैकल्पिक मान।"
+  },
+  "verified": "प्रमाणित",
+  "@verified": {
+    "description": "इमेल वा फोन नम्बर प्रमाणित भएको अवस्थामा देखाइने स्थिति।"
+  },
+  "unverified": "अपुष्ट",
+  "@unverified": {
+    "description": "इमेल वा फोन नम्बर प्रमाणित नभएको अवस्थामा देखाइने स्थिति।"
+  },
+
+  "notAdded": "थपिएको छैन",
+  "@notAdded": {
+    "description": "जानकारी थपिएको छैन भने देखाइने वैकल्पिक पाठ।"
+  },
+
+  "completeYourProfile": "आफ्नो प्रोफाइल पूरा गर्नुहोस्",
+  "@completeYourProfile": {
+    "description": "प्रोफाइल ५० प्रतिशतभन्दा कम पूरा हुँदा देखाइने शीर्षक।"
+  },
+  "almostThere": "लगभग पूरा भयो!",
+  "@almostThere": {
+    "description": "प्रोफाइल कम्तीमा ५० प्रतिशत पूरा हुँदा देखाइने शीर्षक।"
+  },
+  "addDetailsToGetMostFromPulze": "Pulze+ बाट अधिकतम लाभ लिन आफ्नो विवरण थप्नुहोस्।",
+  "@addDetailsToGetMostFromPulze": {
+    "description": "प्रयोगकर्तालाई आफ्नो प्रोफाइल पूरा गर्न प्रोत्साहित गर्ने विवरण।"
+  },
+
+  "editProfile": "प्रोफाइल सम्पादन गर्नुहोस्",
+  "@editProfile": {
+    "description": "प्रोफाइल सम्पादन गर्दा AppBar मा देखाइने शीर्षक।"
+  },
+  "tellUsALittleAboutYou": "आफ्नो बारेमा केही बताउनुहोस्",
+  "@tellUsALittleAboutYou": {
+    "description": "प्रोफाइल सिर्जना गर्दा देखाइने शीर्षक।"
+  },
+  "updateYourProfile": "आफ्नो प्रोफाइल अपडेट गर्नुहोस्",
+  "@updateYourProfile": {
+    "description": "प्रोफाइल सम्पादन गर्दा देखाइने शीर्षक।"
+  },
+  "completeYourProfileToStartUsingPulze": "Pulze+ प्रयोग गर्न सुरु गर्न आफ्नो प्रोफाइल पूरा गर्नुहोस्।",
+  "@completeYourProfileToStartUsingPulze": {
+    "description": "प्रोफाइल सिर्जना गर्दा देखाइने विवरण।"
+  },
+  "keepYourInformationUpToDate": "आफ्नो जानकारी अद्यावधिक राख्नुहोस्।",
+  "@keepYourInformationUpToDate": {
+    "description": "प्रोफाइल सम्पादन गर्दा देखाइने विवरण।"
+  },
+  "phoneNumber": "फोन नम्बर",
+  "@phoneNumber": {
+    "description": "फोन नम्बर field को लेबल।"
+  },
+  "enterYourPhoneNumber": "आफ्नो फोन नम्बर लेख्नुहोस्",
+  "@enterYourPhoneNumber": {
+    "description": "फोन नम्बर field को hint।"
+  },
+  "bloodType": "रक्त समूह",
+  "@bloodType": {
+    "description": "रक्त समूह field को लेबल।"
+  },
+  "selectYourBloodType": "आफ्नो रक्त समूह चयन गर्नुहोस्",
+  "@selectYourBloodType": {
+    "description": "रक्त समूह field को hint।"
+  },
+  "selectYourGender": "आफ्नो लिङ्ग चयन गर्नुहोस्",
+  "@selectYourGender": {
+    "description": "लिङ्ग field को hint।"
+  },
+  "preferNotToSay": "उल्लेख नगर्नुहोस्",
+  "@preferNotToSay": {
+    "description": "आफ्नो लिङ्ग उल्लेख नगर्ने विकल्प।"
+  },
+  "selectDateOfBirth": "जन्म मिति चयन गर्नुहोस्",
+  "@selectDateOfBirth": {
+    "description": "जन्म मिति चयन गर्ने date picker को help text।"
+  },
+  "dateOfBirthIsRequired": "जन्म मिति आवश्यक छ।",
+  "@dateOfBirthIsRequired": {
+    "description": "जन्म मिति चयन नगरिएको अवस्थामा देखाइने validation message।"
+  },
+  "selectYourDateOfBirth": "आफ्नो जन्म मिति चयन गर्नुहोस्",
+  "@selectYourDateOfBirth": {
+    "description": "जन्म मिति field को hint।"
+  },
+  "address": "ठेगाना",
+  "@address": {
+    "description": "ठेगाना field को लेबल।"
+  },
+  "enterYourAddress": "आफ्नो ठेगाना लेख्नुहोस्",
+  "@enterYourAddress": {
+    "description": "ठेगाना field को hint।"
+  },
+  "enterYourCity": "आफ्नो शहर लेख्नुहोस्",
+  "@enterYourCity": {
+    "description": "शहर field को hint।"
+  },
+  "location": "स्थान",
+  "@location": {
+    "description": "स्थान खण्डको शीर्षक।"
+  },
+  "locationSelected": "स्थान चयन गरिएको छ",
+  "@locationSelected": {
+    "description": "स्थान चयन गरिएको अवस्थामा देखाइने स्थिति।"
+  },
+  "selectYourLocation": "आफ्नो स्थान चयन गर्नुहोस्",
+  "@selectYourLocation": {
+    "description": "स्थान चयन नगरिएको अवस्थामा देखाइने स्थिति।"
+  },
+  "changeLocation": "स्थान परिवर्तन गर्नुहोस्",
+  "@changeLocation": {
+    "description": "चयन गरिएको स्थान परिवर्तन गर्ने बटनको लेबल।"
+  },
+  "selectLocation": "स्थान चयन गर्नुहोस्",
+  "@selectLocation": {
+    "description": "स्थान चयन गर्ने बटन वा dialog को शीर्षक।"
+  },
+  "mapSelectionWillBeConnectedLater": "नक्सामार्फत स्थान चयन गर्ने सुविधा पछि जोडिनेछ।",
+  "@mapSelectionWillBeConnectedLater": {
+    "description": "नक्सा integration अहिले उपलब्ध नभएको जानकारी।"
+  },
+  "mapLocationSelectionWillBeAvailable": "नक्सा integration थपिएपछि नक्सामार्फत स्थान चयन गर्न सकिनेछ।",
+  "@mapLocationSelectionWillBeAvailable": {
+    "description": "नक्साबाट स्थान चयन सुविधा अहिले उपलब्ध नभएको जानकारी।"
+  },
+  "ok": "ठीक छ",
+  "@ok": {
+    "description": "पुष्टि गर्ने बटनको लेबल।"
+  },
+  "completeProfile": "प्रोफाइल पूरा गर्नुहोस्",
+  "@completeProfile": {
+    "description": "नयाँ प्रोफाइल पूरा गर्ने बटनको लेबल।"
+  },
+  "saveChanges": "परिवर्तनहरू सुरक्षित गर्नुहोस्",
+  "@saveChanges": {
+    "description": "प्रोफाइल परिवर्तनहरू सुरक्षित गर्ने बटनको लेबल।"
+  },
+  "profileUpdatedSuccessfully": "प्रोफाइल सफलतापूर्वक अपडेट भयो।",
+  "@profileUpdatedSuccessfully": {
+    "description": "प्रोफाइल सफलतापूर्वक अपडेट भएपछि देखाइने सन्देश।"
+  }
+}

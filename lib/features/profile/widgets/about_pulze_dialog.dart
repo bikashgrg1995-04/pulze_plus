@@ -4,22 +4,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AboutPulzeDialog extends StatelessWidget {
   const AboutPulzeDialog({
     super.key,
   });
-
-  static const String _title = 'About Pulze+';
-
-  static const String _content =
-      'Pulze+ is a blood donor matching platform built to help '
-      'connect people who need blood with eligible donors nearby.\n\n'
-      'The platform helps users discover relevant blood donors, '
-      'manage donor availability, and respond to blood requests '
-      'more efficiently.\n\n'
-      'Our goal is to make blood donation and blood requests '
-      'simpler, faster, and more accessible for everyone.';
 
   Future<String> _getVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
@@ -30,6 +20,7 @@ class AboutPulzeDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       backgroundColor: colorScheme.surface,
@@ -79,7 +70,7 @@ class AboutPulzeDialog extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _title,
+                          l10n.aboutPulze,
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
@@ -87,7 +78,7 @@ class AboutPulzeDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Connecting people through blood donation.',
+                          l10n.connectingPeopleThroughBloodDonation,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                             height: 1.4,
@@ -98,7 +89,7 @@ class AboutPulzeDialog extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   IconButton(
-                    tooltip: 'Close',
+                    tooltip: l10n.close,
                     onPressed: () => Navigator.of(context).pop(),
                     visualDensity: VisualDensity.compact,
                     icon: Icon(
@@ -116,7 +107,7 @@ class AboutPulzeDialog extends StatelessWidget {
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Text(
-                    _content,
+                    l10n.aboutPulzeDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       height: 1.65,
@@ -151,7 +142,7 @@ class AboutPulzeDialog extends StatelessWidget {
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Text(
-                      'Version',
+                      l10n.version,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),

@@ -8,12 +8,14 @@ class AppBottomSheet extends StatelessWidget {
     super.key,
     required this.child,
     this.title,
+    this.titleWidget,
     this.showHandle = true,
     this.padding,
   });
 
   final Widget child;
   final String? title;
+  final Widget? titleWidget;
   final bool showHandle;
   final EdgeInsetsGeometry? padding;
 
@@ -21,6 +23,7 @@ class AppBottomSheet extends StatelessWidget {
     required BuildContext context,
     required Widget child,
     String? title,
+    Widget? titleWidget,
     bool showHandle = true,
     EdgeInsetsGeometry? padding,
     bool isScrollControlled = true,
@@ -32,6 +35,7 @@ class AppBottomSheet extends StatelessWidget {
       builder: (sheetContext) {
         return AppBottomSheet(
           title: title,
+          titleWidget: titleWidget,
           showHandle: showHandle,
           padding: padding,
           child: child,
@@ -47,6 +51,8 @@ class AppBottomSheet extends StatelessWidget {
 
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final screenHeight = MediaQuery.sizeOf(context).height;
+
+    final hasTitle = title != null || titleWidget != null;
 
     return Material(
       color: colorScheme.surface,
@@ -86,21 +92,22 @@ class AppBottomSheet extends StatelessWidget {
                     ),
                   ),
 
-                if (showHandle && title != null)
+                if (showHandle && hasTitle)
                   const SizedBox(height: AppSpacing.lg),
 
-                if (title != null)
-                  Text(
-                    title!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                if (hasTitle)
+                  titleWidget ??
+                      Text(
+                        title!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
 
-                if (title != null)
+                if (hasTitle)
                   const SizedBox(height: AppSpacing.lg),
 
                 Flexible(

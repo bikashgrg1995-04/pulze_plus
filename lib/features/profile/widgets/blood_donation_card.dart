@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_section_header.dart';
+import '../../../l10n/app_localizations.dart';
 
 class BloodDonationCard extends StatefulWidget {
   const BloodDonationCard({
@@ -20,7 +21,8 @@ class BloodDonationCard extends StatefulWidget {
   final VoidCallback? onEdit;
 
   @override
-  State<BloodDonationCard> createState() => _BloodDonationCardState();
+  State<BloodDonationCard> createState() =>
+      _BloodDonationCardState();
 }
 
 class _BloodDonationCardState extends State<BloodDonationCard> {
@@ -36,7 +38,9 @@ class _BloodDonationCardState extends State<BloodDonationCard> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
+        borderRadius: BorderRadius.circular(
+          AppRadius.xl,
+        ),
         border: Border.all(
           color: colorScheme.outline,
         ),
@@ -47,9 +51,12 @@ class _BloodDonationCardState extends State<BloodDonationCard> {
             child: _DetailsBackground(),
           ),
           Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: const EdgeInsets.all(
+              AppSpacing.md,
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
                 _SectionHeader(
                   isExpanded: _isExpanded,
@@ -60,7 +67,9 @@ class _BloodDonationCardState extends State<BloodDonationCard> {
                   },
                 ),
                 AnimatedSize(
-                  duration: const Duration(milliseconds: 280),
+                  duration: const Duration(
+                    milliseconds: 280,
+                  ),
                   curve: Curves.easeInOut,
                   alignment: Alignment.topCenter,
                   child: _isExpanded
@@ -71,41 +80,60 @@ class _BloodDonationCardState extends State<BloodDonationCard> {
                             ),
                             _DetailRow(
                               icon: Icons.bloodtype_outlined,
-                              label: 'Blood Group',
+                              label: AppLocalizations.of(
+                                context,
+                              )!
+                                  .bloodGroup,
                               value: widget.bloodGroup,
-                              valueColor: AppColors.primary,
+                              valueColor:
+                                  AppColors.primary,
                             ),
                             const SizedBox(
                               height: AppSpacing.sm,
                             ),
                             _DetailRow(
-                              icon: Icons.calendar_today_outlined,
-                              label: 'Last Donation',
-                              value: widget.lastDonation,
+                              icon: Icons
+                                  .calendar_today_outlined,
+                              label: AppLocalizations.of(
+                                context,
+                              )!
+                                  .lastDonation,
+                              value:
+                                  widget.lastDonation,
                             ),
                             const SizedBox(
                               height: AppSpacing.sm,
                             ),
                             _DetailRow(
-                              icon: Icons.event_available_outlined,
-                              label: 'Next Eligible Date',
-                              value: widget.nextEligibleDate,
-                              valueColor: AppColors.success,
+                              icon: Icons
+                                  .event_available_outlined,
+                              label: AppLocalizations.of(
+                                context,
+                              )!
+                                  .nextEligibleDate,
+                              value: widget
+                                  .nextEligibleDate,
+                              valueColor:
+                                  AppColors.success,
                             ),
                             if (widget.onEdit != null) ...[
                               const SizedBox(
                                 height: AppSpacing.md,
                               ),
                               Align(
-                                alignment: Alignment.centerRight,
+                                alignment:
+                                    Alignment.centerRight,
                                 child: TextButton.icon(
                                   onPressed: widget.onEdit,
                                   icon: const Icon(
                                     Icons.edit_outlined,
                                     size: 18,
                                   ),
-                                  label: const Text(
-                                    'Edit donation details',
+                                  label: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!
+                                        .editDonationDetails,
                                   ),
                                 ),
                               ),
@@ -134,42 +162,55 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadius.md),
+      borderRadius: BorderRadius.circular(
+        AppRadius.md,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppSpacing.xs,
         ),
         child: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
                   AppSectionHeader(
-                    title: 'Blood & Donations',
+                    title: l10n.bloodAndDonations,
                   ),
-                  SizedBox(height: AppSpacing.xxs),
+                  const SizedBox(
+                    height: AppSpacing.xxs,
+                  ),
                   Text(
-                    'View your blood donation information',
-                    style: TextStyle(
+                    l10n.viewYourBloodDonationInformation,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
+            const SizedBox(
+              width: AppSpacing.sm,
+            ),
             AnimatedRotation(
               turns: isExpanded ? 0.5 : 0,
-              duration: const Duration(milliseconds: 280),
+              duration: const Duration(
+                milliseconds: 280,
+              ),
               child: Icon(
                 Icons.expand_more_rounded,
                 size: 24,
-                color: colorScheme.onSurfaceVariant,
+                color:
+                    colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -198,7 +239,8 @@ class _DetailRow extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment:
+          CrossAxisAlignment.center,
       children: [
         Container(
           width: 36,
@@ -210,23 +252,28 @@ class _DetailRow extends StatelessWidget {
             ),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
-            Icons.bloodtype_outlined,
+          child: Icon(
+            icon,
             size: 18,
             color: AppColors.primary,
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(
+          width: AppSpacing.sm,
+        ),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 label.toUpperCase(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+                style:
+                    theme.textTheme.labelSmall?.copyWith(
+                  color:
+                      colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.4,
                 ),
@@ -236,8 +283,10 @@ class _DetailRow extends StatelessWidget {
                 value,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: valueColor ?? colorScheme.onSurface,
+                style:
+                    theme.textTheme.bodySmall?.copyWith(
+                  color: valueColor ??
+                      colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -260,11 +309,14 @@ class _DetailsBackground extends StatelessWidget {
   }
 }
 
-class _DetailsBackgroundPainter extends CustomPainter {
+class _DetailsBackgroundPainter
+    extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final topPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.035)
+      ..color = AppColors.primary.withValues(
+        alpha: 0.035,
+      )
       ..style = PaintingStyle.fill;
 
     final topPath = Path()
@@ -280,14 +332,22 @@ class _DetailsBackgroundPainter extends CustomPainter {
       ..lineTo(size.width, 0)
       ..close();
 
-    canvas.drawPath(topPath, topPaint);
+    canvas.drawPath(
+      topPath,
+      topPaint,
+    );
 
     final bottomPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.025)
+      ..color = AppColors.primary.withValues(
+        alpha: 0.025,
+      )
       ..style = PaintingStyle.fill;
 
     final bottomPath = Path()
-      ..moveTo(0, size.height * 0.90)
+      ..moveTo(
+        0,
+        size.height * 0.90,
+      )
       ..cubicTo(
         size.width * 0.22,
         size.height * 0.80,
@@ -304,15 +364,26 @@ class _DetailsBackgroundPainter extends CustomPainter {
         size.width,
         size.height * 0.78,
       )
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
+      ..lineTo(
+        size.width,
+        size.height,
+      )
+      ..lineTo(
+        0,
+        size.height,
+      )
       ..close();
 
-    canvas.drawPath(bottomPath, bottomPaint);
+    canvas.drawPath(
+      bottomPath,
+      bottomPaint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(
+    covariant CustomPainter oldDelegate,
+  ) {
     return false;
   }
 }

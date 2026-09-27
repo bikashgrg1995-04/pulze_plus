@@ -30,6 +30,7 @@ import 'package:pulze_plus/features/profile/widgets/profile_header.dart';
 import 'package:pulze_plus/features/profile/widgets/profile_menu_item.dart';
 import 'package:pulze_plus/features/profile/widgets/profile_section.dart';
 import 'package:pulze_plus/features/profile/widgets/profile_settings_sheet.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 import 'profile_form_screen.dart';
 
@@ -53,11 +54,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     if (user == null) {
       return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 
@@ -102,20 +106,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   try {
                     await ref
                         .read(profileProvider.notifier)
-                        .updateDonorStatus(isDonor: value);
+                        .updateDonorStatus(
+                          isDonor: value,
+                        );
 
                     if (!context.mounted) return;
 
                     AppSnackBar.success(
                       context,
                       value
-                          ? 'You are now available as a donor.'
-                          : 'You are no longer available as a donor.',
+                          ? l10n.donorAvailableMessage
+                          : l10n.donorUnavailableMessage,
                     );
                   } catch (error) {
                     if (!context.mounted) return;
 
-                    AppSnackBar.error(context, error.toString());
+                    AppSnackBar.error(
+                      context,
+                      error.toString(),
+                    );
                   }
                 },
               ),
@@ -129,117 +138,163 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 720),
+                    constraints: const BoxConstraints(
+                      maxWidth: 720,
+                    ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.stretch,
                       children: [
                         if (profileCompletion < 1.0) ...[
                           ProfileCompletionCard(
                             completion: profileCompletion,
                             onPressed: () {
-                              _openEditProfile(context, profile);
+                              _openEditProfile(
+                                context,
+                                profile,
+                              );
                             },
                           ),
-                          const SizedBox(height: AppSpacing.md),
+                          const SizedBox(
+                            height: AppSpacing.md,
+                          ),
                         ],
 
                         ProfileUserCard(
                           user: user,
                           profile: profile,
                           onEdit: () {
-                            _openEditProfile(context, profile);
+                            _openEditProfile(
+                              context,
+                              profile,
+                            );
                           },
                         ),
 
-                        const SizedBox(height: AppSpacing.md),
-
-                        BloodDonationCard(
-                          bloodGroup: profile?.bloodType ?? 'Not added',
-                          lastDonation: 'Not available',
-                          nextEligibleDate: 'Not available',
+                        const SizedBox(
+                          height: AppSpacing.md,
                         ),
 
-                        const SizedBox(height: AppSpacing.xl),
+                        BloodDonationCard(
+                          bloodGroup:
+                              profile?.bloodType ??
+                              l10n.bloodGroupNotAdded,
+                          lastDonation:
+                              l10n.notAvailable,
+                          nextEligibleDate:
+                              l10n.notAvailable,
+                        ),
+
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
 
                         // Activity
                         ProfileSection(
-                          title: 'Activity',
-                          subtitle: 'View your requests and donations',
+                          title: l10n.activity,
+                          subtitle:
+                              l10n.viewRequestsAndDonations,
                           expandable: true,
-                          children: const [
+                          children: [
                             ProfileMenuItem(
-                              icon: Icons.description_outlined,
-                              title: 'My Requests',
+                              icon:
+                                  Icons.description_outlined,
+                              title: l10n.myRequests,
                             ),
                             ProfileMenuItem(
-                              icon: Icons.volunteer_activism_outlined,
-                              title: 'Donation History',
+                              icon: Icons
+                                  .volunteer_activism_outlined,
+                              title: l10n.donationHistory,
                               showDivider: false,
                             ),
                           ],
                         ),
 
-                        const SizedBox(height: AppSpacing.xl),
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
 
                         // Settings
                         ProfileSection(
-                          title: 'Settings',
-                          subtitle: 'Manage your account and preferences',
+                          title: l10n.settings,
+                          subtitle:
+                              l10n.manageAccountAndPreferences,
                           expandable: true,
                           children: [
                             ProfileMenuItem(
-                              icon: Icons.lock_outline_rounded,
-                              title: 'Privacy & Security',
+                              icon:
+                                  Icons.lock_outline_rounded,
+                              title: l10n.privacySecurity,
                               onTap: () {
-                                _showPrivacySecuritySheet(context);
+                                _showPrivacySecuritySheet(
+                                  context,
+                                );
                               },
                             ),
                             ProfileMenuItem(
-                              icon: Icons.manage_accounts_outlined,
-                              title: 'Account Settings',
+                              icon: Icons
+                                  .manage_accounts_outlined,
+                              title: l10n.accountSettings,
                               onTap: () {
-                                _showAccountSettingsSheet(context);
+                                _showAccountSettingsSheet(
+                                  context,
+                                );
                               },
                             ),
                             ProfileMenuItem(
                               icon: Icons.tune_rounded,
-                              title: 'App Preferences',
+                              title: l10n.appPreferences,
                               onTap: () {
-                                _showAppPreferencesSheet(context);
+                                _showAppPreferencesSheet(
+                                  context,
+                                );
                               },
                             ),
                             ProfileMenuItem(
-                              icon: Icons.help_outline_rounded,
-                              title: 'Help & Support',
+                              icon:
+                                  Icons.help_outline_rounded,
+                              title: l10n.helpSupport,
                               showDivider: false,
                               onTap: () {
-                                _showHelpSupportSheet(context);
+                                _showHelpSupportSheet(
+                                  context,
+                                );
                               },
                             ),
                           ],
                         ),
 
-                        const SizedBox(height: AppSpacing.xl),
+                        const SizedBox(
+                          height: AppSpacing.xl,
+                        ),
 
                         AppButton(
-                          label: 'Sign out',
+                          label: l10n.signOut,
                           icon: Icons.logout_rounded,
-                          variant: AppButtonVariant.danger,
+                          variant:
+                              AppButtonVariant.danger,
                           onPressed: () {
-                            _showLogoutConfirmation(context);
+                            _showLogoutConfirmation(
+                              context,
+                            );
                           },
                         ),
 
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(
+                          height: AppSpacing.md,
+                        ),
 
                         Center(
                           child: Text(
                             'Pulze+',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: colorScheme.onSurface.withValues(
+                            style: theme.textTheme.labelSmall
+                                ?.copyWith(
+                              color: colorScheme.onSurface
+                                  .withValues(
                                 alpha: 0.5,
                               ),
-                              fontWeight: FontWeight.w500,
+                              fontWeight:
+                                  FontWeight.w500,
                               letterSpacing: 0.3,
                             ),
                           ),
@@ -260,43 +315,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Privacy & Security
   // ---------------------------------------------------------------------------
 
-  Future<void> _showPrivacySecuritySheet(BuildContext context) async {
+  Future<void> _showPrivacySecuritySheet(
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
     await AppBottomSheet.show<void>(
       context: context,
-      title: 'Privacy & Security',
+      title: l10n.privacySecurity,
       child: ProfileSettingsSheet(
         icon: Icons.lock_outline_rounded,
-        title: 'Privacy & Security',
-        subtitle: 'Manage your privacy and security',
+        title: l10n.privacySecurity,
+        subtitle: l10n.managePrivacySecurity,
         children: [
           ProfileSettingsSheetItem(
             icon: Icons.lock_reset_rounded,
-            title: 'Change Password',
-            subtitle: 'Update your account password',
+            title: l10n.changePassword,
+            subtitle: l10n.updateAccountPassword,
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           ProfileSettingsSheetItem(
-            icon: Icons.admin_panel_settings_outlined,
-            title: 'App Permissions',
-            subtitle: 'Manage camera and location permissions',
+            icon:
+                Icons.admin_panel_settings_outlined,
+            title: l10n.appPermissions,
+            subtitle:
+                l10n.manageCameraLocationPermissions,
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           ProfileSettingsSheetItem(
             icon: Icons.privacy_tip_outlined,
-            title: 'Privacy Policy',
-            subtitle: 'Learn how Pulze+ handles your information',
+            title: l10n.privacyPolicy,
+            subtitle:
+                l10n.learnHowPulzeHandlesInformation,
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           ProfileSettingsSheetItem(
             icon: Icons.description_outlined,
-            title: 'Terms & Conditions',
-            subtitle: 'Review Pulze+ terms of use',
+            title: l10n.termsConditions,
+            subtitle: l10n.reviewPulzeTerms,
             showDivider: false,
             onTap: () {
               Navigator.of(context).pop();
@@ -311,19 +373,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Account Settings
   // ---------------------------------------------------------------------------
 
-  Future<void> _showAccountSettingsSheet(BuildContext context) async {
+  Future<void> _showAccountSettingsSheet(
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
     await AppBottomSheet.show<void>(
       context: context,
-      title: 'Account Settings',
+      title: l10n.accountSettings,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ProfileMenuItem(
-            icon: Icons.volunteer_activism_outlined,
-            title: 'Donor Status',
+            icon:
+                Icons.volunteer_activism_outlined,
+            title: l10n.donorStatus,
             subtitle: profileIsDonor
-                ? 'You are currently available as a donor'
-                : 'You are currently not available as a donor',
+                ? l10n.currentlyAvailableDonor
+                : l10n.currentlyNotAvailableDonor,
             onTap: () async {
               Navigator.of(context).pop();
 
@@ -332,16 +399,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           ProfileMenuItem(
             icon: Icons.phone_outlined,
-            title: 'Change Phone Number',
-            subtitle: 'Update your registered phone number',
+            title: l10n.changePhoneNumber,
+            subtitle: l10n.updateRegisteredPhone,
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           ProfileMenuItem(
-            icon: Icons.delete_outline_rounded,
-            title: 'Delete Account',
-            subtitle: 'Permanently delete your Pulze+ account',
+            icon:
+                Icons.delete_outline_rounded,
+            title: l10n.deleteAccount,
+            subtitle:
+                l10n.permanentlyDeleteAccount,
             showDivider: false,
             onTap: () {
               Navigator.of(context).pop();
@@ -356,76 +425,133 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // App Preferences
   // ---------------------------------------------------------------------------
 
-  Future<void> _showAppPreferencesSheet(BuildContext context) async {
+  Future<void> _showAppPreferencesSheet(
+    BuildContext context,
+  ) async {
     await AppBottomSheet.show<void>(
       context: context,
-      title: 'App Preferences',
+      titleWidget: Builder(
+        builder: (context) {
+          final l10n =
+              AppLocalizations.of(context)!;
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
+
+          return Text(
+            l10n.appPreferences,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleLarge
+                ?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
+          );
+        },
+      ),
       child: Consumer(
         builder: (context, ref, child) {
-          final preferences = ref.watch(appPreferencesProvider);
+          final preferences =
+              ref.watch(appPreferencesProvider);
+          final l10n =
+              AppLocalizations.of(context)!;
 
           return Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               PreferenceSwitchRow(
-                icon: Icons.notifications_outlined,
-                title: 'Notifications',
-                subtitle: 'Receive important app notifications',
-                value: preferences.notificationsEnabled,
+                icon:
+                    Icons.notifications_outlined,
+                title: l10n.notifications,
+                subtitle:
+                    l10n.receiveImportantNotifications,
+                value:
+                    preferences.notificationsEnabled,
                 onChanged: (value) {
                   ref
-                      .read(appPreferencesProvider.notifier)
-                      .setNotificationsEnabled(value);
+                      .read(
+                        appPreferencesProvider
+                            .notifier,
+                      )
+                      .setNotificationsEnabled(
+                        value,
+                      );
                 },
               ),
-
               PreferenceSwitchRow(
                 icon: Icons.bloodtype_outlined,
-                title: 'Donation Reminder',
-                subtitle: 'Get reminded when you can donate again',
-                value: preferences.donationRemindersEnabled,
+                title: l10n.donationReminder,
+                subtitle:
+                    l10n.getRemindedWhenCanDonate,
+                value: preferences
+                    .donationRemindersEnabled,
                 onChanged: (value) {
                   ref
-                      .read(appPreferencesProvider.notifier)
-                      .setDonationRemindersEnabled(value);
+                      .read(
+                        appPreferencesProvider
+                            .notifier,
+                      )
+                      .setDonationRemindersEnabled(
+                        value,
+                      );
                 },
               ),
-
               PreferenceSegmentedTile<String>(
                 icon: Icons.palette_outlined,
-                title: 'Theme',
-                subtitle: 'Choose your preferred appearance',
+                title: l10n.theme,
+                subtitle:
+                    l10n.choosePreferredAppearance,
                 value: preferences.theme,
-                options: const [
+                options: [
                   PreferenceSegment(
                     value: 'light',
-                    label: 'Light',
-                    icon: Icons.light_mode_outlined,
+                    label: l10n.light,
+                    icon:
+                        Icons.light_mode_outlined,
                   ),
                   PreferenceSegment(
                     value: 'dark',
-                    label: 'Dark',
-                    icon: Icons.dark_mode_outlined,
+                    label: l10n.dark,
+                    icon:
+                        Icons.dark_mode_outlined,
                   ),
                 ],
                 onChanged: (value) {
-                  ref.read(appPreferencesProvider.notifier).setTheme(value);
+                  ref
+                      .read(
+                        appPreferencesProvider
+                            .notifier,
+                      )
+                      .setTheme(value);
                 },
               ),
-
               PreferenceSegmentedTile<String>(
-                icon: Icons.language_outlined,
-                title: 'Language',
-                subtitle: 'Choose your preferred language',
+                icon:
+                    Icons.language_outlined,
+                title: l10n.language,
+                subtitle:
+                    l10n.choosePreferredLanguage,
                 value: preferences.language,
                 showDivider: false,
-                options: const [
-                  PreferenceSegment(value: 'english', label: 'English'),
-                  PreferenceSegment(value: 'nepali', label: 'नेपाली'),
+                options: [
+                  PreferenceSegment(
+                    value: 'english',
+                    label: l10n.english,
+                  ),
+                  PreferenceSegment(
+                    value: 'nepali',
+                    label: l10n.nepali,
+                  ),
                 ],
                 onChanged: (value) {
-                  ref.read(appPreferencesProvider.notifier).setLanguage(value);
+                  ref
+                      .read(
+                        appPreferencesProvider
+                            .notifier,
+                      )
+                      .setLanguage(value);
                 },
               ),
             ],
@@ -439,17 +565,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Help & Support
   // ---------------------------------------------------------------------------
 
-  Future<void> _showHelpSupportSheet(BuildContext context) async {
+  Future<void> _showHelpSupportSheet(
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
     await AppBottomSheet.show<void>(
       context: context,
-      title: 'Help & Support',
+      title: l10n.helpSupport,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ProfileMenuItem(
             icon: Icons.quiz_outlined,
-            title: 'FAQs',
-            subtitle: 'Find answers to common questions',
+            title: l10n.faqs,
+            subtitle:
+                l10n.findAnswersCommonQuestions,
             onTap: () {
               Navigator.of(context).pop();
 
@@ -457,56 +588,68 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             },
           ),
           ProfileMenuItem(
-            icon: Icons.support_agent_outlined,
-            title: 'Contact Support',
-            subtitle: 'Get help from the Pulze+ support team',
+            icon:
+                Icons.support_agent_outlined,
+            title: l10n.contactSupport,
+            subtitle:
+                l10n.getHelpFromSupportTeam,
             onTap: () {
               showDialog<void>(
                 context: context,
-                builder: (_) => SupportRequestDialog(
+                builder: (_) =>
+                    SupportRequestDialog(
                   parentContext: context,
-                  type: SupportRequestType.contact,
+                  type:
+                      SupportRequestType.contact,
                 ),
               );
             },
           ),
           ProfileMenuItem(
             icon: Icons.bug_report_outlined,
-            title: 'Report a Problem',
-            subtitle: 'Tell us about an issue in the app',
+            title: l10n.reportProblem,
+            subtitle: l10n.tellUsAboutIssue,
             onTap: () {
               showDialog<void>(
                 context: context,
-                builder: (_) => SupportRequestDialog(
+                builder: (_) =>
+                    SupportRequestDialog(
                   parentContext: context,
-                  type: SupportRequestType.problem,
+                  type:
+                      SupportRequestType.problem,
                 ),
               );
             },
           ),
           ProfileMenuItem(
             icon: Icons.feedback_outlined,
-            title: 'Feedback',
-            subtitle: 'Share your ideas and suggestions',
+            title: l10n.feedback,
+            subtitle:
+                l10n.shareIdeasSuggestions,
             onTap: () {
               showDialog<void>(
                 context: context,
-                builder: (_) => SupportRequestDialog(
+                builder: (_) =>
+                    SupportRequestDialog(
                   parentContext: context,
-                  type: SupportRequestType.feedback,
+                  type:
+                      SupportRequestType.feedback,
                 ),
               );
             },
           ),
           ProfileMenuItem(
-            icon: Icons.info_outline_rounded,
-            title: 'About Pulze+',
-            subtitle: 'Learn more about Pulze+',
+            icon:
+                Icons.info_outline_rounded,
+            title: l10n.aboutPulze,
+            subtitle:
+                l10n.learnMoreAboutPulze,
             showDivider: false,
             onTap: () {
               showDialog<void>(
                 context: context,
-                builder: (_) => const AboutPulzeDialog(),
+                builder: (_) =>
+                    const AboutPulzeDialog(),
               );
             },
           ),
@@ -520,29 +663,45 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // ---------------------------------------------------------------------------
 
   bool get profileIsDonor {
-    return ref.read(profileProvider).profile?.isDonor ?? false;
+    return ref
+            .read(profileProvider)
+            .profile
+            ?.isDonor ??
+        false;
   }
 
   Future<void> _toggleDonorStatus() async {
-    final currentStatus = ref.read(profileProvider).profile?.isDonor ?? false;
+    final l10n =
+        AppLocalizations.of(context)!;
+
+    final currentStatus = ref
+            .read(profileProvider)
+            .profile
+            ?.isDonor ??
+        false;
 
     try {
       await ref
           .read(profileProvider.notifier)
-          .updateDonorStatus(isDonor: !currentStatus);
+          .updateDonorStatus(
+            isDonor: !currentStatus,
+          );
 
       if (!mounted) return;
 
       AppSnackBar.success(
         context,
         !currentStatus
-            ? 'You are now available as a donor.'
-            : 'You are no longer available as a donor.',
+            ? l10n.donorAvailableMessage
+            : l10n.donorUnavailableMessage,
       );
     } catch (error) {
       if (!mounted) return;
 
-      AppSnackBar.error(context, error.toString());
+      AppSnackBar.error(
+        context,
+        error.toString(),
+      );
     }
   }
 
@@ -550,46 +709,68 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Avatar
   // ---------------------------------------------------------------------------
 
-  Future<void> _showAvatarSourceDialog(BuildContext context) async {
+  Future<void> _showAvatarSourceDialog(
+    BuildContext context,
+  ) async {
     if (_isUploadingAvatar) return;
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n =
+        AppLocalizations.of(context)!;
 
-    final source = await AppBottomSheet.show<ImageSource>(
+    final source =
+        await AppBottomSheet.show<ImageSource>(
       context: context,
-      title: 'Change profile photo',
+      title: l10n.changeProfilePhoto,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Choose how you want to update your profile photo.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+            l10n.chooseProfilePhotoMethod,
+            style: theme.textTheme.bodySmall
+                ?.copyWith(
+              color:
+                  colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(
+            height: AppSpacing.md,
+          ),
           _AvatarSourceOption(
-            icon: Icons.camera_alt_rounded,
-            title: 'Take a photo',
-            subtitle: 'Use your camera',
+            icon:
+                Icons.camera_alt_rounded,
+            title: l10n.takePhoto,
+            subtitle: l10n.useCamera,
             onTap: () {
-              Navigator.of(context).pop(ImageSource.camera);
+              Navigator.of(context).pop(
+                ImageSource.camera,
+              );
             },
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(
+            height: AppSpacing.sm,
+          ),
           _AvatarSourceOption(
-            icon: Icons.photo_library_rounded,
-            title: 'Choose from gallery',
-            subtitle: 'Select an existing photo',
+            icon:
+                Icons.photo_library_rounded,
+            title:
+                l10n.chooseFromGallery,
+            subtitle:
+                l10n.selectExistingPhoto,
             onTap: () {
-              Navigator.of(context).pop(ImageSource.gallery);
+              Navigator.of(context).pop(
+                ImageSource.gallery,
+              );
             },
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(
+            height: AppSpacing.sm,
+          ),
           AppButton(
-            label: 'Cancel',
-            variant: AppButtonVariant.text,
+            label: l10n.cancel,
+            variant:
+                AppButtonVariant.text,
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -598,17 +779,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
 
-    if (!mounted || source == null) return;
+    if (!mounted || source == null) {
+      return;
+    }
 
     await _pickAndUploadAvatar(source);
   }
 
-  Future<void> _pickAndUploadAvatar(ImageSource source) async {
+  Future<void> _pickAndUploadAvatar(
+    ImageSource source,
+  ) async {
     if (_isUploadingAvatar) return;
+
+    final l10n =
+        AppLocalizations.of(context)!;
 
     try {
       if (source == ImageSource.camera) {
-        final permissionStatus = await Permission.camera.request();
+        final permissionStatus =
+            await Permission.camera.request();
 
         if (!mounted) return;
 
@@ -616,8 +805,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           if (permissionStatus.isPermanentlyDenied) {
             AppSnackBar.error(
               context,
-              'Camera permission is required. '
-              'Please enable it in Settings.',
+              l10n
+                  .cameraPermissionRequiredSettings,
             );
 
             await openAppSettings();
@@ -626,7 +815,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           AppSnackBar.error(
             context,
-            'Camera permission is required to take a photo.',
+            l10n.cameraPermissionRequired,
           );
 
           return;
@@ -635,14 +824,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       final picker = ImagePicker();
 
-      final pickedFile = await picker.pickImage(
+      final pickedFile =
+          await picker.pickImage(
         source: source,
         imageQuality: 85,
         maxWidth: 1200,
         maxHeight: 1200,
       );
 
-      if (!mounted || pickedFile == null) return;
+      if (!mounted || pickedFile == null) {
+        return;
+      }
 
       setState(() {
         _isUploadingAvatar = true;
@@ -650,15 +842,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       await ref
           .read(profileProvider.notifier)
-          .updateAvatar(avatarFile: File(pickedFile.path));
+          .updateAvatar(
+            avatarFile:
+                File(pickedFile.path),
+          );
 
       if (!mounted) return;
 
-      AppSnackBar.success(context, 'Profile photo updated successfully.');
+      AppSnackBar.success(
+        context,
+        l10n.profilePhotoUpdated,
+      );
     } catch (error) {
       if (!mounted) return;
 
-      AppSnackBar.error(context, error.toString());
+      AppSnackBar.error(
+        context,
+        error.toString(),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -688,7 +889,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       completedFields++;
     }
 
-    if (user.phoneNumber?.trim().isNotEmpty ?? false) {
+    if (user.phoneNumber?.trim().isNotEmpty ??
+        false) {
       completedFields++;
     }
 
@@ -699,15 +901,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       completedFields++;
 
-      if (profile.address?.trim().isNotEmpty ?? false) {
+      if (profile.address?.trim().isNotEmpty ??
+          false) {
         completedFields++;
       }
 
-      if (profile.city?.trim().isNotEmpty ?? false) {
+      if (profile.city?.trim().isNotEmpty ??
+          false) {
         completedFields++;
       }
 
-      if (profile.latitude != null && profile.longitude != null) {
+      if (profile.latitude != null &&
+          profile.longitude != null) {
         completedFields++;
       }
     }
@@ -723,7 +928,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) {
-            return const ProfileFormScreen(mode: ProfileFormMode.create);
+            return const ProfileFormScreen(
+              mode: ProfileFormMode.create,
+            );
           },
         ),
       );
@@ -747,13 +954,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   // Logout
   // ---------------------------------------------------------------------------
 
-  Future<void> _showLogoutConfirmation(BuildContext context) async {
-    final confirmed = await AppConfirmationDialog.show(
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+  ) async {
+    final l10n =
+        AppLocalizations.of(context)!;
+
+    final confirmed =
+        await AppConfirmationDialog.show(
       context: context,
-      title: 'Sign out',
-      description: 'Are you sure you want to sign out of Pulze+?',
-      confirmLabel: 'Sign out',
-      cancelLabel: 'Cancel',
+      title: l10n.signOut,
+      description:
+          l10n.signOutConfirmation,
+      confirmLabel: l10n.signOut,
+      cancelLabel: l10n.cancel,
       icon: Icons.logout_rounded,
       isDestructive: true,
     );
@@ -762,11 +976,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       return;
     }
 
-    await ref.read(authProvider.notifier).logout();
+    await ref
+        .read(authProvider.notifier)
+        .logout();
   }
 }
 
-class _AvatarSourceOption extends StatelessWidget {
+class _AvatarSourceOption
+    extends StatelessWidget {
   const _AvatarSourceOption({
     required this.icon,
     required this.title,
@@ -786,12 +1003,18 @@ class _AvatarSourceOption extends StatelessWidget {
 
     return Material(
       color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(AppRadius.lg),
+      borderRadius: BorderRadius.circular(
+        AppRadius.lg,
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(
+          AppRadius.lg,
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(
+            AppSpacing.md,
+          ),
           child: Row(
             children: [
               Container(
@@ -799,42 +1022,67 @@ class _AvatarSourceOption extends StatelessWidget {
                 height: 44,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  color: AppColors.primary
+                      .withValues(alpha: 0.08),
+                  borderRadius:
+                      BorderRadius.circular(
+                    AppRadius.md,
+                  ),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 22),
+                child: Icon(
+                  icon,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
-              const SizedBox(width: AppSpacing.md),
+              const SizedBox(
+                width: AppSpacing.md,
+              ),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
+                      overflow:
+                          TextOverflow.ellipsis,
+                      style: theme
+                          .textTheme.bodyMedium
+                          ?.copyWith(
+                        color:
+                            colorScheme.onSurface,
+                        fontWeight:
+                            FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xxs),
+                    const SizedBox(
+                      height: AppSpacing.xxs,
+                    ),
                     Text(
                       subtitle,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                      overflow:
+                          TextOverflow.ellipsis,
+                      style: theme
+                          .textTheme.bodySmall
+                          ?.copyWith(
+                        color: colorScheme
+                            .onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(
+                width: AppSpacing.sm,
+              ),
               Icon(
                 Icons.chevron_right_rounded,
                 size: 22,
-                color: colorScheme.onSurfaceVariant,
+                color:
+                    colorScheme.onSurfaceVariant,
               ),
             ],
           ),

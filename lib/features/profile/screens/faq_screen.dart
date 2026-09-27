@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/responsive_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class FaqScreen extends ConsumerWidget {
   const FaqScreen({super.key});
@@ -14,6 +15,7 @@ class FaqScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final horizontalPadding = ResponsiveUtils.value(
       context,
@@ -34,7 +36,7 @@ class FaqScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('FAQs'),
+        title: Text(l10n.faqs),
         backgroundColor: theme.scaffoldBackgroundColor,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
@@ -115,6 +117,7 @@ class _FaqIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(
@@ -162,7 +165,7 @@ class _FaqIntro extends StatelessWidget {
                   CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Frequently Asked Questions',
+                  l10n.frequentlyAskedQuestions,
                   style: theme.textTheme.titleMedium
                       ?.copyWith(
                     color: colorScheme.onSurface,
@@ -175,8 +178,7 @@ class _FaqIntro extends StatelessWidget {
                 ),
 
                 Text(
-                  'Find quick answers about Pulze+, blood donation, '
-                  'and your account.',
+                  l10n.findQuickAnswersAboutPulze,
                   style: theme.textTheme.bodySmall
                       ?.copyWith(
                     color:
@@ -336,6 +338,7 @@ class _FaqError extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -354,7 +357,7 @@ class _FaqError extends StatelessWidget {
           ),
 
           Text(
-            'Unable to load FAQs.',
+            l10n.unableToLoadFaqs,
             style: theme.textTheme.bodyMedium
                 ?.copyWith(
               color: colorScheme.onSurface,
@@ -368,7 +371,7 @@ class _FaqError extends StatelessWidget {
 
           TextButton(
             onPressed: onRetry,
-            child: const Text('Try Again'),
+            child: Text(l10n.tryAgain),
           ),
         ],
       ),
@@ -383,6 +386,7 @@ class _EmptyFaq extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -390,7 +394,7 @@ class _EmptyFaq extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          'No FAQs available right now.',
+          l10n.noFaqsAvailableRightNow,
           style: theme.textTheme.bodyMedium
               ?.copyWith(
             color: colorScheme.onSurfaceVariant,

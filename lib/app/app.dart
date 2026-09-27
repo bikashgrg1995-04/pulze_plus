@@ -6,6 +6,7 @@ import 'package:pulze_plus/core/theme/app_theme.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 class PulzeApp extends ConsumerWidget {
   const PulzeApp({super.key});
@@ -20,16 +21,14 @@ class PulzeApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: preferences.theme == 'dark'
-          ? ThemeMode.dark
-          : ThemeMode.light,
+      themeMode: preferences.theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
+      locale: Locale(preferences.language == 'nepali' ? 'ne' : 'en'),
       themeAnimationDuration: Duration.zero,
-      themeAnimationCurve: Curves.easeInOut,
       routerConfig: router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
-        return _AuthMessageListener(
-          child: child ?? const SizedBox.shrink(),
-        );
+        return _AuthMessageListener(child: child ?? const SizedBox.shrink());
       },
     );
   }

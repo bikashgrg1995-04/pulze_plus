@@ -8,6 +8,7 @@ import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ProfileUserCard extends StatefulWidget {
   const ProfileUserCard({
@@ -30,7 +31,9 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
@@ -69,14 +72,18 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                                 child: SizedBox(
                                   width: ResponsiveUtils.widthPercent(
                                     context,
-                                    0.28,
+                                    Localizations.localeOf(context)
+                                                .languageCode ==
+                                            'ne'
+                                        ? 0.45
+                                        : 0.28,
                                   ),
                                   height: ResponsiveUtils.heightPercent(
                                     context,
                                     0.04,
                                   ),
                                   child: AppButton(
-                                    label: 'Edit',
+                                    label: l10n.edit,
                                     icon: Icons.edit_outlined,
                                     variant: AppButtonVariant.outlined,
                                     isExpanded: false,
@@ -87,13 +94,13 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                             ],
                             _DetailRow(
                               icon: Icons.person_outline_rounded,
-                              label: 'Full Name',
+                              label: l10n.fullName,
                               value: widget.user.fullName,
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
                               icon: Icons.email_outlined,
-                              label: 'Email',
+                              label: l10n.email,
                               value: widget.user.email,
                               trailing: _VerificationStatus(
                                 isVerified: widget.user.isEmailVerified,
@@ -102,8 +109,9 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
                               icon: Icons.phone_outlined,
-                              label: 'Phone',
-                              value: widget.profile?.phoneNumber ?? 'Not added',
+                              label: l10n.phone,
+                              value:
+                                  widget.profile?.phoneNumber ?? l10n.notAdded,
                               trailing: _VerificationStatus(
                                 isVerified:
                                     widget.profile?.isPhoneVerified == true,
@@ -112,24 +120,30 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
                               icon: Icons.person_outline_rounded,
-                              label: 'Gender',
-                              value: _formatGender(widget.profile?.gender),
+                              label: l10n.gender,
+                              value: _formatGender(
+                                widget.profile?.gender,
+                                l10n,
+                              ),
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
                               icon: Icons.calendar_today_outlined,
-                              label: 'Date of Birth',
-                              value: _formatDate(widget.profile?.dateOfBirth),
+                              label: l10n.dateOfBirth,
+                              value: _formatDate(
+                                widget.profile?.dateOfBirth,
+                                l10n,
+                              ),
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
                               icon: Icons.location_city_outlined,
-                              label: 'City',
+                              label: l10n.city,
                               value:
                                   widget.profile?.city?.trim().isNotEmpty ==
                                       true
                                   ? widget.profile!.city!
-                                  : 'Not added',
+                                  : l10n.notAdded,
                             ),
                           ],
                         )
@@ -143,24 +157,24 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
     );
   }
 
-  String _formatGender(String? gender) {
+  String _formatGender(String? gender, AppLocalizations l10n) {
     switch (gender) {
       case 'male':
-        return 'Male';
+        return l10n.male;
       case 'female':
-        return 'Female';
+        return l10n.female;
       case 'other':
-        return 'Other';
+        return l10n.other;
       case 'prefer_not_to_say':
-        return 'Not specified';
+        return l10n.notSpecified;
       default:
-        return 'Not specified';
+        return l10n.notSpecified;
     }
   }
 
-  String _formatDate(DateTime? date) {
+  String _formatDate(DateTime? date, AppLocalizations l10n) {
     if (date == null) {
-      return 'Not added';
+      return l10n.notAdded;
     }
 
     final year = date.year.toString().padLeft(4, '0');
@@ -179,7 +193,9 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return InkWell(
       onTap: onTap,
@@ -192,11 +208,11 @@ class _SectionHeader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AppSectionHeader(title: 'Personal Details'),
+                  AppSectionHeader(title: l10n.personalDetails),
                   const SizedBox(height: AppSpacing.xxs),
                   Text(
-                    'View your personal information',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    l10n.viewYourPersonalInformation,
+                    style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
@@ -293,6 +309,7 @@ class _VerificationStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final statusColor = isVerified ? AppColors.success : AppColors.error;
 
     return Row(
@@ -305,7 +322,7 @@ class _VerificationStatus extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          isVerified ? 'Verified' : 'Unverified',
+          isVerified ? l10n.verified : l10n.unverified,
           style: Theme.of(context).textTheme.labelSmall
               ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
         ),

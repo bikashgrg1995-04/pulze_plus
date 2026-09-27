@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pulze_plus/core/widgets/app_button.dart';
-import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
-import 'package:pulze_plus/core/widgets/app_text_field.dart';
 import 'package:pulze_plus/features/profile/providers/help_support_providers.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/widgets/app_text_field.dart';
+import '../../../../l10n/app_localizations.dart';
 
 enum SupportRequestType { contact, problem, feedback }
 
@@ -35,25 +36,25 @@ class _SupportRequestDialogState
 
   bool _isSubmitting = false;
 
-  String get _title {
+  String _title(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'Contact Support';
+        return l10n.contactSupport;
       case SupportRequestType.problem:
-        return 'Report a Problem';
+        return l10n.reportAProblem;
       case SupportRequestType.feedback:
-        return 'Send Feedback';
+        return l10n.sendFeedback;
     }
   }
 
-  String get _subtitle {
+  String _subtitle(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'Tell us how we can help you.';
+        return l10n.tellUsHowWeCanHelp;
       case SupportRequestType.problem:
-        return 'Tell us what went wrong so we can fix it.';
+        return l10n.tellUsWhatWentWrong;
       case SupportRequestType.feedback:
-        return 'Share your thoughts and help us improve Pulze+.';
+        return l10n.shareYourThoughtsAndHelpUsImprove;
     }
   }
 
@@ -68,47 +69,47 @@ class _SupportRequestDialogState
     }
   }
 
-  String get _subjectHint {
+  String _subjectHint(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'What do you need help with?';
+        return l10n.whatDoYouNeedHelpWith;
       case SupportRequestType.problem:
-        return 'What problem are you experiencing?';
+        return l10n.whatProblemAreYouExperiencing;
       case SupportRequestType.feedback:
-        return 'What would you like to share?';
+        return l10n.whatWouldYouLikeToShare;
     }
   }
 
-  String get _messageHint {
+  String _messageHint(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'Describe your question or issue...';
+        return l10n.describeYourQuestionOrIssue;
       case SupportRequestType.problem:
-        return 'Describe the problem and what happened...';
+        return l10n.describeTheProblemAndWhatHappened;
       case SupportRequestType.feedback:
-        return 'Tell us about your experience or suggestion...';
+        return l10n.tellUsAboutYourExperienceOrSuggestion;
     }
   }
 
-  String get _buttonText {
+  String _buttonText(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'Send Message';
+        return l10n.sendMessage;
       case SupportRequestType.problem:
-        return 'Submit Report';
+        return l10n.submitReport;
       case SupportRequestType.feedback:
-        return 'Send Feedback';
+        return l10n.sendFeedback;
     }
   }
 
-  String get _successMessage {
+  String _successMessage(AppLocalizations l10n) {
     switch (widget.type) {
       case SupportRequestType.contact:
-        return 'Your support request has been submitted successfully.';
+        return l10n.supportRequestSubmittedSuccessfully;
       case SupportRequestType.problem:
-        return 'Your problem report has been submitted successfully.';
+        return l10n.problemReportSubmittedSuccessfully;
       case SupportRequestType.feedback:
-        return 'Thank you for your feedback.';
+        return l10n.thankYouForYourFeedback;
     }
   }
 
@@ -124,7 +125,8 @@ class _SupportRequestDialogState
     });
 
     try {
-      final repository = ref.read(helpSupportRepositoryProvider);
+      final repository =
+          ref.read(helpSupportRepositoryProvider);
 
       switch (widget.type) {
         case SupportRequestType.contact:
@@ -157,6 +159,9 @@ class _SupportRequestDialogState
         _isSubmitting = false;
       });
 
+      final l10n = AppLocalizations.of(context)!;
+      final successMessage = _successMessage(l10n);
+
       Navigator.of(context).pop();
 
       if (widget.parentContext.mounted) {
@@ -164,7 +169,7 @@ class _SupportRequestDialogState
 
         AppSnackBar.success(
           widget.parentContext,
-          _successMessage,
+          successMessage,
         );
       }
     } catch (error) {
@@ -176,7 +181,10 @@ class _SupportRequestDialogState
         _isSubmitting = false;
       });
 
-      AppSnackBar.error(context, error.toString());
+      AppSnackBar.error(
+        context,
+        error.toString(),
+      );
     }
   }
 
@@ -192,6 +200,7 @@ class _SupportRequestDialogState
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final mediaQuery = MediaQuery.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       backgroundColor: colorScheme.surface,
@@ -217,7 +226,8 @@ class _SupportRequestDialogState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Container(
                       width: 52,
@@ -226,7 +236,8 @@ class _SupportRequestDialogState
                         color: AppColors.primary.withValues(
                           alpha: 0.10,
                         ),
-                        borderRadius: BorderRadius.circular(
+                        borderRadius:
+                            BorderRadius.circular(
                           AppRadius.lg,
                         ),
                       ),
@@ -236,103 +247,138 @@ class _SupportRequestDialogState
                         size: 28,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.md),
+                    const SizedBox(
+                      width: AppSpacing.md,
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment:
                             CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _title,
-                            style:
-                                theme.textTheme.titleLarge?.copyWith(
-                              color: colorScheme.onSurface,
-                              fontWeight: FontWeight.w700,
+                            _title(l10n),
+                            style: theme
+                                .textTheme.titleLarge
+                                ?.copyWith(
+                              color:
+                                  colorScheme.onSurface,
+                              fontWeight:
+                                  FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _subtitle,
-                            style:
-                                theme.textTheme.bodyMedium?.copyWith(
-                              color:
-                                  colorScheme.onSurfaceVariant,
+                            _subtitle(l10n),
+                            style: theme
+                                .textTheme.bodyMedium
+                                ?.copyWith(
+                              color: colorScheme
+                                  .onSurfaceVariant,
                               height: 1.4,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(
+                      width: AppSpacing.sm,
+                    ),
                     IconButton(
-                      tooltip: 'Close',
+                      tooltip: l10n.close,
                       onPressed: _isSubmitting
                           ? null
-                          : () => Navigator.of(context).pop(),
-                      visualDensity: VisualDensity.compact,
+                          : () =>
+                              Navigator.of(context)
+                                  .pop(),
+                      visualDensity:
+                          VisualDensity.compact,
                       icon: Icon(
                         Icons.close_rounded,
-                        color: colorScheme.onSurfaceVariant,
+                        color: colorScheme
+                            .onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.xl),
+
+                const SizedBox(
+                  height: AppSpacing.xl,
+                ),
+
                 AppTextField(
                   controller: _subjectController,
-                  label: 'Subject',
-                  hint: _subjectHint,
+                  label: l10n.subject,
+                  hint: _subjectHint(l10n),
                   prefixIcon: Icons.subject_rounded,
-                  textInputAction: TextInputAction.next,
+                  textInputAction:
+                      TextInputAction.next,
                   validator: (value) {
-                    final text = value?.trim() ?? '';
+                    final text =
+                        value?.trim() ?? '';
 
                     if (text.isEmpty) {
-                      return 'Please enter a subject.';
+                      return l10n
+                          .pleaseEnterASubject;
                     }
 
                     if (text.length < 3) {
-                      return 'Subject must be at least 3 characters.';
+                      return l10n
+                          .subjectMustBeAtLeast3Characters;
                     }
 
                     return null;
                   },
                 ),
-                const SizedBox(height: AppSpacing.md),
+
+                const SizedBox(
+                  height: AppSpacing.md,
+                ),
+
                 AppTextField(
                   controller: _messageController,
-                  label: 'Message',
-                  hint: _messageHint,
+                  label: l10n.message,
+                  hint: _messageHint(l10n),
                   prefixIcon:
                       Icons.chat_bubble_outline_rounded,
                   minLines: 5,
                   maxLines: 8,
-                  textInputAction: TextInputAction.newline,
+                  textInputAction:
+                      TextInputAction.newline,
                   validator: (value) {
-                    final text = value?.trim() ?? '';
+                    final text =
+                        value?.trim() ?? '';
 
                     if (text.isEmpty) {
-                      return 'Please enter your message.';
+                      return l10n
+                          .pleaseEnterYourMessage;
                     }
 
                     if (text.length < 10) {
-                      return 'Message must be at least 10 characters.';
+                      return l10n
+                          .messageMustBeAtLeast10Characters;
                     }
 
                     return null;
                   },
                 ),
-                const SizedBox(height: AppSpacing.lg),
+
+                const SizedBox(
+                  height: AppSpacing.lg,
+                ),
+
                 Container(
-                  padding: const EdgeInsets.symmetric(
+                  padding:
+                      const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                     vertical: AppSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(
+                    color:
+                        AppColors.primary.withValues(
                       alpha: 0.05,
                     ),
-                    borderRadius: BorderRadius.circular(
+                    borderRadius:
+                        BorderRadius.circular(
                       AppRadius.md,
                     ),
                   ),
@@ -345,14 +391,18 @@ class _SupportRequestDialogState
                         size: 18,
                         color: AppColors.primary,
                       ),
-                      const SizedBox(width: AppSpacing.sm),
+                      const SizedBox(
+                        width: AppSpacing.sm,
+                      ),
                       Expanded(
                         child: Text(
-                          'Please provide enough details so we can respond appropriately.',
-                          style:
-                              theme.textTheme.bodySmall?.copyWith(
-                            color:
-                                colorScheme.onSurfaceVariant,
+                          l10n
+                              .provideEnoughDetailsToRespond,
+                          style: theme
+                              .textTheme.bodySmall
+                              ?.copyWith(
+                            color: colorScheme
+                                .onSurfaceVariant,
                             height: 1.4,
                           ),
                         ),
@@ -360,13 +410,18 @@ class _SupportRequestDialogState
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
+
+                const SizedBox(
+                  height: AppSpacing.lg,
+                ),
+
                 SizedBox(
                   width: double.infinity,
                   child: AppButton(
-                    label: _buttonText,
-                    onPressed:
-                        _isSubmitting ? null : _submit,
+                    label: _buttonText(l10n),
+                    onPressed: _isSubmitting
+                        ? null
+                        : _submit,
                     isLoading: _isSubmitting,
                   ),
                 ),

@@ -15,6 +15,7 @@ import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/models/profile_state.dart';
 import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
+import 'package:pulze_plus/l10n/app_localizations.dart';
 
 enum ProfileFormMode { create, edit }
 
@@ -96,6 +97,7 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Future<void> _selectDateOfBirth() async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
 
     final initialDate = _selectedDateOfBirth ??
@@ -110,7 +112,7 @@ class _ProfileFormScreenState
       initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: now,
-      helpText: 'Select date of birth',
+      helpText: l10n.selectDateOfBirth,
     );
 
     if (selectedDate == null || !mounted) {
@@ -143,21 +145,22 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Future<void> _selectLocation() async {
+    final l10n = AppLocalizations.of(context)!;
+
     await showDialog<void>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Select location'),
-          content: const Text(
-            'Map location selection will be available '
-            'once map integration is added.',
+          title: Text(l10n.selectLocation),
+          content: Text(
+            l10n.mapLocationSelectionWillBeAvailable,
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: Text(l10n.ok),
             ),
           ],
         );
@@ -242,9 +245,11 @@ class _ProfileFormScreenState
         return;
       }
 
+      final l10n = AppLocalizations.of(context)!;
+
       AppSnackBar.success(
         context,
-        'Profile updated successfully.',
+        l10n.profileUpdatedSuccessfully,
       );
 
       Navigator.of(context).pop(true);
@@ -271,6 +276,7 @@ class _ProfileFormScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final horizontalPadding =
         ResponsiveUtils.value(
@@ -283,15 +289,13 @@ class _ProfileFormScreenState
     return Scaffold(
       backgroundColor:
           theme.scaffoldBackgroundColor,
-
       appBar: AppBar(
         title: Text(
           _isCreate
-              ? 'Complete your profile'
-              : 'Edit profile',
+              ? l10n.completeYourProfile
+              : l10n.editProfile,
         ),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           physics:
@@ -346,8 +350,8 @@ class _ProfileFormScreenState
                     AppTextField(
                       controller:
                           _addressController,
-                      label: 'Address',
-                      hint: 'Enter your address',
+                      label: l10n.address,
+                      hint: l10n.enterYourAddress,
                       prefixIcon:
                           Icons.location_on_outlined,
                       textInputAction:
@@ -360,8 +364,8 @@ class _ProfileFormScreenState
 
                     AppTextField(
                       controller: _cityController,
-                      label: 'City',
-                      hint: 'Enter your city',
+                      label: l10n.city,
+                      hint: l10n.enterYourCity,
                       prefixIcon:
                           Icons.location_city_outlined,
                       textInputAction:
@@ -380,8 +384,8 @@ class _ProfileFormScreenState
 
                     AppButton(
                       label: _isCreate
-                          ? 'Complete profile'
-                          : 'Save changes',
+                          ? l10n.completeProfile
+                          : l10n.saveChanges,
                       icon: _isCreate
                           ? Icons.arrow_forward_rounded
                           : Icons.check_rounded,
@@ -408,6 +412,7 @@ class _ProfileFormScreenState
   Widget _buildHeader() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment:
@@ -415,19 +420,18 @@ class _ProfileFormScreenState
       children: [
         Text(
           _isCreate
-              ? 'Tell us a little about you'
-              : 'Update your profile',
+              ? l10n.tellUsALittleAboutYou
+              : l10n.updateYourProfile,
           style:
               theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
           ),
         ),
-
         Text(
           _isCreate
-              ? 'Complete your profile to start using Pulze+.'
-              : 'Keep your information up to date.',
+              ? l10n.completeYourProfileToStartUsingPulze
+              : l10n.keepYourInformationUpToDate,
           style:
               theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -442,10 +446,12 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Widget _buildPhoneField() {
+    final l10n = AppLocalizations.of(context)!;
+
     return AppTextField(
       controller: _phoneController,
-      label: 'Phone number',
-      hint: 'Enter your phone number',
+      label: l10n.phoneNumber,
+      hint: l10n.enterYourPhoneNumber,
       prefixIcon: Icons.phone_outlined,
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
@@ -465,13 +471,15 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Widget _buildBloodTypeField() {
+    final l10n = AppLocalizations.of(context)!;
+
     return DropdownButtonFormField<String>(
       initialValue: _selectedBloodType,
-      decoration: const InputDecoration(
-        labelText: 'Blood type',
-        hintText: 'Select your blood type',
+      decoration: InputDecoration(
+        labelText: l10n.bloodType,
+        hintText: l10n.selectYourBloodType,
         prefixIcon:
-            Icon(Icons.bloodtype_outlined),
+            const Icon(Icons.bloodtype_outlined),
       ),
       items: const [
         DropdownMenuItem(
@@ -517,7 +525,7 @@ class _ProfileFormScreenState
       validator: (value) {
         return FormValidators.required(
           value,
-          fieldName: 'Blood type',
+          fieldName: l10n.bloodType,
         );
       },
     );
@@ -528,30 +536,32 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Widget _buildGenderField() {
+    final l10n = AppLocalizations.of(context)!;
+
     return DropdownButtonFormField<String>(
       initialValue: _selectedGender,
-      decoration: const InputDecoration(
-        labelText: 'Gender',
-        hintText: 'Select your gender',
+      decoration: InputDecoration(
+        labelText: l10n.gender,
+        hintText: l10n.selectYourGender,
         prefixIcon:
-            Icon(Icons.person_outline_rounded),
+            const Icon(Icons.person_outline_rounded),
       ),
-      items: const [
+      items: [
         DropdownMenuItem(
           value: 'male',
-          child: Text('Male'),
+          child: Text(l10n.male),
         ),
         DropdownMenuItem(
           value: 'female',
-          child: Text('Female'),
+          child: Text(l10n.female),
         ),
         DropdownMenuItem(
           value: 'other',
-          child: Text('Other'),
+          child: Text(l10n.other),
         ),
         DropdownMenuItem(
           value: 'prefer_not_to_say',
-          child: Text('Prefer not to say'),
+          child: Text(l10n.preferNotToSay),
         ),
       ],
       onChanged: _isSubmitting
@@ -564,7 +574,7 @@ class _ProfileFormScreenState
       validator: (value) {
         return FormValidators.required(
           value,
-          fieldName: 'Gender',
+          fieldName: l10n.gender,
         );
       },
     );
@@ -575,11 +585,13 @@ class _ProfileFormScreenState
   // ===========================================================================
 
   Widget _buildDateOfBirthField() {
+    final l10n = AppLocalizations.of(context)!;
+
     return FormField<DateTime>(
       initialValue: _selectedDateOfBirth,
       validator: (_) {
         if (_selectedDateOfBirth == null) {
-          return 'Date of birth is required.';
+          return l10n.dateOfBirthIsRequired;
         }
 
         return null;
@@ -606,16 +618,15 @@ class _ProfileFormScreenState
                 child: AppTextField(
                   controller:
                       _dateOfBirthController,
-                  label: 'Date of birth',
+                  label: l10n.dateOfBirth,
                   hint:
-                      'Select your date of birth',
+                      l10n.selectYourDateOfBirth,
                   prefixIcon:
                       Icons.calendar_today_outlined,
                   readOnly: true,
                 ),
               ),
             ),
-
             if (field.hasError)
               Padding(
                 padding: const EdgeInsets.only(
@@ -645,6 +656,7 @@ class _ProfileFormScreenState
   Widget _buildLocationSelector() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final hasLocation =
         widget.profile?.latitude != null &&
@@ -673,7 +685,8 @@ class _ProfileFormScreenState
                 width: AppSpacing.huge,
                 height: AppSpacing.huge,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(
+                  color:
+                      AppColors.primary.withValues(
                     alpha: 0.10,
                   ),
                   borderRadius:
@@ -686,18 +699,16 @@ class _ProfileFormScreenState
                   color: AppColors.primary,
                 ),
               ),
-
               const SizedBox(
                 width: AppSpacing.md,
               ),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Location',
+                      l10n.location,
                       style: theme
                           .textTheme
                           .titleLarge
@@ -709,15 +720,13 @@ class _ProfileFormScreenState
                             colorScheme.onSurface,
                       ),
                     ),
-
                     const SizedBox(
                       height: AppSpacing.xxs,
                     ),
-
                     Text(
                       hasLocation
-                          ? 'Location selected'
-                          : 'Select your location',
+                          ? l10n.locationSelected
+                          : l10n.selectYourLocation,
                       style: theme
                           .textTheme
                           .bodySmall
@@ -731,15 +740,13 @@ class _ProfileFormScreenState
               ),
             ],
           ),
-
           const SizedBox(
             height: AppSpacing.md,
           ),
-
           AppButton(
             label: hasLocation
-                ? 'Change location'
-                : 'Select location',
+                ? l10n.changeLocation
+                : l10n.selectLocation,
             icon: Icons.map_outlined,
             variant:
                 AppButtonVariant.outlined,
@@ -747,13 +754,11 @@ class _ProfileFormScreenState
                 ? null
                 : _selectLocation,
           ),
-
           const SizedBox(
             height: AppSpacing.xs,
           ),
-
           Text(
-            'Map selection will be connected later.',
+            l10n.mapSelectionWillBeConnectedLater,
             style: theme.textTheme.bodySmall
                 ?.copyWith(
               color: colorScheme

@@ -1,0 +1,702 @@
+{
+  "@@locale": "en",
+
+  "appPreferences": "App Preferences",
+  "@appPreferences": {
+    "description": "Title for the App Preferences settings section."
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Label for notification preferences."
+  },
+
+  "donationReminder": "Donation Reminder",
+  "@donationReminder": {
+    "description": "Label for donation reminder preference."
+  },
+
+  "theme": "Theme",
+  "@theme": {
+    "description": "Label for theme preference."
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Label for language preference."
+  },
+
+  "activity": "Activity",
+  "@activity": {
+    "description": "Profile activity section title."
+  },
+
+  "viewRequestsAndDonations": "View your requests and donations",
+  "@viewRequestsAndDonations": {
+    "description": "Profile activity section subtitle."
+  },
+
+  "myRequests": "My Requests",
+  "@myRequests": {
+    "description": "Menu item for the user's blood requests."
+  },
+
+  "donationHistory": "Donation History",
+  "@donationHistory": {
+    "description": "Menu item for the user's donation history."
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Profile settings section title."
+  },
+
+  "manageAccountAndPreferences": "Manage your account and preferences",
+  "@manageAccountAndPreferences": {
+    "description": "Profile settings section subtitle."
+  },
+
+  "privacySecurity": "Privacy & Security",
+  "@privacySecurity": {
+    "description": "Privacy and security settings title."
+  },
+
+  "accountSettings": "Account Settings",
+  "@accountSettings": {
+    "description": "Account settings title."
+  },
+
+  "helpSupport": "Help & Support",
+  "@helpSupport": {
+    "description": "Help and support section title."
+  },
+
+  "signOut": "Sign out",
+  "@signOut": {
+    "description": "Sign out action label."
+  },
+
+  "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Change password settings option."
+  },
+
+  "updateAccountPassword": "Update your account password",
+  "@updateAccountPassword": {
+    "description": "Change password option subtitle."
+  },
+
+  "appPermissions": "App Permissions",
+  "@appPermissions": {
+    "description": "App permissions settings option."
+  },
+
+  "manageCameraLocationPermissions": "Manage camera and location permissions",
+  "@manageCameraLocationPermissions": {
+    "description": "App permissions option subtitle."
+  },
+
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy settings option."
+  },
+
+  "learnHowPulzeHandlesInformation": "Learn how Pulze+ handles your information",
+  "@learnHowPulzeHandlesInformation": {
+    "description": "Privacy policy option subtitle."
+  },
+
+  "termsConditions": "Terms & Conditions",
+  "@termsConditions": {
+    "description": "Terms and conditions settings option."
+  },
+
+  "reviewPulzeTerms": "Review Pulze+ terms of use",
+  "@reviewPulzeTerms": {
+    "description": "Terms and conditions option subtitle."
+  },
+
+  "donorStatus": "Donor Status",
+  "@donorStatus": {
+    "description": "Donor status account setting."
+  },
+
+  "currentlyAvailableDonor": "You are currently available as a donor",
+  "@currentlyAvailableDonor": {
+    "description": "Subtitle when the user is an active donor."
+  },
+
+  "currentlyNotAvailableDonor": "You are currently not available as a donor",
+  "@currentlyNotAvailableDonor": {
+    "description": "Subtitle when the user is not an active donor."
+  },
+
+  "changePhoneNumber": "Change Phone Number",
+  "@changePhoneNumber": {
+    "description": "Change phone number account setting."
+  },
+
+  "updateRegisteredPhone": "Update your registered phone number",
+  "@updateRegisteredPhone": {
+    "description": "Change phone number option subtitle."
+  },
+
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Delete account option."
+  },
+
+  "permanentlyDeleteAccount": "Permanently delete your Pulze+ account",
+  "@permanentlyDeleteAccount": {
+    "description": "Delete account option subtitle."
+  },
+
+  "receiveImportantNotifications": "Receive important app notifications",
+  "@receiveImportantNotifications": {
+    "description": "Notifications preference subtitle."
+  },
+
+  "getRemindedWhenCanDonate": "Get reminded when you can donate again",
+  "@getRemindedWhenCanDonate": {
+    "description": "Donation reminder preference subtitle."
+  },
+
+  "choosePreferredAppearance": "Choose your preferred appearance",
+  "@choosePreferredAppearance": {
+    "description": "Theme preference subtitle."
+  },
+
+  "choosePreferredLanguage": "Choose your preferred language",
+  "@choosePreferredLanguage": {
+    "description": "Language preference subtitle."
+  },
+
+  "light": "Light",
+  "@light": {
+    "description": "Light theme option."
+  },
+
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme option."
+  },
+
+  "english": "English",
+  "@english": {
+    "description": "English language option."
+  },
+
+  "nepali": "नेपाली",
+  "@nepali": {
+    "description": "Nepali language option."
+  },
+
+  "faqs": "FAQs",
+  "@faqs": {
+    "description": "Frequently asked questions option."
+  },
+
+  "findAnswersCommonQuestions": "Find answers to common questions",
+  "@findAnswersCommonQuestions": {
+    "description": "FAQ option subtitle."
+  },
+
+  "contactSupport": "Contact Support",
+  "@contactSupport": {
+    "description": "Contact support option."
+  },
+
+  "getHelpFromSupportTeam": "Get help from the Pulze+ support team",
+  "@getHelpFromSupportTeam": {
+    "description": "Contact support option subtitle."
+  },
+
+  "reportProblem": "Report a Problem",
+  "@reportProblem": {
+    "description": "Report problem option."
+  },
+
+  "tellUsAboutIssue": "Tell us about an issue in the app",
+  "@tellUsAboutIssue": {
+    "description": "Report problem option subtitle."
+  },
+
+  "feedback": "Feedback",
+  "@feedback": {
+    "description": "Feedback option."
+  },
+
+  "shareIdeasSuggestions": "Share your ideas and suggestions",
+  "@shareIdeasSuggestions": {
+    "description": "Feedback option subtitle."
+  },
+
+  "aboutPulze": "About Pulze+",
+  "@aboutPulze": {
+    "description": "About Pulze+ option."
+  },
+
+  "learnMoreAboutPulze": "Learn more about Pulze+",
+  "@learnMoreAboutPulze": {
+    "description": "About Pulze+ option subtitle."
+  },
+
+  "changeProfilePhoto": "Change profile photo",
+  "@changeProfilePhoto": {
+    "description": "Profile photo change sheet title."
+  },
+
+  "chooseProfilePhotoMethod": "Choose how you want to update your profile photo.",
+  "@chooseProfilePhotoMethod": {
+    "description": "Profile photo source selection subtitle."
+  },
+
+  "takePhoto": "Take a photo",
+  "@takePhoto": {
+    "description": "Camera option for profile photo."
+  },
+
+  "useCamera": "Use your camera",
+  "@useCamera": {
+    "description": "Camera option subtitle."
+  },
+
+  "chooseFromGallery": "Choose from gallery",
+  "@chooseFromGallery": {
+    "description": "Gallery option for profile photo."
+  },
+
+  "selectExistingPhoto": "Select an existing photo",
+  "@selectExistingPhoto": {
+    "description": "Gallery option subtitle."
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel action."
+  },
+
+  "cameraPermissionRequiredSettings": "Camera permission is required. Please enable it in Settings.",
+  "@cameraPermissionRequiredSettings": {
+    "description": "Message shown when camera permission is permanently denied."
+  },
+
+  "cameraPermissionRequired": "Camera permission is required to take a photo.",
+  "@cameraPermissionRequired": {
+    "description": "Message shown when camera permission is denied."
+  },
+
+  "profilePhotoUpdated": "Profile photo updated successfully.",
+  "@profilePhotoUpdated": {
+    "description": "Success message after updating profile photo."
+  },
+
+  "donorAvailableMessage": "You are now available as a donor.",
+  "@donorAvailableMessage": {
+    "description": "Message shown when donor availability is enabled."
+  },
+
+  "donorUnavailableMessage": "You are no longer available as a donor.",
+  "@donorUnavailableMessage": {
+    "description": "Message shown when donor availability is disabled."
+  },
+
+  "signOutConfirmation": "Are you sure you want to sign out of Pulze+?",
+  "@signOutConfirmation": {
+    "description": "Sign out confirmation message."
+  },
+  
+  "bloodGroupNotAdded": "Not added",
+  "@bloodGroupNotAdded": {
+    "description": "Fallback text shown when the user's blood group has not been added."
+  },
+
+  "notAvailable": "Not available",
+  "@notAvailable": {
+    "description": "Fallback text shown when information is not available."
+  },
+
+  "managePrivacySecurity": "Manage your privacy and security",
+  "@managePrivacySecurity": {
+    "description": "Subtitle describing privacy and security account management."
+  },
+
+  "connectingPeopleThroughBloodDonation": "Connecting people through blood donation.",
+  "@connectingPeopleThroughBloodDonation": {
+    "description": "Subtitle shown in the About Pulze+ dialog."
+  },
+
+  "aboutPulzeDescription": "Pulze+ is a blood donor matching platform built to help connect people who need blood with eligible donors nearby.\n\nThe platform helps users discover relevant blood donors, manage donor availability, and respond to blood requests more efficiently.\n\nOur goal is to make blood donation and blood requests simpler, faster, and more accessible for everyone.",
+  "@aboutPulzeDescription": {
+    "description": "Main description shown in the About Pulze+ dialog."
+  },
+
+  "version": "Version",
+  "@version": {
+    "description": "Label shown next to the application version."
+  },
+
+  "close": "Close",
+  "@close": {
+    "description": "Tooltip for the close button."
+  },
+
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "@frequentlyAskedQuestions": {
+    "description": "Heading shown at the top of the FAQ screen."
+  },
+
+  "findQuickAnswersAboutPulze": "Find quick answers about Pulze+, blood donation, and your account.",
+  "@findQuickAnswersAboutPulze": {
+    "description": "Description shown below the FAQ screen heading."
+  },
+
+  "unableToLoadFaqs": "Unable to load FAQs.",
+  "@unableToLoadFaqs": {
+    "description": "Error message shown when FAQs cannot be loaded."
+  },
+
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Button label used to retry loading FAQs."
+  },
+
+  "noFaqsAvailableRightNow": "No FAQs available right now.",
+  "@noFaqsAvailableRightNow": {
+    "description": "Message shown when there are no FAQs available."
+  },
+
+  
+
+  "reportAProblem": "Report a Problem",
+  "@reportAProblem": {
+    "description": "Title or action label for reporting a problem."
+  },
+
+  "sendFeedback": "Send Feedback",
+  "@sendFeedback": {
+    "description": "Action label for submitting feedback."
+  },
+
+  "tellUsHowWeCanHelp": "Tell us how we can help you.",
+  "@tellUsHowWeCanHelp": {
+    "description": "Subtitle shown when contacting support."
+  },
+
+  "tellUsWhatWentWrong": "Tell us what went wrong so we can fix it.",
+  "@tellUsWhatWentWrong": {
+    "description": "Subtitle shown when reporting a problem."
+  },
+
+  "shareYourThoughtsAndHelpUsImprove": "Share your thoughts and help us improve Pulze+.",
+  "@shareYourThoughtsAndHelpUsImprove": {
+    "description": "Subtitle shown when sending feedback."
+  },
+
+  "whatDoYouNeedHelpWith": "What do you need help with?",
+  "@whatDoYouNeedHelpWith": {
+    "description": "Subject hint for support requests."
+  },
+
+  "whatProblemAreYouExperiencing": "What problem are you experiencing?",
+  "@whatProblemAreYouExperiencing": {
+    "description": "Subject hint for problem reports."
+  },
+
+  "whatWouldYouLikeToShare": "What would you like to share?",
+  "@whatWouldYouLikeToShare": {
+    "description": "Subject hint for feedback."
+  },
+
+  "describeYourQuestionOrIssue": "Describe your question or issue...",
+  "@describeYourQuestionOrIssue": {
+    "description": "Message hint for support requests."
+  },
+
+  "describeTheProblemAndWhatHappened": "Describe the problem and what happened...",
+  "@describeTheProblemAndWhatHappened": {
+    "description": "Message hint for problem reports."
+  },
+
+  "tellUsAboutYourExperienceOrSuggestion": "Tell us about your experience or suggestion...",
+  "@tellUsAboutYourExperienceOrSuggestion": {
+    "description": "Message hint for feedback."
+  },
+
+  "sendMessage": "Send Message",
+  "@sendMessage": {
+    "description": "Button label for sending a support message."
+  },
+
+  "submitReport": "Submit Report",
+  "@submitReport": {
+    "description": "Button label for submitting a problem report."
+  },
+
+  "supportRequestSubmittedSuccessfully": "Your support request has been submitted successfully.",
+  "@supportRequestSubmittedSuccessfully": {
+    "description": "Success message shown after submitting a support request."
+  },
+
+  "problemReportSubmittedSuccessfully": "Your problem report has been submitted successfully.",
+  "@problemReportSubmittedSuccessfully": {
+    "description": "Success message shown after submitting a problem report."
+  },
+
+  "thankYouForYourFeedback": "Thank you for your feedback.",
+  "@thankYouForYourFeedback": {
+    "description": "Success message shown after submitting feedback."
+  },
+
+  "subject": "Subject",
+  "@subject": {
+    "description": "Label for the support request subject field."
+  },
+
+  "message": "Message",
+  "@message": {
+    "description": "Label for the support request message field."
+  },
+
+  "pleaseEnterASubject": "Please enter a subject.",
+  "@pleaseEnterASubject": {
+    "description": "Validation message when the subject is empty."
+  },
+
+  "subjectMustBeAtLeast3Characters": "Subject must be at least 3 characters.",
+  "@subjectMustBeAtLeast3Characters": {
+    "description": "Validation message when the subject is too short."
+  },
+
+  "pleaseEnterYourMessage": "Please enter your message.",
+  "@pleaseEnterYourMessage": {
+    "description": "Validation message when the message is empty."
+  },
+
+  "messageMustBeAtLeast10Characters": "Message must be at least 10 characters.",
+  "@messageMustBeAtLeast10Characters": {
+    "description": "Validation message when the message is too short."
+  },
+
+  "provideEnoughDetailsToRespond": "Please provide enough details so we can respond appropriately.",
+  "@provideEnoughDetailsToRespond": {
+    "description": "Information message encouraging users to provide enough details."
+  },
+
+  "bloodAndDonations": "Blood & Donations",
+  "@bloodAndDonations": {
+    "description": "Section title for the user's blood and donation information."
+  },
+  "viewYourBloodDonationInformation": "View your blood donation information",
+  "@viewYourBloodDonationInformation": {
+    "description": "Subtitle describing the blood donation information section."
+  },
+  "bloodGroup": "Blood Group",
+  "@bloodGroup": {
+    "description": "Label for the user's blood group."
+  },
+  "lastDonation": "Last Donation",
+  "@lastDonation": {
+    "description": "Label for the user's most recent blood donation."
+  },
+  "nextEligibleDate": "Next Eligible Date",
+  "@nextEligibleDate": {
+    "description": "Label for the next date the user is eligible to donate blood."
+  },
+  "editDonationDetails": "Edit donation details",
+  "@editDonationDetails": {
+    "description": "Button label for editing blood donation details."
+  },
+
+  "personalDetails": "Personal Details",
+  "@personalDetails": {
+    "description": "Section title for the user's personal information."
+  },
+  "viewYourPersonalInformation": "View your personal information",
+  "@viewYourPersonalInformation": {
+    "description": "Subtitle describing the personal information section."
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Button label for editing personal information."
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Label for the user's full name."
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Label for the user's email address."
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Label for the user's phone number."
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Label for the user's gender."
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Label for the user's date of birth."
+  },
+  "city": "City",
+  "@city": {
+    "description": "Label for the user's city."
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Gender value for male."
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Gender value for female."
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Gender value for other."
+  },
+  "notSpecified": "Not specified",
+  "@notSpecified": {
+    "description": "Fallback gender value when gender is not specified."
+  },
+  "verified": "Verified",
+  "@verified": {
+    "description": "Status shown when an email or phone number is verified."
+  },
+  "unverified": "Unverified",
+  "@unverified": {
+    "description": "Status shown when an email or phone number is not verified."
+  },
+
+  "notAdded": "Not added",
+  "@notAdded": {
+    "description": "Fallback text shown when information has not been added."
+  },
+
+  "completeYourProfile": "Complete your profile",
+  "@completeYourProfile": {
+    "description": "Title shown when the user's profile completion is below 50 percent."
+  },
+  "almostThere": "Almost there!",
+  "@almostThere": {
+    "description": "Title shown when the user's profile is at least 50 percent complete."
+  },
+  "addDetailsToGetMostFromPulze": "Add your details to get the most from Pulze+.",
+  "@addDetailsToGetMostFromPulze": {
+    "description": "Description encouraging the user to complete their profile."
+  },
+
+  "editProfile": "Edit profile",
+  "@editProfile": {
+    "description": "App bar title when editing an existing profile."
+  },
+  "tellUsALittleAboutYou": "Tell us a little about you",
+  "@tellUsALittleAboutYou": {
+    "description": "Header shown when creating a profile."
+  },
+  "updateYourProfile": "Update your profile",
+  "@updateYourProfile": {
+    "description": "Header shown when editing a profile."
+  },
+  "completeYourProfileToStartUsingPulze": "Complete your profile to start using Pulze+.",
+  "@completeYourProfileToStartUsingPulze": {
+    "description": "Description shown when creating a profile."
+  },
+  "keepYourInformationUpToDate": "Keep your information up to date.",
+  "@keepYourInformationUpToDate": {
+    "description": "Description shown when editing a profile."
+  },
+  "phoneNumber": "Phone number",
+  "@phoneNumber": {
+    "description": "Label for the phone number field."
+  },
+  "enterYourPhoneNumber": "Enter your phone number",
+  "@enterYourPhoneNumber": {
+    "description": "Hint for the phone number field."
+  },
+  "bloodType": "Blood type",
+  "@bloodType": {
+    "description": "Label for the blood type field."
+  },
+  "selectYourBloodType": "Select your blood type",
+  "@selectYourBloodType": {
+    "description": "Hint for the blood type field."
+  },
+  "selectYourGender": "Select your gender",
+  "@selectYourGender": {
+    "description": "Hint for the gender field."
+  },
+  "preferNotToSay": "Prefer not to say",
+  "@preferNotToSay": {
+    "description": "Gender option allowing the user not to specify their gender."
+  },
+  "selectDateOfBirth": "Select date of birth",
+  "@selectDateOfBirth": {
+    "description": "Date picker help text for selecting date of birth."
+  },
+  "dateOfBirthIsRequired": "Date of birth is required.",
+  "@dateOfBirthIsRequired": {
+    "description": "Validation message when date of birth is not selected."
+  },
+  "selectYourDateOfBirth": "Select your date of birth",
+  "@selectYourDateOfBirth": {
+    "description": "Hint for the date of birth field."
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Label for the address field."
+  },
+  "enterYourAddress": "Enter your address",
+  "@enterYourAddress": {
+    "description": "Hint for the address field."
+  },
+  "enterYourCity": "Enter your city",
+  "@enterYourCity": {
+    "description": "Hint for the city field."
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Title for the location section."
+  },
+  "locationSelected": "Location selected",
+  "@locationSelected": {
+    "description": "Status shown when a location has been selected."
+  },
+  "selectYourLocation": "Select your location",
+  "@selectYourLocation": {
+    "description": "Status shown when no location has been selected."
+  },
+  "changeLocation": "Change location",
+  "@changeLocation": {
+    "description": "Button label for changing the selected location."
+  },
+  "selectLocation": "Select location",
+  "@selectLocation": {
+    "description": "Button label or dialog title for selecting a location."
+  },
+  "mapSelectionWillBeConnectedLater": "Map selection will be connected later.",
+  "@mapSelectionWillBeConnectedLater": {
+    "description": "Temporary message indicating map integration is not available yet."
+  },
+  "mapLocationSelectionWillBeAvailable": "Map location selection will be available once map integration is added.",
+  "@mapLocationSelectionWillBeAvailable": {
+    "description": "Dialog message explaining that map selection is not implemented yet."
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "Confirmation button label."
+  },
+  "completeProfile": "Complete profile",
+  "@completeProfile": {
+    "description": "Button label for completing a new profile."
+  },
+  "saveChanges": "Save changes",
+  "@saveChanges": {
+    "description": "Button label for saving profile changes."
+  },
+  "profileUpdatedSuccessfully": "Profile updated successfully.",
+  "@profileUpdatedSuccessfully": {
+    "description": "Success message shown after a profile is updated."
+  }
+}
