@@ -124,7 +124,6 @@ class AuthNotifier extends Notifier<AuthState> {
   // ===========================================================================
   // Email verification
   // ===========================================================================
-
   Future<void> verifyEmail({
     required String email,
     required String code,
@@ -145,13 +144,29 @@ class AuthNotifier extends Notifier<AuthState> {
         );
       }
 
-      await ref
-          .read(tokenStorageProvider)
-          .saveTokens(accessToken: tokens.access, refreshToken: tokens.refresh);
+      await _tokenStorage.saveTokens(
+        accessToken: tokens.access,
+        refreshToken: tokens.refresh,
+      );
+
+      final profileResponse = await ref
+          .read(profileProvider.notifier)
+          .loadProfile();
+
+      if (profileResponse.profile == null) {
+        state = AuthState(
+          status: AuthStatus.needsProfile,
+          user: response.user,
+          message: response.message,
+          messageType: AuthMessageType.success,
+        );
+
+        return;
+      }
 
       state = AuthState(
         status: AuthStatus.authenticated,
-        user: response.user,
+        user: profileResponse.user,
         message: response.message,
         messageType: AuthMessageType.success,
       );
