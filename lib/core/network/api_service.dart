@@ -64,6 +64,44 @@ class ApiService {
       return error.error as AppException;
     }
 
+    final responseData = error.response?.data;
+
+    if (responseData is Map) {
+      final detail = responseData['detail'];
+
+      if (detail is String && detail.isNotEmpty) {
+        return AppException(
+          message: detail,
+          statusCode: error.response?.statusCode,
+        );
+      }
+
+      final message = responseData['message'];
+
+      if (message is String && message.isNotEmpty) {
+        return AppException(
+          message: message,
+          statusCode: error.response?.statusCode,
+        );
+      }
+
+      final currentPassword = responseData['current_password'];
+
+      if (currentPassword is List && currentPassword.isNotEmpty) {
+        return AppException(
+          message: currentPassword.first.toString(),
+          statusCode: error.response?.statusCode,
+        );
+      }
+
+      if (currentPassword is String && currentPassword.isNotEmpty) {
+        return AppException(
+          message: currentPassword,
+          statusCode: error.response?.statusCode,
+        );
+      }
+    }
+
     return AppException(
       message: error.message ?? 'Something went wrong.',
       statusCode: error.response?.statusCode,

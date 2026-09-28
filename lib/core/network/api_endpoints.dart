@@ -22,6 +22,7 @@ class ApiEndpoints {
   static const profile = 'auth/profile/';
   static const profileAvatar = 'auth/profile/avatar/';
   static const profileDonor = 'auth/profile/donor/';
+  static const changePassword = '/auth/change-password/';
 
   // Help & Support
   static const faqs = 'help-support/faqs/';

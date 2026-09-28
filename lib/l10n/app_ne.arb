@@ -641,34 +641,35 @@
   "@resetPassword": {
     "description": "पासवर्ड reset गर्ने बटनको लेबल।"
   },
-
-  "user": "User",
+  
+  "user": "प्रयोगकर्ता",
   "@user": {
-    "description": "Fallback name shown when a user's name is unavailable."
+    "description": "प्रयोगकर्ताको नाम उपलब्ध नभएको अवस्थामा देखाइने वैकल्पिक नाम।"
   },
 
-  "addressNotAdded": "Address not added",
+  "addressNotAdded": "ठेगाना थपिएको छैन",
   "@addressNotAdded": {
-    "description": "Fallback address shown when no address has been added."
+    "description": "ठेगाना थपिएको नभएको अवस्थामा देखाइने वैकल्पिक ठेगाना।"
   },
 
-  "available": "Available",
+  "available": "उपलब्ध",
   "@available": {
-    "description": "Status shown when the donor is available for blood donation."
+    "description": "रक्तदानका लागि उपलब्ध हुँदा देखाइने स्थिति।"
   },
 
-  "unavailable": "Unavailable",
+  "unavailable": "अनुपलब्ध",
   "@unavailable": {
-    "description": "Status shown when the donor is not available for blood donation."
+    "description": "रक्तदानका लागि उपलब्ध नभएको अवस्थामा देखाइने स्थिति।"
   },
 
-  "isDonor": "I am a donor",
+  "isDonor": "म रक्तदाता हुँ",
   "@isDonor": {
-    "description": "Settings label for the user's donor status."
+    "description": "प्रयोगकर्ताको रक्तदाता स्थिति सेटिङमा देखाइने लेबल।"
   },
-  "availableForBloodDonation": "Make yourself available for blood donation",
+
+  "availableForBloodDonation": "रक्तदानका लागि आफूलाई उपलब्ध बनाउनुहोस्",
   "@availableForBloodDonation": {
-    "description": "Description shown below the donor status setting."
+    "description": "रक्तदाता स्थिति सेटिङमुनि देखाइने विवरण।"
   },
   "continueAsGuest": "अतिथिको रूपमा जारी राख्नुहोस्",
   "@continueAsGuest": {
@@ -928,5 +929,85 @@
   "legalAgreementSuffix": " सँग सहमत छु।",
   "@legalAgreementSuffix": {
     "description": "दर्ताको समयमा कानुनी सहमति वाक्यको अन्तिम भाग।"
+  },
+
+  "changePasswordDescription": "आफ्नो खाता सुरक्षित राख्न पासवर्ड परिवर्तन गर्नुहोस्।",
+  "@changePasswordDescription": {
+    "description": "पासवर्ड परिवर्तन संवादमा देखाइने विवरण।"
+  },
+
+  "changePasswordSecurityHint": "अन्य खाताहरूमा प्रयोग नगरेको बलियो पासवर्ड प्रयोग गर्नुहोस्।",
+  "@changePasswordSecurityHint": {
+    "description": "पासवर्ड परिवर्तन संवादमा देखाइने सुरक्षा सुझाव।"
+  },
+
+  "currentPassword": "हालको पासवर्ड",
+  "@currentPassword": {
+    "description": "हालको पासवर्ड फिल्डको लेबल।"
+  },
+
+  "confirmNewPassword": "नयाँ पासवर्ड पुष्टि गर्नुहोस्",
+  "@confirmNewPassword": {
+    "description": "नयाँ पासवर्ड पुष्टि गर्ने फिल्डको लेबल।"
+  },
+
+  "enterCurrentPassword": "आफ्नो हालको पासवर्ड प्रविष्ट गर्नुहोस्",
+  "@enterCurrentPassword": {
+    "description": "हालको पासवर्ड फिल्डमा देखाइने संकेत।"
+  },
+
+  "enterNewPassword": "आफ्नो नयाँ पासवर्ड प्रविष्ट गर्नुहोस्",
+  "@enterNewPassword": {
+    "description": "नयाँ पासवर्ड फिल्डमा देखाइने संकेत।"
+  },
+
+  "enterNewPasswordAgain": "आफ्नो नयाँ पासवर्ड फेरि प्रविष्ट गर्नुहोस्",
+  "@enterNewPasswordAgain": {
+    "description": "नयाँ पासवर्ड पुष्टि गर्ने फिल्डमा देखाइने संकेत।"
+  },
+
+  "currentPasswordRequired": "कृपया आफ्नो हालको पासवर्ड प्रविष्ट गर्नुहोस्।",
+  "@currentPasswordRequired": {
+    "description": "हालको पासवर्ड खाली हुँदा देखाइने प्रमाणीकरण सन्देश।"
+  },
+
+  "newPasswordRequired": "कृपया नयाँ पासवर्ड प्रविष्ट गर्नुहोस्।",
+  "@newPasswordRequired": {
+    "description": "नयाँ पासवर्ड खाली हुँदा देखाइने प्रमाणीकरण सन्देश।"
+  },
+
+  "confirmPasswordRequired": "कृपया आफ्नो नयाँ पासवर्ड पुष्टि गर्नुहोस्।",
+  "@confirmPasswordRequired": {
+    "description": "नयाँ पासवर्ड पुष्टि गर्ने फिल्ड खाली हुँदा देखाइने प्रमाणीकरण सन्देश।"
+  },
+
+  "passwordMinimumLength": "पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ।",
+  "@passwordMinimumLength": {
+    "description": "नयाँ पासवर्ड न्यूनतम लम्बाइभन्दा छोटो हुँदा देखाइने प्रमाणीकरण सन्देश।"
+  },
+
+  "passwordMinimumHint": "पासवर्डमा कम्तीमा ८ अक्षर हुनुपर्छ।",
+  "@passwordMinimumHint": {
+    "description": "नयाँ पासवर्ड फिल्डमुनि देखाइने पासवर्ड आवश्यकताको संकेत।"
+  },
+
+  "updatePassword": "पासवर्ड परिवर्तन गर्नुहोस्",
+  "@updatePassword": {
+    "description": "पासवर्ड परिवर्तन submit गर्न प्रयोग गरिने बटनको लेबल।"
+  },
+
+  "showPassword": "पासवर्ड देखाउनुहोस्",
+  "@showPassword": {
+    "description": "पासवर्ड लुकेको अवस्थामा देखाइने tooltip।"
+  },
+  
+  "hidePassword": "पासवर्ड लुकाउनुहोस्",
+  "@hidePassword": {
+    "description": "पासवर्ड देखाइएको अवस्थामा देखाइने tooltip।"
+  },
+
+  "passwordChangedSuccessfully": "तपाईंको पासवर्ड सफलतापूर्वक परिवर्तन भयो।",
+  "@passwordChangedSuccessfully": {
+    "description": "पासवर्ड सफलतापूर्वक परिवर्तन भएपछि देखाइने सन्देश।"
   }
 }

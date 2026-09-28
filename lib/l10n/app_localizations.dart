@@ -1531,6 +1531,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'.'**
   String get legalAgreementSuffix;
+
+  /// Description shown in the Change Password dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your password to keep your account secure.'**
+  String get changePasswordDescription;
+
+  /// Security guidance shown in the Change Password dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a strong password that you do not use for other accounts.'**
+  String get changePasswordSecurityHint;
+
+  /// Label for the current password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// Label for the confirm new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get confirmNewPassword;
+
+  /// Hint text for the current password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current password'**
+  String get enterCurrentPassword;
+
+  /// Hint text for the new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password'**
+  String get enterNewPassword;
+
+  /// Hint text for the confirm new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password again'**
+  String get enterNewPasswordAgain;
+
+  /// Validation message when the current password is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your current password.'**
+  String get currentPasswordRequired;
+
+  /// Validation message when the new password is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a new password.'**
+  String get newPasswordRequired;
+
+  /// Validation message when the new password confirmation is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your new password.'**
+  String get confirmPasswordRequired;
+
+  /// Validation message when the new password is shorter than the minimum length.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters.'**
+  String get passwordMinimumLength;
+
+  /// Password requirement hint shown below the new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least 8 characters.'**
+  String get passwordMinimumHint;
+
+  /// Button label used to submit the password change.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get updatePassword;
+
+  /// Tooltip shown when the password is currently hidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// Tooltip shown when the password is currently visible.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// Success message shown after the user's password is changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been changed successfully.'**
+  String get passwordChangedSuccessfully;
 }
 
 class _AppLocalizationsDelegate

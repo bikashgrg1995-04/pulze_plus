@@ -21,6 +21,7 @@ import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
 import 'package:pulze_plus/features/profile/widgets/about_pulze_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/blood_donation_card.dart';
+import 'package:pulze_plus/features/profile/widgets/change_password_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_segmented_tile.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_switch_row.dart';
 import 'package:pulze_plus/features/profile/widgets/support_request_dialog.dart';
@@ -263,8 +264,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             icon: Icons.lock_reset_rounded,
             title: l10n.changePassword,
             subtitle: l10n.updateAccountPassword,
-            onTap: () {
+            onTap: () async {
               Navigator.of(context).pop();
+
+              final result = await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => const ChangePasswordDialog(),
+              );
+
+              if (!mounted || result != true) {
+                return;
+              }
+
+              AppSnackBar.success(this.context, l10n.passwordChangedSuccessfully);
             },
           ),
           ProfileSettingsSheetItem(

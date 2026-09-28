@@ -791,4 +791,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legalAgreementSuffix => '.';
+
+  @override
+  String get changePasswordDescription =>
+      'Update your password to keep your account secure.';
+
+  @override
+  String get changePasswordSecurityHint =>
+      'Use a strong password that you do not use for other accounts.';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get confirmNewPassword => 'Confirm new password';
+
+  @override
+  String get enterCurrentPassword => 'Enter your current password';
+
+  @override
+  String get enterNewPassword => 'Enter your new password';
+
+  @override
+  String get enterNewPasswordAgain => 'Enter your new password again';
+
+  @override
+  String get currentPasswordRequired => 'Please enter your current password.';
+
+  @override
+  String get newPasswordRequired => 'Please enter a new password.';
+
+  @override
+  String get confirmPasswordRequired => 'Please confirm your new password.';
+
+  @override
+  String get passwordMinimumLength => 'Password must be at least 8 characters.';
+
+  @override
+  String get passwordMinimumHint =>
+      'Password must contain at least 8 characters.';
+
+  @override
+  String get updatePassword => 'Update password';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get passwordChangedSuccessfully =>
+      'Your password has been changed successfully.';
 }

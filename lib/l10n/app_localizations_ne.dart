@@ -598,23 +598,23 @@ class AppLocalizationsNe extends AppLocalizations {
   String get resetPassword => 'पासवर्ड reset गर्नुहोस्';
 
   @override
-  String get user => 'User';
+  String get user => 'प्रयोगकर्ता';
 
   @override
-  String get addressNotAdded => 'Address not added';
+  String get addressNotAdded => 'ठेगाना थपिएको छैन';
 
   @override
-  String get available => 'Available';
+  String get available => 'उपलब्ध';
 
   @override
-  String get unavailable => 'Unavailable';
+  String get unavailable => 'अनुपलब्ध';
 
   @override
-  String get isDonor => 'I am a donor';
+  String get isDonor => 'म रक्तदाता हुँ';
 
   @override
   String get availableForBloodDonation =>
-      'Make yourself available for blood donation';
+      'रक्तदानका लागि आफूलाई उपलब्ध बनाउनुहोस्';
 
   @override
   String get legalLastUpdated => 'अन्तिम अद्यावधिक: सेप्टेम्बर २०२६';
@@ -800,4 +800,58 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get legalAgreementSuffix => ' सँग सहमत छु।';
+
+  @override
+  String get changePasswordDescription =>
+      'आफ्नो खाता सुरक्षित राख्न पासवर्ड परिवर्तन गर्नुहोस्।';
+
+  @override
+  String get changePasswordSecurityHint =>
+      'अन्य खाताहरूमा प्रयोग नगरेको बलियो पासवर्ड प्रयोग गर्नुहोस्।';
+
+  @override
+  String get currentPassword => 'हालको पासवर्ड';
+
+  @override
+  String get confirmNewPassword => 'नयाँ पासवर्ड पुष्टि गर्नुहोस्';
+
+  @override
+  String get enterCurrentPassword => 'आफ्नो हालको पासवर्ड प्रविष्ट गर्नुहोस्';
+
+  @override
+  String get enterNewPassword => 'आफ्नो नयाँ पासवर्ड प्रविष्ट गर्नुहोस्';
+
+  @override
+  String get enterNewPasswordAgain =>
+      'आफ्नो नयाँ पासवर्ड फेरि प्रविष्ट गर्नुहोस्';
+
+  @override
+  String get currentPasswordRequired =>
+      'कृपया आफ्नो हालको पासवर्ड प्रविष्ट गर्नुहोस्।';
+
+  @override
+  String get newPasswordRequired => 'कृपया नयाँ पासवर्ड प्रविष्ट गर्नुहोस्।';
+
+  @override
+  String get confirmPasswordRequired =>
+      'कृपया आफ्नो नयाँ पासवर्ड पुष्टि गर्नुहोस्।';
+
+  @override
+  String get passwordMinimumLength => 'पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ।';
+
+  @override
+  String get passwordMinimumHint => 'पासवर्डमा कम्तीमा ८ अक्षर हुनुपर्छ।';
+
+  @override
+  String get updatePassword => 'पासवर्ड परिवर्तन गर्नुहोस्';
+
+  @override
+  String get showPassword => 'पासवर्ड देखाउनुहोस्';
+
+  @override
+  String get hidePassword => 'पासवर्ड लुकाउनुहोस्';
+
+  @override
+  String get passwordChangedSuccessfully =>
+      'तपाईंको पासवर्ड सफलतापूर्वक परिवर्तन भयो।';
 }

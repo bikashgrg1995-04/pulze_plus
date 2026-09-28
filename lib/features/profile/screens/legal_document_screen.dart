@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:pulze_plus/core/theme/app_colors.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
 import 'package:pulze_plus/l10n/app_localizations.dart';
 
@@ -20,6 +19,7 @@ class LegalDocumentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final isPrivacyPolicy =
         type == LegalDocumentType.privacyPolicy;
@@ -29,12 +29,13 @@ class LegalDocumentScreen extends StatelessWidget {
         : l10n.termsConditions;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -233,6 +234,7 @@ class _DocumentIntro extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +242,7 @@ class _DocumentIntro extends StatelessWidget {
         Text(
           title,
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: AppColors.textPrimary,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -248,14 +250,14 @@ class _DocumentIntro extends StatelessWidget {
         Text(
           lastUpdated,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.textTertiary,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
           description,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: AppColors.textSecondary,
+            color: colorScheme.onSurfaceVariant,
             height: 1.6,
           ),
         ),
@@ -276,6 +278,7 @@ class _DocumentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -287,7 +290,7 @@ class _DocumentSection extends StatelessWidget {
           Text(
             title,
             style: theme.textTheme.titleMedium?.copyWith(
-              color: AppColors.textPrimary,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -300,7 +303,7 @@ class _DocumentSection extends StatelessWidget {
               child: Text(
                 paragraph,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                   height: 1.6,
                 ),
               ),

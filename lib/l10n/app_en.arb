@@ -1147,6 +1147,84 @@
   "legalAgreementSuffix": ".",
   "@legalAgreementSuffix": {
     "description": "Ending punctuation for the legal agreement during account registration."
+  },
+
+  "changePasswordDescription": "Update your password to keep your account secure.",
+  "@changePasswordDescription": {
+    "description": "Description shown in the Change Password dialog."
+  },
+
+  "changePasswordSecurityHint": "Use a strong password that you do not use for other accounts.",
+  "@changePasswordSecurityHint": {
+    "description": "Security guidance shown in the Change Password dialog."
+  },
+
+  "currentPassword": "Current password",
+  "@currentPassword": {
+    "description": "Label for the current password field."
+  },
+
+  "confirmNewPassword": "Confirm new password",
+  "@confirmNewPassword": {
+    "description": "Label for the confirm new password field."
+  },
+
+  "enterCurrentPassword": "Enter your current password",
+  "@enterCurrentPassword": {
+    "description": "Hint text for the current password field."
+  },
+
+  "enterNewPassword": "Enter your new password",
+  "@enterNewPassword": {
+    "description": "Hint text for the new password field."
+  },
+
+  "enterNewPasswordAgain": "Enter your new password again",
+  "@enterNewPasswordAgain": {
+    "description": "Hint text for the confirm new password field."
+  },
+
+  "currentPasswordRequired": "Please enter your current password.",
+  "@currentPasswordRequired": {
+    "description": "Validation message when the current password is empty."
+  },
+
+  "newPasswordRequired": "Please enter a new password.",
+  "@newPasswordRequired": {
+    "description": "Validation message when the new password is empty."
+  },
+
+  "confirmPasswordRequired": "Please confirm your new password.",
+  "@confirmPasswordRequired": {
+    "description": "Validation message when the new password confirmation is empty."
+  },
+
+  "passwordMinimumLength": "Password must be at least 8 characters.",
+  "@passwordMinimumLength": {
+    "description": "Validation message when the new password is shorter than the minimum length."
+  },
+
+  "passwordMinimumHint": "Password must contain at least 8 characters.",
+  "@passwordMinimumHint": {
+    "description": "Password requirement hint shown below the new password field."
+  },
+
+  "updatePassword": "Update password",
+  "@updatePassword": {
+    "description": "Button label used to submit the password change."
+  },
+
+  "showPassword": "Show password",
+  "@showPassword": {
+    "description": "Tooltip shown when the password is currently hidden."
+  },
+  "hidePassword": "Hide password",
+  "@hidePassword": {
+    "description": "Tooltip shown when the password is currently visible."
+  },
+
+  "passwordChangedSuccessfully": "Your password has been changed successfully.",
+  "@passwordChangedSuccessfully": {
+    "description": "Success message shown after the user's password is changed."
   }
-  
 }

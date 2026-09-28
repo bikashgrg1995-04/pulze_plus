@@ -176,6 +176,26 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    state = state.copyWith(clearMessage: true);
+
+    try {
+      await _profileRepository.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+    } catch (error) {
+      state = state.copyWith(message: error.toString());
+
+      rethrow;
+    }
+  }
+
   void setProfile(ProfileModel profile) {
     state = ProfileState(status: ProfileStatus.loaded, profile: profile);
   }
