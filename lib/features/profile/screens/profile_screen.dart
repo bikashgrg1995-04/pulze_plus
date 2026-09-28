@@ -281,6 +281,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             subtitle: l10n.learnHowPulzeHandlesInformation,
             onTap: () {
               Navigator.of(context).pop();
+              context.push(AppRoutes.privacyPolicy);
             },
           ),
           ProfileSettingsSheetItem(
@@ -290,6 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             showDivider: false,
             onTap: () {
               Navigator.of(context).pop();
+              context.push(AppRoutes.termsConditions);
             },
           ),
         ],

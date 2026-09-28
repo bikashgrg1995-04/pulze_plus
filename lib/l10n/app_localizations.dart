@@ -1220,11 +1220,317 @@ abstract class AppLocalizations {
   /// **'Make yourself available for blood donation'**
   String get availableForBloodDonation;
 
+  /// Last updated date displayed on Pulze+ legal documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: September 2026'**
+  String get legalLastUpdated;
+
+  /// Introduction text displayed at the beginning of the Pulze+ Privacy Policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ respects your privacy and is committed to protecting the information you provide while using the platform.'**
+  String get privacyPolicyIntro;
+
+  /// Privacy Policy section heading describing the information Pulze+ may collect.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Information We Collect'**
+  String get privacyInformationWeCollect;
+
+  /// Privacy Policy paragraph explaining the types of information Pulze+ may collect from users.
+  ///
+  /// In en, this message translates to:
+  /// **'When you create and use a Pulze+ account, we may collect information such as your name, email address, phone number, blood group, donor status, location information, profile information, and other information you choose to provide.'**
+  String get privacyInformationWeCollectParagraph1;
+
+  /// Privacy Policy paragraph explaining how device location may be used for location-based features.
+  ///
+  /// In en, this message translates to:
+  /// **'If you use features that require location access, Pulze+ may use your device location to provide nearby blood requests, blood banks, donors, or distance-related information.'**
+  String get privacyInformationWeCollectParagraph2;
+
+  /// Privacy Policy section heading explaining how Pulze+ uses user information.
+  ///
+  /// In en, this message translates to:
+  /// **'2. How We Use Your Information'**
+  String get privacyHowWeUseInformation;
+
+  /// Privacy Policy paragraph explaining the purposes for which Pulze+ uses user information.
+  ///
+  /// In en, this message translates to:
+  /// **'We use your information to provide and improve Pulze+ features, manage your account, support blood donation and blood request services, provide relevant notifications, and maintain the security and reliability of the platform.'**
+  String get privacyHowWeUseInformationParagraph;
+
+  /// Privacy Policy section heading about location information and location-based features.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Location Information'**
+  String get privacyLocationInformation;
+
+  /// Privacy Policy paragraph explaining that location access is optional and how location may be used.
+  ///
+  /// In en, this message translates to:
+  /// **'Location access is optional. If you grant location permission, Pulze+ may use your location to calculate distance and provide location-based features.'**
+  String get privacyLocationInformationParagraph1;
+
+  /// Privacy Policy paragraph explaining how users can manage location permission.
+  ///
+  /// In en, this message translates to:
+  /// **'You can manage location permission through your device settings. If location access is unavailable, some location-based features may not work as intended.'**
+  String get privacyLocationInformationParagraph2;
+
+  /// Privacy Policy section heading about app notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Notifications'**
+  String get privacyNotifications;
+
+  /// Privacy Policy paragraph explaining the types of notifications Pulze+ may send.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ may send notifications related to blood requests, donation reminders, account activity, or other important app information when notification permission is enabled.'**
+  String get privacyNotificationsParagraph;
+
+  /// Privacy Policy section heading about sharing and processing user information.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Information Sharing'**
+  String get privacyInformationSharing;
+
+  /// Privacy Policy statement about selling personal information.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ does not intend to sell your personal information.'**
+  String get privacyInformationSharingParagraph1;
+
+  /// Privacy Policy paragraph explaining circumstances in which information may be processed or shared.
+  ///
+  /// In en, this message translates to:
+  /// **'Information may be processed or shared when necessary to provide requested services, operate the platform, comply with applicable laws, protect users, or maintain the security of the service.'**
+  String get privacyInformationSharingParagraph2;
+
+  /// Privacy Policy section heading about user choices and account settings.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Your Choices'**
+  String get privacyYourChoices;
+
+  /// Privacy Policy paragraph explaining the settings and preferences users can manage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can review and update available account information through your profile. You may also manage certain device permissions, notification preferences, language, and theme settings through the app or your device settings.'**
+  String get privacyYourChoicesParagraph;
+
+  /// Privacy Policy section heading about protecting user information.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Data Security'**
+  String get privacyDataSecurity;
+
+  /// Privacy Policy paragraph explaining Pulze+ data security practices and limitations.
+  ///
+  /// In en, this message translates to:
+  /// **'We take reasonable measures to protect information handled through Pulze+. However, no internet-based service can guarantee absolute security.'**
+  String get privacyDataSecurityParagraph;
+
+  /// Privacy Policy section heading about future policy changes.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Changes to This Policy'**
+  String get privacyChangesToPolicy;
+
+  /// Privacy Policy paragraph explaining how policy updates will be communicated.
+  ///
+  /// In en, this message translates to:
+  /// **'This Privacy Policy may be updated from time to time as Pulze+ features, services, or legal requirements change. The updated version will be made available through the app.'**
+  String get privacyChangesToPolicyParagraph;
+
+  /// Privacy Policy section heading for privacy-related contact information.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Contact'**
+  String get privacyContact;
+
+  /// Privacy Policy paragraph directing users to Pulze+ support for privacy questions.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions or concerns about this Privacy Policy or how your information is handled, please contact the Pulze+ support team.'**
+  String get privacyContactParagraph;
+
+  /// Introduction text displayed at the beginning of the Pulze+ Terms & Conditions.
+  ///
+  /// In en, this message translates to:
+  /// **'These Terms & Conditions describe the rules for using the Pulze+ platform and its blood donation and blood request related features.'**
+  String get termsConditionsIntro;
+
+  /// Terms & Conditions section heading about accepting the terms.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Acceptance of Terms'**
+  String get termsAcceptance;
+
+  /// Terms & Conditions paragraph explaining user acceptance of the terms and Privacy Policy.
+  ///
+  /// In en, this message translates to:
+  /// **'By creating an account or using account-based features of Pulze+, you agree to these Terms & Conditions and the Privacy Policy.'**
+  String get termsAcceptanceParagraph;
+
+  /// Terms & Conditions section heading about acceptable use of Pulze+.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Use of Pulze+'**
+  String get termsUseOfPulze;
+
+  /// Terms & Conditions paragraph explaining users' responsibilities when using Pulze+.
+  ///
+  /// In en, this message translates to:
+  /// **'You agree to provide accurate information when creating or maintaining your account and to use Pulze+ only for lawful purposes.'**
+  String get termsUseOfPulzeParagraph;
+
+  /// Terms & Conditions section heading about blood donation information.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Blood Donation Information'**
+  String get termsBloodDonationInformation;
+
+  /// Terms & Conditions paragraph explaining the purpose and limitations of blood donation information.
+  ///
+  /// In en, this message translates to:
+  /// **'Information provided through Pulze+ is intended to help connect people with blood donation resources. Pulze+ does not replace professional medical advice, diagnosis, or treatment.'**
+  String get termsBloodDonationInformationParagraph1;
+
+  /// Terms & Conditions paragraph advising users to verify important medical and donation information.
+  ///
+  /// In en, this message translates to:
+  /// **'Users should independently verify important medical and blood donation requirements with qualified healthcare professionals or authorized blood banks.'**
+  String get termsBloodDonationInformationParagraph2;
+
+  /// Terms & Conditions section heading about blood requests.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Blood Requests'**
+  String get termsBloodRequests;
+
+  /// Terms & Conditions paragraph explaining user responsibility when creating or responding to blood requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Users are responsible for providing truthful and appropriate information when creating or responding to blood requests.'**
+  String get termsBloodRequestsParagraph1;
+
+  /// Terms & Conditions paragraph explaining that Pulze+ cannot guarantee availability of donors or blood resources.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ does not guarantee that a suitable donor, blood unit, blood bank, or response will always be available.'**
+  String get termsBloodRequestsParagraph2;
+
+  /// Terms & Conditions section heading about account security and responsibility.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Account Responsibility'**
+  String get termsAccountResponsibility;
+
+  /// Terms & Conditions paragraph explaining responsibility for account credentials and account activity.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for maintaining the security of your account credentials and for activity performed through your account.'**
+  String get termsAccountResponsibilityParagraph1;
+
+  /// Terms & Conditions paragraph advising users not to share account credentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not share your password or knowingly allow another person to use your account.'**
+  String get termsAccountResponsibilityParagraph2;
+
+  /// Terms & Conditions section heading about prohibited activities.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Prohibited Use'**
+  String get termsProhibitedUse;
+
+  /// Terms & Conditions paragraph describing prohibited uses of Pulze+.
+  ///
+  /// In en, this message translates to:
+  /// **'You must not use Pulze+ to provide false information, misuse blood request or donor features, harass other users, attempt unauthorized access, or interfere with the operation or security of the platform.'**
+  String get termsProhibitedUseParagraph;
+
+  /// Terms & Conditions section heading about service availability.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Availability of Services'**
+  String get termsServiceAvailability;
+
+  /// Terms & Conditions paragraph explaining that Pulze+ may modify or suspend features when necessary.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ may change, suspend, or discontinue features when necessary for maintenance, security, development, or other operational reasons.'**
+  String get termsServiceAvailabilityParagraph;
+
+  /// Terms & Conditions section heading about user responsibility and service limitations.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Limitation of Responsibility'**
+  String get termsLimitationOfResponsibility;
+
+  /// Terms & Conditions paragraph explaining the responsibilities of users when using the platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulze+ provides a platform for connecting users with blood-related resources. Users remain responsible for their own decisions, communications, and actions.'**
+  String get termsLimitationOfResponsibilityParagraph;
+
+  /// Terms & Conditions section heading about future changes to the terms.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Changes to These Terms'**
+  String get termsChanges;
+
+  /// Terms & Conditions paragraph explaining how updated terms will be made available.
+  ///
+  /// In en, this message translates to:
+  /// **'These Terms & Conditions may be updated as the Pulze+ platform evolves. Updated terms will be made available through the application.'**
+  String get termsChangesParagraph;
+
+  /// Terms & Conditions section heading for support contact information.
+  ///
+  /// In en, this message translates to:
+  /// **'10. Contact'**
+  String get termsContact;
+
+  /// Terms & Conditions paragraph directing users to Pulze+ support for questions.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about these Terms & Conditions, please contact the Pulze+ support team.'**
+  String get termsContactParagraph;
+
   /// Button label allowing users to enter Pulze+ as a guest.
   ///
   /// In en, this message translates to:
   /// **'Continue as Guest'**
   String get continueAsGuest;
+
+  /// Checkbox label requiring users to accept the Terms & Conditions and Privacy Policy before registration.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms & Conditions and Privacy Policy.'**
+  String get agreeToTermsAndPrivacy;
+
+  /// Introductory text for the legal agreement during account registration.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get legalAgreementPrefix;
+
+  /// Connector between the Terms & Conditions and Privacy Policy during account registration.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get legalAgreementConnector;
+
+  /// Ending punctuation for the legal agreement during account registration.
+  ///
+  /// In en, this message translates to:
+  /// **'.'**
+  String get legalAgreementSuffix;
 }
 
 class _AppLocalizationsDelegate

@@ -617,5 +617,187 @@ class AppLocalizationsNe extends AppLocalizations {
       'Make yourself available for blood donation';
 
   @override
+  String get legalLastUpdated => 'अन्तिम अद्यावधिक: सेप्टेम्बर २०२६';
+
+  @override
+  String get privacyPolicyIntro =>
+      'Pulze+ ले तपाईंको गोपनीयताको सम्मान गर्छ र प्लेटफर्म प्रयोग गर्दा तपाईंले प्रदान गर्नुभएको जानकारीको सुरक्षा गर्न प्रतिबद्ध छ।';
+
+  @override
+  String get privacyInformationWeCollect => '१. हामीले सङ्कलन गर्ने जानकारी';
+
+  @override
+  String get privacyInformationWeCollectParagraph1 =>
+      'तपाईंले Pulze+ खाता सिर्जना गरी प्रयोग गर्दा हामी तपाईंको नाम, इमेल ठेगाना, फोन नम्बर, रक्त समूह, रक्तदाता स्थिति, स्थानसम्बन्धी जानकारी, प्रोफाइलसम्बन्धी जानकारी तथा तपाईंले उपलब्ध गराउन रोज्नुभएको अन्य जानकारी सङ्कलन गर्न सक्छौँ।';
+
+  @override
+  String get privacyInformationWeCollectParagraph2 =>
+      'स्थान आवश्यक पर्ने सुविधा प्रयोग गर्दा, नजिकका रक्त अनुरोध, रक्त बैंक, रक्तदाता वा दूरीसम्बन्धी जानकारी उपलब्ध गराउन Pulze+ ले तपाईंको उपकरणको स्थान प्रयोग गर्न सक्छ।';
+
+  @override
+  String get privacyHowWeUseInformation =>
+      '२. हामी तपाईंको जानकारी कसरी प्रयोग गर्छौँ';
+
+  @override
+  String get privacyHowWeUseInformationParagraph =>
+      'हामी तपाईंको जानकारी Pulze+ का सुविधाहरू उपलब्ध गराउन र सुधार गर्न, तपाईंको खाता व्यवस्थापन गर्न, रक्तदान तथा रक्त अनुरोधसम्बन्धी सेवा सञ्चालन गर्न, आवश्यक सूचनाहरू पठाउन तथा प्लेटफर्मको सुरक्षा र विश्वसनीयता कायम राख्न प्रयोग गर्छौँ।';
+
+  @override
+  String get privacyLocationInformation => '३. स्थानसम्बन्धी जानकारी';
+
+  @override
+  String get privacyLocationInformationParagraph1 =>
+      'स्थान पहुँच वैकल्पिक हो। तपाईंले स्थान अनुमति दिनुभयो भने Pulze+ ले दूरी गणना गर्न र स्थानमा आधारित सुविधाहरू उपलब्ध गराउन तपाईंको स्थान प्रयोग गर्न सक्छ।';
+
+  @override
+  String get privacyLocationInformationParagraph2 =>
+      'तपाईं आफ्नो उपकरणको सेटिङबाट स्थान अनुमति व्यवस्थापन गर्न सक्नुहुन्छ। स्थान पहुँच उपलब्ध नभएमा केही स्थानमा आधारित सुविधाहरू अपेक्षित रूपमा काम नगर्न सक्छन्।';
+
+  @override
+  String get privacyNotifications => '४. सूचनाहरू';
+
+  @override
+  String get privacyNotificationsParagraph =>
+      'सूचना अनुमति सक्षम गरिएको अवस्थामा Pulze+ ले रक्त अनुरोध, रक्तदान सम्झना, खाता गतिविधि वा अन्य महत्वपूर्ण एपसम्बन्धी जानकारीका सूचनाहरू पठाउन सक्छ।';
+
+  @override
+  String get privacyInformationSharing => '५. जानकारी साझेदारी';
+
+  @override
+  String get privacyInformationSharingParagraph1 =>
+      'Pulze+ ले तपाईंको व्यक्तिगत जानकारी बेच्ने उद्देश्य राख्दैन।';
+
+  @override
+  String get privacyInformationSharingParagraph2 =>
+      'अनुरोध गरिएका सेवाहरू उपलब्ध गराउन, प्लेटफर्म सञ्चालन गर्न, लागू हुने कानून पालना गर्न, प्रयोगकर्ताको सुरक्षा गर्न वा सेवाको सुरक्षा कायम राख्न आवश्यक हुँदा जानकारी प्रशोधन वा साझेदारी गर्न सकिन्छ।';
+
+  @override
+  String get privacyYourChoices => '६. तपाईंका विकल्पहरू';
+
+  @override
+  String get privacyYourChoicesParagraph =>
+      'तपाईं आफ्नो प्रोफाइलमार्फत उपलब्ध खाता जानकारी समीक्षा र अद्यावधिक गर्न सक्नुहुन्छ। तपाईंले एप वा आफ्नो उपकरणको सेटिङमार्फत केही उपकरण अनुमति, सूचना प्राथमिकता, भाषा र थिमसम्बन्धी सेटिङहरू पनि व्यवस्थापन गर्न सक्नुहुन्छ।';
+
+  @override
+  String get privacyDataSecurity => '७. डेटा सुरक्षा';
+
+  @override
+  String get privacyDataSecurityParagraph =>
+      'Pulze+ मार्फत व्यवस्थापन गरिने जानकारी सुरक्षित राख्न हामी उचित सुरक्षा उपायहरू अपनाउँछौँ। तथापि, इन्टरनेटमा आधारित कुनै पनि सेवाले पूर्ण सुरक्षा सुनिश्चित गर्न सक्दैन।';
+
+  @override
+  String get privacyChangesToPolicy => '८. यस गोपनीयता नीतिमा परिवर्तन';
+
+  @override
+  String get privacyChangesToPolicyParagraph =>
+      'Pulze+ का सुविधाहरू, सेवाहरू वा कानुनी आवश्यकताहरू परिवर्तन हुँदा यो गोपनीयता नीति समय–समयमा अद्यावधिक हुन सक्छ। अद्यावधिक गरिएको संस्करण एपमार्फत उपलब्ध गराइनेछ।';
+
+  @override
+  String get privacyContact => '९. सम्पर्क';
+
+  @override
+  String get privacyContactParagraph =>
+      'यस गोपनीयता नीति वा तपाईंको जानकारी कसरी व्यवस्थापन गरिन्छ भन्ने सम्बन्धमा प्रश्न वा चिन्ता भएमा Pulze+ सपोर्ट टोलीसँग सम्पर्क गर्नुहोस्।';
+
+  @override
+  String get termsConditionsIntro =>
+      'यी Terms & Conditions ले Pulze+ प्लेटफर्म तथा यसका रक्तदान र रक्त अनुरोधसम्बन्धी सुविधाहरू प्रयोग गर्ने नियमहरू वर्णन गर्छन्।';
+
+  @override
+  String get termsAcceptance => '१. सर्तहरूको स्वीकृति';
+
+  @override
+  String get termsAcceptanceParagraph =>
+      'Pulze+ मा खाता सिर्जना गर्दा वा खातासँग सम्बन्धित सुविधाहरू प्रयोग गर्दा तपाईं यी Terms & Conditions तथा Privacy Policy मा सहमत हुनुहुन्छ।';
+
+  @override
+  String get termsUseOfPulze => '२. Pulze+ को प्रयोग';
+
+  @override
+  String get termsUseOfPulzeParagraph =>
+      'खाता सिर्जना वा व्यवस्थापन गर्दा सही जानकारी उपलब्ध गराउन र Pulze+ लाई कानुनी उद्देश्यका लागि मात्र प्रयोग गर्न तपाईं सहमत हुनुहुन्छ।';
+
+  @override
+  String get termsBloodDonationInformation => '३. रक्तदानसम्बन्धी जानकारी';
+
+  @override
+  String get termsBloodDonationInformationParagraph1 =>
+      'Pulze+ मार्फत उपलब्ध जानकारी मानिसहरूलाई रक्तदानसम्बन्धी स्रोतहरूसँग जोड्नका लागि हो। Pulze+ ले पेशेवर चिकित्सकीय सल्लाह, निदान वा उपचारको स्थान लिँदैन।';
+
+  @override
+  String get termsBloodDonationInformationParagraph2 =>
+      'महत्वपूर्ण चिकित्सकीय तथा रक्तदानसम्बन्धी आवश्यकताहरू योग्य स्वास्थ्यकर्मी वा आधिकारिक रक्त बैंकसँग स्वतन्त्र रूपमा पुष्टि गर्नुपर्छ।';
+
+  @override
+  String get termsBloodRequests => '४. रक्त अनुरोध';
+
+  @override
+  String get termsBloodRequestsParagraph1 =>
+      'रक्त अनुरोध सिर्जना गर्दा वा त्यसमा प्रतिक्रिया दिँदा सही र उपयुक्त जानकारी उपलब्ध गराउने जिम्मेवारी प्रयोगकर्ताको हुन्छ।';
+
+  @override
+  String get termsBloodRequestsParagraph2 =>
+      'Pulze+ ले उपयुक्त रक्तदाता, रक्त युनिट, रक्त बैंक वा प्रतिक्रिया सधैँ उपलब्ध हुनेछ भन्ने ग्यारेन्टी गर्दैन।';
+
+  @override
+  String get termsAccountResponsibility => '५. खाता सम्बन्धी जिम्मेवारी';
+
+  @override
+  String get termsAccountResponsibilityParagraph1 =>
+      'तपाईं आफ्नो खाता प्रमाणहरूको सुरक्षा तथा आफ्नो खातामार्फत हुने गतिविधिका लागि जिम्मेवार हुनुहुन्छ।';
+
+  @override
+  String get termsAccountResponsibilityParagraph2 =>
+      'आफ्नो पासवर्ड अरूसँग साझा नगर्नुहोस् र जानाजानी अर्को व्यक्तिलाई आफ्नो खाता प्रयोग गर्न नदिनुहोस्।';
+
+  @override
+  String get termsProhibitedUse => '६. निषेधित प्रयोग';
+
+  @override
+  String get termsProhibitedUseParagraph =>
+      'Pulze+ प्रयोग गर्दा गलत जानकारी उपलब्ध गराउने, रक्त अनुरोध वा रक्तदाता सुविधाको दुरुपयोग गर्ने, अन्य प्रयोगकर्तालाई दुर्व्यवहार गर्ने, अनधिकृत पहुँच प्रयास गर्ने वा प्लेटफर्मको सञ्चालन वा सुरक्षामा हस्तक्षेप गर्ने कार्य गर्न पाइँदैन।';
+
+  @override
+  String get termsServiceAvailability => '७. सेवाको उपलब्धता';
+
+  @override
+  String get termsServiceAvailabilityParagraph =>
+      'मर्मतसम्भार, सुरक्षा, विकास वा अन्य सञ्चालनसम्बन्धी कारणले आवश्यक परेमा Pulze+ ले केही सुविधा परिवर्तन, स्थगित वा बन्द गर्न सक्छ।';
+
+  @override
+  String get termsLimitationOfResponsibility => '८. जिम्मेवारीको सीमा';
+
+  @override
+  String get termsLimitationOfResponsibilityParagraph =>
+      'Pulze+ ले प्रयोगकर्ताहरूलाई रक्तसम्बन्धी स्रोतहरूसँग जोड्ने प्लेटफर्म उपलब्ध गराउँछ। आफ्ना निर्णय, सञ्चार तथा कार्यका लागि प्रयोगकर्ताहरू स्वयं जिम्मेवार हुन्छन्।';
+
+  @override
+  String get termsChanges => '९. यी सर्तहरूमा परिवर्तन';
+
+  @override
+  String get termsChangesParagraph =>
+      'Pulze+ प्लेटफर्म विकसित हुँदै जाँदा यी Terms & Conditions अद्यावधिक हुन सक्छन्। अद्यावधिक गरिएका सर्तहरू एपमार्फत उपलब्ध गराइनेछन्।';
+
+  @override
+  String get termsContact => '१०. सम्पर्क';
+
+  @override
+  String get termsContactParagraph =>
+      'यी Terms & Conditions सम्बन्धमा कुनै प्रश्न भएमा Pulze+ सपोर्ट टोलीसँग सम्पर्क गर्नुहोस्।';
+
+  @override
   String get continueAsGuest => 'अतिथिको रूपमा जारी राख्नुहोस्';
+
+  @override
+  String get agreeToTermsAndPrivacy =>
+      'म नियम तथा सर्तहरू र गोपनीयता नीतिसँग सहमत छु।';
+
+  @override
+  String get legalAgreementPrefix => 'म ';
+
+  @override
+  String get legalAgreementConnector => ' तथा ';
+
+  @override
+  String get legalAgreementSuffix => ' सँग सहमत छु।';
 }

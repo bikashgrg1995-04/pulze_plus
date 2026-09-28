@@ -13,23 +13,33 @@ class AuthRepository {
     required String fullName,
     required String email,
     required String password,
+    required bool termsAccepted,
+    required bool privacyPolicyAccepted,
   }) async {
     final response = await apiService.post(
       ApiEndpoints.register,
-      data: {'full_name': fullName, 'email': email, 'password': password},
+      data: {
+        'full_name': fullName,
+        'email': email,
+        'password': password,
+        'terms_accepted': termsAccepted,
+        'privacy_policy_accepted': privacyPolicyAccepted,
+      },
     );
 
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(response.data));
   }
 
-  Future<void> verifyEmail({
+  Future<AuthResponseModel> verifyEmail({
     required String email,
     required String code,
   }) async {
-    await apiService.post(
+    final response = await apiService.post(
       ApiEndpoints.verifyEmail,
       data: {'email': email, 'code': code},
     );
+
+    return AuthResponseModel.fromJson(Map<String, dynamic>.from(response.data));
   }
 
   Future<void> resendVerificationEmail({required String email}) async {

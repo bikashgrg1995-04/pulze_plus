@@ -32,4 +32,10 @@ abstract final class AppRoutes {
 
   //help & support
   static const faqs = '/faqs';
+
+  //privacy policy
+  static const privacyPolicy = '/privacy-policy';
+
+  //terms and conditions
+  static const termsConditions = '/terms-conditions';
 }

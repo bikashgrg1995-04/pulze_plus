@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,6 +46,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   bool _obscureLoginPassword = true;
   bool _obscureSignupPassword = true;
+  bool _acceptedLegalDocuments = false;
 
   bool get _isLogin => _mode == AuthMode.login;
 
@@ -180,6 +182,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             fullName: _signupNameController.text.trim(),
             email: email,
             password: _signupPasswordController.text,
+            termsAccepted: _acceptedLegalDocuments,
+            privacyPolicyAccepted: _acceptedLegalDocuments,
           );
 
       // Registration was successful, so the user has completed
@@ -237,7 +241,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     _signupNameController.clear();
     _signupEmailController.clear();
     _signupPasswordController.clear();
-
+    _acceptedLegalDocuments = false;
     _signupFormKey.currentState?.reset();
   }
 
@@ -529,13 +533,71 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             },
           ),
 
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Checkbox(
+                value: _acceptedLegalDocuments,
+                onChanged: _isLoading
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _acceptedLegalDocuments = value ?? false;
+                        });
+                      },
+                activeColor: AppColors.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                      children: [
+                        TextSpan(text: l10n.legalAgreementPrefix),
+                        TextSpan(
+                          text: l10n.termsConditions,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.push(AppRoutes.termsConditions);
+                            },
+                        ),
+                        TextSpan(text: l10n.legalAgreementConnector),
+                        TextSpan(
+                          text: l10n.privacyPolicy,
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.push(AppRoutes.privacyPolicy);
+                            },
+                        ),
+                        TextSpan(text: l10n.legalAgreementSuffix),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
           const SizedBox(height: AppSpacing.lg),
 
           AppButton(
             label: l10n.createAccount,
             icon: Icons.arrow_forward_rounded,
             isLoading: _isLoading,
-            onPressed: _createAccount,
+            onPressed: _acceptedLegalDocuments ? _createAccount : null,
           ),
         ],
       ),

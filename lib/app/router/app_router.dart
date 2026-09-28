@@ -18,6 +18,7 @@ import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
 import 'package:pulze_plus/features/navigation/screens/main_navigation_screen.dart';
 import 'package:pulze_plus/features/onboarding/screens/onboarding_screen.dart';
 import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
+import 'package:pulze_plus/features/profile/screens/legal_document_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
@@ -44,10 +45,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           location == AppRoutes.verifyPasswordReset ||
           location == AppRoutes.resetPassword;
 
+      final isLegalRoute =
+          location == AppRoutes.privacyPolicy ||
+          location == AppRoutes.termsConditions;
+
       final isPublicRoute =
           location == AppRoutes.startup ||
           location == AppRoutes.onboarding ||
-          isAuthRoute;
+          isAuthRoute ||
+          isLegalRoute;
 
       if (authStatus == AuthStatus.initial ||
           authStatus == AuthStatus.loading) {
@@ -91,9 +97,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ------------------------------------------------------------
       // Email verification
       // ------------------------------------------------------------
-
       if (authStatus == AuthStatus.needsVerification) {
-        if (location == AppRoutes.verifyEmail) {
+        if (location == AppRoutes.auth || location == AppRoutes.verifyEmail) {
           return null;
         }
 
@@ -152,7 +157,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.verifyEmail,
         builder: (context, state) {
-          final email = state.extra as String;
+          final email = state.extra as String?;
+
+          if (email == null || email.isEmpty) {
+            return const AuthScreen();
+          }
 
           return VerifyEmailScreen(email: email);
         },
@@ -226,6 +235,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final chat = state.extra as ChatModel;
 
           return ChatDetailScreen(chat: chat);
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.privacyPolicy,
+        builder: (context, state) {
+          return const LegalDocumentScreen(
+            type: LegalDocumentType.privacyPolicy,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.termsConditions,
+        builder: (context, state) {
+          return const LegalDocumentScreen(
+            type: LegalDocumentType.termsConditions,
+          );
         },
       ),
 

@@ -73,12 +73,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       await ref
           .read(authProvider.notifier)
           .verifyEmail(email: widget.email, code: code);
-
-      if (!mounted) {
-        return;
-      }
-
-      context.pop();
     } catch (error) {
       if (!mounted) {
         return;

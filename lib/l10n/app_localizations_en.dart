@@ -608,5 +608,187 @@ class AppLocalizationsEn extends AppLocalizations {
       'Make yourself available for blood donation';
 
   @override
+  String get legalLastUpdated => 'Last updated: September 2026';
+
+  @override
+  String get privacyPolicyIntro =>
+      'Pulze+ respects your privacy and is committed to protecting the information you provide while using the platform.';
+
+  @override
+  String get privacyInformationWeCollect => '1. Information We Collect';
+
+  @override
+  String get privacyInformationWeCollectParagraph1 =>
+      'When you create and use a Pulze+ account, we may collect information such as your name, email address, phone number, blood group, donor status, location information, profile information, and other information you choose to provide.';
+
+  @override
+  String get privacyInformationWeCollectParagraph2 =>
+      'If you use features that require location access, Pulze+ may use your device location to provide nearby blood requests, blood banks, donors, or distance-related information.';
+
+  @override
+  String get privacyHowWeUseInformation => '2. How We Use Your Information';
+
+  @override
+  String get privacyHowWeUseInformationParagraph =>
+      'We use your information to provide and improve Pulze+ features, manage your account, support blood donation and blood request services, provide relevant notifications, and maintain the security and reliability of the platform.';
+
+  @override
+  String get privacyLocationInformation => '3. Location Information';
+
+  @override
+  String get privacyLocationInformationParagraph1 =>
+      'Location access is optional. If you grant location permission, Pulze+ may use your location to calculate distance and provide location-based features.';
+
+  @override
+  String get privacyLocationInformationParagraph2 =>
+      'You can manage location permission through your device settings. If location access is unavailable, some location-based features may not work as intended.';
+
+  @override
+  String get privacyNotifications => '4. Notifications';
+
+  @override
+  String get privacyNotificationsParagraph =>
+      'Pulze+ may send notifications related to blood requests, donation reminders, account activity, or other important app information when notification permission is enabled.';
+
+  @override
+  String get privacyInformationSharing => '5. Information Sharing';
+
+  @override
+  String get privacyInformationSharingParagraph1 =>
+      'Pulze+ does not intend to sell your personal information.';
+
+  @override
+  String get privacyInformationSharingParagraph2 =>
+      'Information may be processed or shared when necessary to provide requested services, operate the platform, comply with applicable laws, protect users, or maintain the security of the service.';
+
+  @override
+  String get privacyYourChoices => '6. Your Choices';
+
+  @override
+  String get privacyYourChoicesParagraph =>
+      'You can review and update available account information through your profile. You may also manage certain device permissions, notification preferences, language, and theme settings through the app or your device settings.';
+
+  @override
+  String get privacyDataSecurity => '7. Data Security';
+
+  @override
+  String get privacyDataSecurityParagraph =>
+      'We take reasonable measures to protect information handled through Pulze+. However, no internet-based service can guarantee absolute security.';
+
+  @override
+  String get privacyChangesToPolicy => '8. Changes to This Policy';
+
+  @override
+  String get privacyChangesToPolicyParagraph =>
+      'This Privacy Policy may be updated from time to time as Pulze+ features, services, or legal requirements change. The updated version will be made available through the app.';
+
+  @override
+  String get privacyContact => '9. Contact';
+
+  @override
+  String get privacyContactParagraph =>
+      'If you have questions or concerns about this Privacy Policy or how your information is handled, please contact the Pulze+ support team.';
+
+  @override
+  String get termsConditionsIntro =>
+      'These Terms & Conditions describe the rules for using the Pulze+ platform and its blood donation and blood request related features.';
+
+  @override
+  String get termsAcceptance => '1. Acceptance of Terms';
+
+  @override
+  String get termsAcceptanceParagraph =>
+      'By creating an account or using account-based features of Pulze+, you agree to these Terms & Conditions and the Privacy Policy.';
+
+  @override
+  String get termsUseOfPulze => '2. Use of Pulze+';
+
+  @override
+  String get termsUseOfPulzeParagraph =>
+      'You agree to provide accurate information when creating or maintaining your account and to use Pulze+ only for lawful purposes.';
+
+  @override
+  String get termsBloodDonationInformation => '3. Blood Donation Information';
+
+  @override
+  String get termsBloodDonationInformationParagraph1 =>
+      'Information provided through Pulze+ is intended to help connect people with blood donation resources. Pulze+ does not replace professional medical advice, diagnosis, or treatment.';
+
+  @override
+  String get termsBloodDonationInformationParagraph2 =>
+      'Users should independently verify important medical and blood donation requirements with qualified healthcare professionals or authorized blood banks.';
+
+  @override
+  String get termsBloodRequests => '4. Blood Requests';
+
+  @override
+  String get termsBloodRequestsParagraph1 =>
+      'Users are responsible for providing truthful and appropriate information when creating or responding to blood requests.';
+
+  @override
+  String get termsBloodRequestsParagraph2 =>
+      'Pulze+ does not guarantee that a suitable donor, blood unit, blood bank, or response will always be available.';
+
+  @override
+  String get termsAccountResponsibility => '5. Account Responsibility';
+
+  @override
+  String get termsAccountResponsibilityParagraph1 =>
+      'You are responsible for maintaining the security of your account credentials and for activity performed through your account.';
+
+  @override
+  String get termsAccountResponsibilityParagraph2 =>
+      'Do not share your password or knowingly allow another person to use your account.';
+
+  @override
+  String get termsProhibitedUse => '6. Prohibited Use';
+
+  @override
+  String get termsProhibitedUseParagraph =>
+      'You must not use Pulze+ to provide false information, misuse blood request or donor features, harass other users, attempt unauthorized access, or interfere with the operation or security of the platform.';
+
+  @override
+  String get termsServiceAvailability => '7. Availability of Services';
+
+  @override
+  String get termsServiceAvailabilityParagraph =>
+      'Pulze+ may change, suspend, or discontinue features when necessary for maintenance, security, development, or other operational reasons.';
+
+  @override
+  String get termsLimitationOfResponsibility =>
+      '8. Limitation of Responsibility';
+
+  @override
+  String get termsLimitationOfResponsibilityParagraph =>
+      'Pulze+ provides a platform for connecting users with blood-related resources. Users remain responsible for their own decisions, communications, and actions.';
+
+  @override
+  String get termsChanges => '9. Changes to These Terms';
+
+  @override
+  String get termsChangesParagraph =>
+      'These Terms & Conditions may be updated as the Pulze+ platform evolves. Updated terms will be made available through the application.';
+
+  @override
+  String get termsContact => '10. Contact';
+
+  @override
+  String get termsContactParagraph =>
+      'If you have questions about these Terms & Conditions, please contact the Pulze+ support team.';
+
+  @override
   String get continueAsGuest => 'Continue as Guest';
+
+  @override
+  String get agreeToTermsAndPrivacy =>
+      'I agree to the Terms & Conditions and Privacy Policy.';
+
+  @override
+  String get legalAgreementPrefix => 'I agree to the ';
+
+  @override
+  String get legalAgreementConnector => ' and ';
+
+  @override
+  String get legalAgreementSuffix => '.';
 }

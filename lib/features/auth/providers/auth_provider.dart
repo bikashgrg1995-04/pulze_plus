@@ -90,6 +90,8 @@ class AuthNotifier extends Notifier<AuthState> {
     required String fullName,
     required String email,
     required String password,
+    required bool termsAccepted,
+    required bool privacyPolicyAccepted,
   }) async {
     state = state.copyWith(status: AuthStatus.loading, clearMessage: true);
 
@@ -98,6 +100,8 @@ class AuthNotifier extends Notifier<AuthState> {
         fullName: fullName,
         email: email,
         password: password,
+        termsAccepted: termsAccepted,
+        privacyPolicyAccepted: privacyPolicyAccepted,
       );
 
       ref.read(profileProvider.notifier).clearProfile();
@@ -128,12 +132,27 @@ class AuthNotifier extends Notifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading, clearMessage: true);
 
     try {
-      await _authRepository.verifyEmail(email: email, code: code);
+      final response = await _authRepository.verifyEmail(
+        email: email,
+        code: code,
+      );
+
+      final tokens = response.tokens;
+
+      if (tokens == null) {
+        throw Exception(
+          'Email verification succeeded, but authentication tokens were not returned.',
+        );
+      }
+
+      await ref
+          .read(tokenStorageProvider)
+          .saveTokens(accessToken: tokens.access, refreshToken: tokens.refresh);
 
       state = AuthState(
-        status: AuthStatus.unauthenticated,
-        user: state.user,
-        message: 'Email verified successfully. You can now log in.',
+        status: AuthStatus.authenticated,
+        user: response.user,
+        message: response.message,
         messageType: AuthMessageType.success,
       );
     } catch (_) {

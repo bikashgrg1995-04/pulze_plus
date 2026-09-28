@@ -889,8 +889,264 @@
     "description": "Description shown below the donor status setting."
   },
 
-  "continueAsGuest": "Continue as Guest",
-  "@continueAsGuest": {
-    "description": "Button label allowing users to enter Pulze+ as a guest."
+  "legalLastUpdated": "Last updated: September 2026",
+  "@legalLastUpdated": {
+    "description": "Last updated date displayed on Pulze+ legal documents."
+  },
+
+  "privacyPolicyIntro": "Pulze+ respects your privacy and is committed to protecting the information you provide while using the platform.",
+  "@privacyPolicyIntro": {
+    "description": "Introduction text displayed at the beginning of the Pulze+ Privacy Policy."
+  },
+
+  "privacyInformationWeCollect": "1. Information We Collect",
+  "@privacyInformationWeCollect": {
+    "description": "Privacy Policy section heading describing the information Pulze+ may collect."
+  },
+
+  "privacyInformationWeCollectParagraph1": "When you create and use a Pulze+ account, we may collect information such as your name, email address, phone number, blood group, donor status, location information, profile information, and other information you choose to provide.",
+  "@privacyInformationWeCollectParagraph1": {
+    "description": "Privacy Policy paragraph explaining the types of information Pulze+ may collect from users."
+  },
+
+  "privacyInformationWeCollectParagraph2": "If you use features that require location access, Pulze+ may use your device location to provide nearby blood requests, blood banks, donors, or distance-related information.",
+  "@privacyInformationWeCollectParagraph2": {
+    "description": "Privacy Policy paragraph explaining how device location may be used for location-based features."
+  },
+
+  "privacyHowWeUseInformation": "2. How We Use Your Information",
+  "@privacyHowWeUseInformation": {
+    "description": "Privacy Policy section heading explaining how Pulze+ uses user information."
+  },
+
+  "privacyHowWeUseInformationParagraph": "We use your information to provide and improve Pulze+ features, manage your account, support blood donation and blood request services, provide relevant notifications, and maintain the security and reliability of the platform.",
+  "@privacyHowWeUseInformationParagraph": {
+    "description": "Privacy Policy paragraph explaining the purposes for which Pulze+ uses user information."
+  },
+
+  "privacyLocationInformation": "3. Location Information",
+  "@privacyLocationInformation": {
+    "description": "Privacy Policy section heading about location information and location-based features."
+  },
+
+  "privacyLocationInformationParagraph1": "Location access is optional. If you grant location permission, Pulze+ may use your location to calculate distance and provide location-based features.",
+  "@privacyLocationInformationParagraph1": {
+    "description": "Privacy Policy paragraph explaining that location access is optional and how location may be used."
+  },
+
+  "privacyLocationInformationParagraph2": "You can manage location permission through your device settings. If location access is unavailable, some location-based features may not work as intended.",
+  "@privacyLocationInformationParagraph2": {
+    "description": "Privacy Policy paragraph explaining how users can manage location permission."
+  },
+
+  "privacyNotifications": "4. Notifications",
+  "@privacyNotifications": {
+    "description": "Privacy Policy section heading about app notifications."
+  },
+
+  "privacyNotificationsParagraph": "Pulze+ may send notifications related to blood requests, donation reminders, account activity, or other important app information when notification permission is enabled.",
+  "@privacyNotificationsParagraph": {
+    "description": "Privacy Policy paragraph explaining the types of notifications Pulze+ may send."
+  },
+
+  "privacyInformationSharing": "5. Information Sharing",
+  "@privacyInformationSharing": {
+    "description": "Privacy Policy section heading about sharing and processing user information."
+  },
+
+  "privacyInformationSharingParagraph1": "Pulze+ does not intend to sell your personal information.",
+  "@privacyInformationSharingParagraph1": {
+    "description": "Privacy Policy statement about selling personal information."
+  },
+
+  "privacyInformationSharingParagraph2": "Information may be processed or shared when necessary to provide requested services, operate the platform, comply with applicable laws, protect users, or maintain the security of the service.",
+  "@privacyInformationSharingParagraph2": {
+    "description": "Privacy Policy paragraph explaining circumstances in which information may be processed or shared."
+  },
+
+  "privacyYourChoices": "6. Your Choices",
+  "@privacyYourChoices": {
+    "description": "Privacy Policy section heading about user choices and account settings."
+  },
+
+  "privacyYourChoicesParagraph": "You can review and update available account information through your profile. You may also manage certain device permissions, notification preferences, language, and theme settings through the app or your device settings.",
+  "@privacyYourChoicesParagraph": {
+    "description": "Privacy Policy paragraph explaining the settings and preferences users can manage."
+  },
+
+  "privacyDataSecurity": "7. Data Security",
+  "@privacyDataSecurity": {
+    "description": "Privacy Policy section heading about protecting user information."
+  },
+
+  "privacyDataSecurityParagraph": "We take reasonable measures to protect information handled through Pulze+. However, no internet-based service can guarantee absolute security.",
+  "@privacyDataSecurityParagraph": {
+    "description": "Privacy Policy paragraph explaining Pulze+ data security practices and limitations."
+  },
+
+  "privacyChangesToPolicy": "8. Changes to This Policy",
+  "@privacyChangesToPolicy": {
+    "description": "Privacy Policy section heading about future policy changes."
+  },
+
+  "privacyChangesToPolicyParagraph": "This Privacy Policy may be updated from time to time as Pulze+ features, services, or legal requirements change. The updated version will be made available through the app.",
+  "@privacyChangesToPolicyParagraph": {
+    "description": "Privacy Policy paragraph explaining how policy updates will be communicated."
+  },
+
+  "privacyContact": "9. Contact",
+  "@privacyContact": {
+    "description": "Privacy Policy section heading for privacy-related contact information."
+  },
+
+  "privacyContactParagraph": "If you have questions or concerns about this Privacy Policy or how your information is handled, please contact the Pulze+ support team.",
+  "@privacyContactParagraph": {
+    "description": "Privacy Policy paragraph directing users to Pulze+ support for privacy questions."
+  },
+
+  "termsConditionsIntro": "These Terms & Conditions describe the rules for using the Pulze+ platform and its blood donation and blood request related features.",
+  "@termsConditionsIntro": {
+    "description": "Introduction text displayed at the beginning of the Pulze+ Terms & Conditions."
+  },
+
+  "termsAcceptance": "1. Acceptance of Terms",
+  "@termsAcceptance": {
+    "description": "Terms & Conditions section heading about accepting the terms."
+  },
+
+  "termsAcceptanceParagraph": "By creating an account or using account-based features of Pulze+, you agree to these Terms & Conditions and the Privacy Policy.",
+  "@termsAcceptanceParagraph": {
+    "description": "Terms & Conditions paragraph explaining user acceptance of the terms and Privacy Policy."
+  },
+
+  "termsUseOfPulze": "2. Use of Pulze+",
+  "@termsUseOfPulze": {
+    "description": "Terms & Conditions section heading about acceptable use of Pulze+."
+  },
+
+  "termsUseOfPulzeParagraph": "You agree to provide accurate information when creating or maintaining your account and to use Pulze+ only for lawful purposes.",
+  "@termsUseOfPulzeParagraph": {
+    "description": "Terms & Conditions paragraph explaining users' responsibilities when using Pulze+."
+  },
+
+  "termsBloodDonationInformation": "3. Blood Donation Information",
+  "@termsBloodDonationInformation": {
+    "description": "Terms & Conditions section heading about blood donation information."
+  },
+
+  "termsBloodDonationInformationParagraph1": "Information provided through Pulze+ is intended to help connect people with blood donation resources. Pulze+ does not replace professional medical advice, diagnosis, or treatment.",
+  "@termsBloodDonationInformationParagraph1": {
+    "description": "Terms & Conditions paragraph explaining the purpose and limitations of blood donation information."
+  },
+
+  "termsBloodDonationInformationParagraph2": "Users should independently verify important medical and blood donation requirements with qualified healthcare professionals or authorized blood banks.",
+  "@termsBloodDonationInformationParagraph2": {
+    "description": "Terms & Conditions paragraph advising users to verify important medical and donation information."
+  },
+
+  "termsBloodRequests": "4. Blood Requests",
+  "@termsBloodRequests": {
+    "description": "Terms & Conditions section heading about blood requests."
+  },
+
+  "termsBloodRequestsParagraph1": "Users are responsible for providing truthful and appropriate information when creating or responding to blood requests.",
+  "@termsBloodRequestsParagraph1": {
+    "description": "Terms & Conditions paragraph explaining user responsibility when creating or responding to blood requests."
+  },
+
+  "termsBloodRequestsParagraph2": "Pulze+ does not guarantee that a suitable donor, blood unit, blood bank, or response will always be available.",
+  "@termsBloodRequestsParagraph2": {
+    "description": "Terms & Conditions paragraph explaining that Pulze+ cannot guarantee availability of donors or blood resources."
+  },
+
+  "termsAccountResponsibility": "5. Account Responsibility",
+  "@termsAccountResponsibility": {
+    "description": "Terms & Conditions section heading about account security and responsibility."
+  },
+
+  "termsAccountResponsibilityParagraph1": "You are responsible for maintaining the security of your account credentials and for activity performed through your account.",
+  "@termsAccountResponsibilityParagraph1": {
+    "description": "Terms & Conditions paragraph explaining responsibility for account credentials and account activity."
+  },
+
+  "termsAccountResponsibilityParagraph2": "Do not share your password or knowingly allow another person to use your account.",
+  "@termsAccountResponsibilityParagraph2": {
+    "description": "Terms & Conditions paragraph advising users not to share account credentials."
+  },
+
+  "termsProhibitedUse": "6. Prohibited Use",
+  "@termsProhibitedUse": {
+    "description": "Terms & Conditions section heading about prohibited activities."
+  },
+
+  "termsProhibitedUseParagraph": "You must not use Pulze+ to provide false information, misuse blood request or donor features, harass other users, attempt unauthorized access, or interfere with the operation or security of the platform.",
+  "@termsProhibitedUseParagraph": {
+    "description": "Terms & Conditions paragraph describing prohibited uses of Pulze+."
+  },
+
+  "termsServiceAvailability": "7. Availability of Services",
+  "@termsServiceAvailability": {
+    "description": "Terms & Conditions section heading about service availability."
+  },
+
+  "termsServiceAvailabilityParagraph": "Pulze+ may change, suspend, or discontinue features when necessary for maintenance, security, development, or other operational reasons.",
+  "@termsServiceAvailabilityParagraph": {
+    "description": "Terms & Conditions paragraph explaining that Pulze+ may modify or suspend features when necessary."
+  },
+
+  "termsLimitationOfResponsibility": "8. Limitation of Responsibility",
+  "@termsLimitationOfResponsibility": {
+    "description": "Terms & Conditions section heading about user responsibility and service limitations."
+  },
+
+  "termsLimitationOfResponsibilityParagraph": "Pulze+ provides a platform for connecting users with blood-related resources. Users remain responsible for their own decisions, communications, and actions.",
+  "@termsLimitationOfResponsibilityParagraph": {
+    "description": "Terms & Conditions paragraph explaining the responsibilities of users when using the platform."
+  },
+
+  "termsChanges": "9. Changes to These Terms",
+  "@termsChanges": {
+    "description": "Terms & Conditions section heading about future changes to the terms."
+  },
+
+  "termsChangesParagraph": "These Terms & Conditions may be updated as the Pulze+ platform evolves. Updated terms will be made available through the application.",
+  "@termsChangesParagraph": {
+    "description": "Terms & Conditions paragraph explaining how updated terms will be made available."
+  },
+
+  "termsContact": "10. Contact",
+  "@termsContact": {
+    "description": "Terms & Conditions section heading for support contact information."
+  },
+
+  "termsContactParagraph": "If you have questions about these Terms & Conditions, please contact the Pulze+ support team.",
+  "@termsContactParagraph": {
+    "description": "Terms & Conditions paragraph directing users to Pulze+ support for questions."
+  },
+
+  "continueAsGuest": "Continue as Guest",   
+  "@continueAsGuest": {     
+    "description": "Button label allowing users to enter Pulze+ as a guest."   
+  },
+
+  "agreeToTermsAndPrivacy": "I agree to the Terms & Conditions and Privacy Policy.",
+  "@agreeToTermsAndPrivacy": {
+    "description": "Checkbox label requiring users to accept the Terms & Conditions and Privacy Policy before registration."
+  },
+
+  "legalAgreementPrefix": "I agree to the ",
+  "@legalAgreementPrefix": {
+    "description": "Introductory text for the legal agreement during account registration."
+  },
+
+  "legalAgreementConnector": " and ",
+  "@legalAgreementConnector": {
+    "description": "Connector between the Terms & Conditions and Privacy Policy during account registration."
+  },
+
+  "legalAgreementSuffix": ".",
+  "@legalAgreementSuffix": {
+    "description": "Ending punctuation for the legal agreement during account registration."
   }
+  
 }
