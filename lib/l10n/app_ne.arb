@@ -669,5 +669,9 @@
   "availableForBloodDonation": "Make yourself available for blood donation",
   "@availableForBloodDonation": {
     "description": "Description shown below the donor status setting."
+  },
+  "continueAsGuest": "अतिथिको रूपमा जारी राख्नुहोस्",
+  "@continueAsGuest": {
+    "description": "प्रयोगकर्तालाई अतिथिको रूपमा Pulze+ मा प्रवेश गर्न दिने बटनको पाठ।"
   }
 }

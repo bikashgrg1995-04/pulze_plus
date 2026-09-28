@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/core/widgets/app_divider.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
@@ -61,6 +62,22 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     super.dispose();
   }
 
+  Future<void> _continueAsGuest() async {
+    if (_isLoading) {
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+
+    await ref.read(appPreferencesProvider.notifier).completeEntry();
+
+    if (!mounted) {
+      return;
+    }
+    AppSnackBar.success(context, 'Continuing as a guest.');
+    context.go(AppRoutes.home);
+  }
+
   void _continueWithGoogle() {
     if (_isLoading) {
       return;
@@ -109,10 +126,22 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
       switch (authState.status) {
         case AuthStatus.needsProfile:
+          await ref.read(appPreferencesProvider.notifier).completeEntry();
+
+          if (!mounted) {
+            return;
+          }
+
           context.go(AppRoutes.profileSetup);
           return;
 
         case AuthStatus.authenticated:
+          await ref.read(appPreferencesProvider.notifier).completeEntry();
+
+          if (!mounted) {
+            return;
+          }
+
           context.go(AppRoutes.home);
           return;
 
@@ -152,6 +181,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             email: email,
             password: _signupPasswordController.text,
           );
+
+      // Registration was successful, so the user has completed
+      // the first-entry decision.
+      await ref.read(appPreferencesProvider.notifier).completeEntry();
 
       if (!mounted) {
         return;
@@ -212,6 +245,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final preferences = ref.watch(appPreferencesProvider);
 
     final horizontalPadding = ResponsiveUtils.value(
       context,
@@ -268,19 +302,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
                   const SizedBox(height: AppSpacing.xl),
 
-                  GoogleAuthButton(
-                    label: _isLogin
-                        ? l10n.continueWithGoogle
-                        : l10n.signUpWithGoogle,
-                    onPressed: _continueWithGoogle,
-                  ),
-
-                  const SizedBox(height: AppSpacing.lg),
-
-                  const AppDivider(),
-
-                  const SizedBox(height: AppSpacing.lg),
-
                   if (_isLogin) _buildLoginForm() else _buildSignupForm(),
 
                   const SizedBox(height: AppSpacing.lg),
@@ -316,6 +337,34 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  const AppDivider(),
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  GoogleAuthButton(
+                    label: _isLogin
+                        ? l10n.continueWithGoogle
+                        : l10n.signUpWithGoogle,
+                    onPressed: _continueWithGoogle,
+                  ),
+
+                  const SizedBox(height: AppSpacing.sm),
+
+                  if (!preferences.hasCompletedEntry)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
+                      child: AppButton(
+                        label: l10n.continueAsGuest,
+                        icon: Icons.person_outline_rounded,
+                        variant: AppButtonVariant.outlined,
+                        onPressed: () {
+                          _continueAsGuest();
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),

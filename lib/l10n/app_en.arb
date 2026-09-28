@@ -887,5 +887,10 @@
   "availableForBloodDonation": "Make yourself available for blood donation",
   "@availableForBloodDonation": {
     "description": "Description shown below the donor status setting."
+  },
+
+  "continueAsGuest": "Continue as Guest",
+  "@continueAsGuest": {
+    "description": "Button label allowing users to enter Pulze+ as a guest."
   }
 }

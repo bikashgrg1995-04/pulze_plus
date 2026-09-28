@@ -9,18 +9,21 @@ class AppPreferencesState {
     required this.donationRemindersEnabled,
     required this.theme,
     required this.language,
+    required this.hasCompletedEntry,
   });
 
   final bool notificationsEnabled;
   final bool donationRemindersEnabled;
   final String theme;
   final String language;
+  final bool hasCompletedEntry;
 
   AppPreferencesState copyWith({
     bool? notificationsEnabled,
     bool? donationRemindersEnabled,
     String? theme,
     String? language,
+    bool? hasCompletedEntry,
   }) {
     return AppPreferencesState(
       notificationsEnabled:
@@ -29,6 +32,8 @@ class AppPreferencesState {
           donationRemindersEnabled ?? this.donationRemindersEnabled,
       theme: theme ?? this.theme,
       language: language ?? this.language,
+      hasCompletedEntry:
+          hasCompletedEntry ?? this.hasCompletedEntry,
     );
   }
 }
@@ -48,6 +53,8 @@ class AppPreferencesNotifier
           _storage.getDonationRemindersEnabled(),
       theme: _storage.getTheme(),
       language: _storage.getLanguage(),
+      hasCompletedEntry:
+          _storage.getHasCompletedEntry(),
     );
   }
 
@@ -81,6 +88,14 @@ class AppPreferencesNotifier
     );
 
     await _storage.setLanguage(value);
+  }
+
+  Future<void> completeEntry() async {
+    state = state.copyWith(
+      hasCompletedEntry: true,
+    );
+
+    await _storage.setHasCompletedEntry(true);
   }
 }
 

@@ -1219,6 +1219,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Make yourself available for blood donation'**
   String get availableForBloodDonation;
+
+  /// Button label allowing users to enter Pulze+ as a guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get continueAsGuest;
 }
 
 class _AppLocalizationsDelegate

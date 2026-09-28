@@ -606,4 +606,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get availableForBloodDonation =>
       'Make yourself available for blood donation';
+
+  @override
+  String get continueAsGuest => 'Continue as Guest';
 }

@@ -12,6 +12,7 @@ class AppPreferencesStorage {
       'donation_reminders_enabled';
   static const _themeKey = 'theme';
   static const _languageKey = 'language';
+  static const _hasCompletedEntryKey = 'has_completed_entry';
 
   bool getNotificationsEnabled() {
     return _preferences.getBool(
@@ -65,6 +66,20 @@ class AppPreferencesStorage {
   Future<bool> setLanguage(String value) {
     return _preferences.setString(
       _languageKey,
+      value,
+    );
+  }
+
+  bool getHasCompletedEntry() {
+    return _preferences.getBool(
+          _hasCompletedEntryKey,
+        ) ??
+        false;
+  }
+
+  Future<bool> setHasCompletedEntry(bool value) {
+    return _preferences.setBool(
+      _hasCompletedEntryKey,
       value,
     );
   }

@@ -615,4 +615,7 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get availableForBloodDonation =>
       'Make yourself available for blood donation';
+
+  @override
+  String get continueAsGuest => 'अतिथिको रूपमा जारी राख्नुहोस्';
 }

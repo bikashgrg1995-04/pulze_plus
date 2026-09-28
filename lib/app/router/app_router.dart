@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pulze_plus/app/app_startup_screen.dart';
 import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/app/router/router_refresh_notifier.dart';
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/auth/screens/auth_screen.dart';
@@ -16,9 +17,9 @@ import 'package:pulze_plus/features/chat/screens/chat_detail_screen.dart';
 import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
 import 'package:pulze_plus/features/navigation/screens/main_navigation_screen.dart';
 import 'package:pulze_plus/features/onboarding/screens/onboarding_screen.dart';
+import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
-import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -31,6 +32,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
     redirect: (context, state) {
       final authStatus = ref.read(authProvider).status;
+      final preferences = ref.read(appPreferencesProvider);
+      final hasCompletedEntry = preferences.hasCompletedEntry;
+
       final location = state.matchedLocation;
 
       final isAuthRoute =
@@ -50,6 +54,32 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
+      // ------------------------------------------------------------
+      // Startup / first-entry flow
+      // ------------------------------------------------------------
+
+      if (location == AppRoutes.startup) {
+        if (hasCompletedEntry) {
+          return AppRoutes.home;
+        }
+
+        return AppRoutes.onboarding;
+      }
+
+      // Once the user has completed the first-entry flow,
+      // never show onboarding again.
+      if (location == AppRoutes.onboarding) {
+        if (hasCompletedEntry) {
+          return AppRoutes.home;
+        }
+
+        return AppRoutes.auth;
+      }
+
+      // ------------------------------------------------------------
+      // Unauthenticated / Guest
+      // ------------------------------------------------------------
+
       if (authStatus == AuthStatus.unauthenticated) {
         if (isPublicRoute || location == AppRoutes.home) {
           return null;
@@ -57,6 +87,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
         return AppRoutes.auth;
       }
+
+      // ------------------------------------------------------------
+      // Email verification
+      // ------------------------------------------------------------
 
       if (authStatus == AuthStatus.needsVerification) {
         if (location == AppRoutes.verifyEmail) {
@@ -66,6 +100,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return AppRoutes.verifyEmail;
       }
 
+      // ------------------------------------------------------------
+      // Profile setup
+      // ------------------------------------------------------------
+
       if (authStatus == AuthStatus.needsProfile) {
         if (location == AppRoutes.profileSetup) {
           return null;
@@ -73,6 +111,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
         return AppRoutes.profileSetup;
       }
+
+      // ------------------------------------------------------------
+      // Authenticated user
+      // ------------------------------------------------------------
 
       if (authStatus == AuthStatus.authenticated) {
         if (isAuthRoute ||
@@ -190,7 +232,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.faqs,
         builder: (context, state) {
-          return FaqScreen();
+          return const FaqScreen();
         },
       ),
     ],
