@@ -843,4 +843,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get passwordChangedSuccessfully =>
       'Your password has been changed successfully.';
+
+  @override
+  String get bloodAndActivity => 'Blood & Activity';
+
+  @override
+  String get viewBloodDonationActivity =>
+      'View your blood donation and request activity';
 }

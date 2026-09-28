@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:pulze_plus/app/router/app_routes.dart';
-import 'package:pulze_plus/core/theme/app_colors.dart';
-import 'package:pulze_plus/core/theme/app_radius.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
 import 'package:pulze_plus/core/utils/responsive_utils.dart';
 import 'package:pulze_plus/core/widgets/app_button.dart';
@@ -118,32 +116,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
   }
 
   // ===========================================================================
-  // Location
-  // ===========================================================================
-
-  Future<void> _selectLocation() async {
-    final l10n = AppLocalizations.of(context)!;
-
-    await showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.selectLocation),
-          content: Text(l10n.mapLocationSelectionWillBeAvailable),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(l10n.ok),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // ===========================================================================
   // Submit
   // ===========================================================================
 
@@ -173,8 +145,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
           address: address,
           city: city,
-          latitude: widget.profile?.latitude,
-          longitude: widget.profile?.longitude,
         );
 
         if (!mounted) {
@@ -204,8 +174,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
         phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
         address: address,
         city: city,
-        latitude: widget.profile?.latitude,
-        longitude: widget.profile?.longitude,
       );
 
       if (!mounted) {
@@ -303,10 +271,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
                       prefixIcon: Icons.location_city_outlined,
                       textInputAction: TextInputAction.done,
                     ),
-
-                    const SizedBox(height: AppSpacing.md),
-
-                    _buildLocationSelector(),
 
                     const SizedBox(height: AppSpacing.xl),
 
@@ -520,88 +484,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           ],
         );
       },
-    );
-  }
-
-  // ===========================================================================
-  // Location
-  // ===========================================================================
-
-  Widget _buildLocationSelector() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
-    final hasLocation =
-        widget.profile?.latitude != null && widget.profile?.longitude != null;
-
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: colorScheme.outline),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: AppSpacing.huge,
-                height: AppSpacing.huge,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: const Icon(
-                  Icons.location_on_outlined,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.location,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text(
-                      hasLocation
-                          ? l10n.locationSelected
-                          : l10n.selectYourLocation,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          AppButton(
-            label: hasLocation ? l10n.changeLocation : l10n.selectLocation,
-            icon: Icons.map_outlined,
-            variant: AppButtonVariant.outlined,
-            onPressed: _isSubmitting ? null : _selectLocation,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            l10n.mapSelectionWillBeConnectedLater,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

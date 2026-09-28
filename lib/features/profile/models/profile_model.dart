@@ -9,8 +9,6 @@ class ProfileModel {
     this.bloodType,
     this.address,
     this.city,
-    this.latitude,
-    this.longitude,
   });
 
   final String gender;
@@ -26,9 +24,6 @@ class ProfileModel {
 
   final String? address;
   final String? city;
-
-  final double? latitude;
-  final double? longitude;
 
   factory ProfileModel.fromJson(
     Map<String, dynamic> json,
@@ -46,8 +41,6 @@ class ProfileModel {
       ),
       address: json['address'] as String?,
       city: json['city'] as String?,
-      latitude: (json['latitude'] as num?)?.toDouble(),
-      longitude: (json['longitude'] as num?)?.toDouble(),
     );
   }
 
@@ -59,8 +52,6 @@ class ProfileModel {
       'date_of_birth': _formatDate(dateOfBirth),
       'address': address,
       'city': city,
-      'latitude': latitude,
-      'longitude': longitude,
     };
   }
 
@@ -74,8 +65,6 @@ class ProfileModel {
     DateTime? dateOfBirth,
     String? address,
     String? city,
-    double? latitude,
-    double? longitude,
   }) {
     return ProfileModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -89,8 +78,6 @@ class ProfileModel {
           dateOfBirth ?? this.dateOfBirth,
       address: address ?? this.address,
       city: city ?? this.city,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
     );
   }
 
@@ -118,9 +105,7 @@ class ProfileModel {
         'gender: $gender, '
         'dateOfBirth: $dateOfBirth, '
         'address: $address, '
-        'city: $city, '
-        'latitude: $latitude, '
-        'longitude: $longitude'
+        'city: $city'
         ')';
   }
 
@@ -139,9 +124,7 @@ class ProfileModel {
         other.gender == gender &&
         other.dateOfBirth == dateOfBirth &&
         other.address == address &&
-        other.city == city &&
-        other.latitude == latitude &&
-        other.longitude == longitude;
+        other.city == city;
   }
 
   @override
@@ -156,8 +139,6 @@ class ProfileModel {
       dateOfBirth,
       address,
       city,
-      latitude,
-      longitude,
     );
   }
 }

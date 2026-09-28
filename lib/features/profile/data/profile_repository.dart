@@ -27,8 +27,6 @@ class ProfileRepository {
     String? bloodType,
     String? address,
     String? city,
-    double? latitude,
-    double? longitude,
   }) async {
     final response = await _apiService.post(
       ApiEndpoints.profile,
@@ -39,8 +37,6 @@ class ProfileRepository {
         'blood_type': bloodType,
         'address': address,
         'city': city,
-        'latitude': latitude,
-        'longitude': longitude,
       },
     );
 
@@ -58,8 +54,6 @@ class ProfileRepository {
     String? bloodType,
     String? address,
     String? city,
-    double? latitude,
-    double? longitude,
   }) async {
     final data = <String, dynamic>{};
 
@@ -85,14 +79,6 @@ class ProfileRepository {
 
     if (city != null) {
       data['city'] = city;
-    }
-
-    if (latitude != null) {
-      data['latitude'] = latitude;
-    }
-
-    if (longitude != null) {
-      data['longitude'] = longitude;
     }
 
     final response = await _apiService.patch(ApiEndpoints.profile, data: data);

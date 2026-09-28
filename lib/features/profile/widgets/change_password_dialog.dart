@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pulze_plus/core/network/app_exception.dart';
@@ -80,14 +79,6 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
     }
 
     return null;
-  }
-
-  String _getErrorMessage(Object error) {
-    if (error is AppException) {
-      return error.message;
-    }
-
-    return error.toString();
   }
 
   Future<void> _submit() async {

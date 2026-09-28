@@ -1009,5 +1009,15 @@
   "passwordChangedSuccessfully": "तपाईंको पासवर्ड सफलतापूर्वक परिवर्तन भयो।",
   "@passwordChangedSuccessfully": {
     "description": "पासवर्ड सफलतापूर्वक परिवर्तन भएपछि देखाइने सन्देश।"
+  },
+
+  "bloodAndActivity": "रक्त तथा गतिविधि",
+  "@bloodAndActivity": {
+    "description": "रक्तदानसम्बन्धी जानकारी र गतिविधिको सेक्सन शीर्षक।"
+  },
+
+  "viewBloodDonationActivity": "आफ्नो रक्तदान तथा अनुरोधसम्बन्धी गतिविधि हेर्नुहोस्",
+  "@viewBloodDonationActivity": {
+    "description": "रक्त तथा गतिविधि सेक्सनमुनि देखाइने विवरण।"
   }
 }

@@ -1627,6 +1627,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your password has been changed successfully.'**
   String get passwordChangedSuccessfully;
+
+  /// Section title for blood donation information and activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood & Activity'**
+  String get bloodAndActivity;
+
+  /// Subtitle for the Blood & Activity section.
+  ///
+  /// In en, this message translates to:
+  /// **'View your blood donation and request activity'**
+  String get viewBloodDonationActivity;
 }
 
 class _AppLocalizationsDelegate

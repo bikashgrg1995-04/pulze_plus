@@ -1226,5 +1226,15 @@
   "passwordChangedSuccessfully": "Your password has been changed successfully.",
   "@passwordChangedSuccessfully": {
     "description": "Success message shown after the user's password is changed."
+  },
+
+  "bloodAndActivity": "Blood & Activity",
+  "@bloodAndActivity": {
+    "description": "Section title for blood donation information and activity."
+  },
+
+  "viewBloodDonationActivity": "View your blood donation and request activity",
+  "@viewBloodDonationActivity": {
+    "description": "Subtitle for the Blood & Activity section."
   }
 }

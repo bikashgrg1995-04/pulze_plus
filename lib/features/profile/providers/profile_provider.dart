@@ -53,8 +53,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
     String? bloodType,
     String? address,
     String? city,
-    double? latitude,
-    double? longitude,
   }) async {
     state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
@@ -66,8 +64,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
         bloodType: bloodType,
         address: address,
         city: city,
-        latitude: latitude,
-        longitude: longitude,
       );
 
       state = ProfileState(status: ProfileStatus.loaded, profile: profile);
@@ -89,8 +85,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
     String? bloodType,
     String? address,
     String? city,
-    double? latitude,
-    double? longitude,
   }) async {
     state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
@@ -102,8 +96,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
         bloodType: bloodType,
         address: address,
         city: city,
-        latitude: latitude,
-        longitude: longitude,
       );
 
       state = ProfileState(status: ProfileStatus.loaded, profile: profile);

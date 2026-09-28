@@ -854,4 +854,11 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get passwordChangedSuccessfully =>
       'तपाईंको पासवर्ड सफलतापूर्वक परिवर्तन भयो।';
+
+  @override
+  String get bloodAndActivity => 'रक्त तथा गतिविधि';
+
+  @override
+  String get viewBloodDonationActivity =>
+      'आफ्नो रक्तदान तथा अनुरोधसम्बन्धी गतिविधि हेर्नुहोस्';
 }

@@ -20,7 +20,6 @@ import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
 import 'package:pulze_plus/features/profile/widgets/about_pulze_dialog.dart';
-import 'package:pulze_plus/features/profile/widgets/blood_donation_card.dart';
 import 'package:pulze_plus/features/profile/widgets/change_password_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_segmented_tile.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_switch_row.dart';
@@ -76,19 +75,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       large: AppSpacing.xxxl,
     );
 
-    final bottomPadding = ResponsiveUtils.value(
-      context,
-      mobile: 120.0,
-      tablet: 80.0,
-      large: 80.0,
-    );
-
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.only(bottom: bottomPadding),
           child: Column(
             children: [
               ProfileHeader(
@@ -138,21 +129,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                         const SizedBox(height: AppSpacing.md),
 
-                        BloodDonationCard(
-                          bloodGroup:
-                              profile?.bloodType ?? l10n.bloodGroupNotAdded,
-                          lastDonation: l10n.notAvailable,
-                          nextEligibleDate: l10n.notAvailable,
-                        ),
-
-                        const SizedBox(height: AppSpacing.xl),
-
-                        // Activity
+                        // Blood & Activity
                         ProfileSection(
-                          title: l10n.activity,
-                          subtitle: l10n.viewRequestsAndDonations,
+                          title: l10n.bloodAndDonations,
+                          subtitle: l10n.viewYourBloodDonationInformation,
                           expandable: true,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                              ),
+                              child: _buildDonationDetailRow(
+                                context,
+                                icon: Icons.bloodtype_outlined,
+                                label: l10n.bloodGroup,
+                                value:
+                                    profile?.bloodType ??
+                                    l10n.bloodGroupNotAdded,
+                                valueColor: AppColors.primary,
+                              ),
+                            ),
+
+                            const SizedBox(height: AppSpacing.sm),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                              ),
+                              child: _buildDonationDetailRow(
+                                context,
+                                icon: Icons.calendar_today_outlined,
+                                label: l10n.lastDonation,
+                                value: l10n.notAvailable,
+                              ),
+                            ),
+
+                            const SizedBox(height: AppSpacing.sm),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                              ),
+                              child: _buildDonationDetailRow(
+                                context,
+                                icon: Icons.event_available_outlined,
+                                label: l10n.nextEligibleDate,
+                                value: l10n.notAvailable,
+                                valueColor: AppColors.success,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+
                             ProfileMenuItem(
                               icon: Icons.description_outlined,
                               title: l10n.myRequests,
@@ -164,7 +191,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: AppSpacing.xl),
 
                         // Settings
@@ -277,7 +303,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 return;
               }
 
-              AppSnackBar.success(this.context, l10n.passwordChangedSuccessfully);
+              AppSnackBar.success(
+                this.context,
+                l10n.passwordChangedSuccessfully,
+              );
             },
           ),
           ProfileSettingsSheetItem(
@@ -670,10 +699,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (profile.city?.trim().isNotEmpty ?? false) {
         completedFields++;
       }
-
-      if (profile.latitude != null && profile.longitude != null) {
-        completedFields++;
-      }
     }
 
     return completedFields / totalFields;
@@ -729,6 +754,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     await ref.read(authProvider.notifier).logout();
+  }
+
+  Widget _buildDonationDetailRow(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 18, color: AppColors.primary),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: valueColor ?? colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
