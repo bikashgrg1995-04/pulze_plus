@@ -1019,5 +1019,35 @@
   "viewBloodDonationActivity": "आफ्नो रक्तदान तथा अनुरोधसम्बन्धी गतिविधि हेर्नुहोस्",
   "@viewBloodDonationActivity": {
     "description": "रक्त तथा गतिविधि सेक्सनमुनि देखाइने विवरण।"
+  },
+
+  "locationHelpsSaveLives": "स्थानले जीवन बचाउन मद्दत गर्छ",
+  "@locationHelpsSaveLives": {
+    "description": "पहिलो पटक देखाइने डोनर लोकेसन संवादको शीर्षक।"
+  },
+
+  "donorLocationDescription": "तपाईंलाई रक्तदाता रूपमा उपलब्ध गराउन Pulze+ लाई तपाईंको हालको स्थान आवश्यक पर्छ। यसले आपत्कालीन अवस्थामा नजिकका योग्य रक्तदाताहरू फेला पार्न मद्दत गर्छ।",
+  "@donorLocationDescription": {
+    "description": "रक्तदाताको स्थान किन आवश्यक छ भन्ने जानकारी।"
+  },
+
+  "yourPrivacyIsProtected": "तपाईंको गोपनीयता सुरक्षित छ",
+  "@yourPrivacyIsProtected": {
+    "description": "रक्तदाता लोकेसन संवादमा देखाइने गोपनीयता शीर्षक।"
+  },
+
+  "donorLocationPrivacyDescription": "तपाईंको वास्तविक स्थान सार्वजनिक रूपमा देखाइँदैन। यसको प्रयोग दूरी गणना गर्न र नजिकका रक्त अनुरोधहरूसँग तपाईंलाई जोड्न मात्र गरिन्छ।",
+  "@donorLocationPrivacyDescription": {
+    "description": "रक्तदाताको स्थान कसरी प्रयोग गरिन्छ भन्ने गोपनीयता जानकारी।"
+  },
+
+  "allowLocation": "स्थान अनुमति दिनुहोस्",
+  "@allowLocation": {
+    "description": "स्थान अनुमति दिन प्रयोग गरिने बटन।"
+  },
+
+  "notNow": "अहिले होइन",
+  "@notNow": {
+    "description": "स्थान संवाद बन्द गर्न प्रयोग गरिने बटन।"
   }
 }

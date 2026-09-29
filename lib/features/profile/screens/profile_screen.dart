@@ -43,11 +43,13 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isUploadingAvatar = false;
+  bool _isUpdatingDonor = false;
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final profileState = ref.watch(profileProvider);
+    final appPreferences = ref.watch(appPreferencesProvider);
 
     final user = authState.user;
     final profile = profileState.profile;
@@ -89,13 +91,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 avatarUrl: profile?.avatar,
                 isUploadingAvatar: _isUploadingAvatar,
                 isAvailable: profile?.isDonor ?? false,
+                isUpdatingAvailability: _isUpdatingDonor,
                 onAvatarTap: _isUploadingAvatar
                     ? null
                     : () => _showAvatarSourceDialog(context),
-                onAvailabilityChanged: (value) {
-                  _updateDonorStatus(value, l10n);
-                },
+                onAvailabilityChanged: _isUpdatingDonor
+                    ? null
+                    : (value) {
+                        _updateDonorStatus(value, l10n);
+                      },
               ),
+
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   horizontalPadding,
@@ -178,12 +184,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 valueColor: AppColors.success,
                               ),
                             ),
+
                             const SizedBox(height: AppSpacing.md),
 
                             ProfileMenuItem(
                               icon: Icons.description_outlined,
                               title: l10n.myRequests,
                             ),
+
                             ProfileMenuItem(
                               icon: Icons.volunteer_activism_outlined,
                               title: l10n.donationHistory,
@@ -191,6 +199,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                           ],
                         ),
+
                         const SizedBox(height: AppSpacing.xl),
 
                         // Settings
@@ -202,12 +211,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             PreferenceSwitchRow(
                               icon: Icons.bloodtype_outlined,
                               title: l10n.isDonor,
-                              subtitle: l10n.availableForBloodDonation,
+                              subtitle: _isUpdatingDonor
+                                  ? 'Updating your location...'
+                                  : l10n.availableForBloodDonation,
                               value: profile?.isDonor ?? false,
+                              isLoading: _isUpdatingDonor,
                               onChanged: (value) {
                                 _updateDonorStatus(value, l10n);
                               },
                             ),
+
+                            PreferenceSwitchRow(
+                              icon: Icons.admin_panel_settings_outlined,
+                              title: l10n.appPermissions,
+                              subtitle: l10n.manageCameraLocationPermissions,
+                              value: appPreferences.locationEnabled,
+                              onChanged: (value) {
+                                _updateLocationSetting(value, l10n);
+                              },
+                            ),
+
                             ProfileMenuItem(
                               icon: Icons.lock_outline_rounded,
                               title: l10n.privacySecurity,
@@ -223,6 +246,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 _showAppPreferencesSheet(context);
                               },
                             ),
+
                             ProfileMenuItem(
                               icon: Icons.help_outline_rounded,
                               title: l10n.helpSupport,
@@ -309,14 +333,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               );
             },
           ),
-          ProfileSettingsSheetItem(
-            icon: Icons.admin_panel_settings_outlined,
-            title: l10n.appPermissions,
-            subtitle: l10n.manageCameraLocationPermissions,
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
+
           ProfileSettingsSheetItem(
             icon: Icons.privacy_tip_outlined,
             title: l10n.privacyPolicy,
@@ -326,6 +343,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               context.push(AppRoutes.privacyPolicy);
             },
           ),
+
           ProfileSettingsSheetItem(
             icon: Icons.description_outlined,
             title: l10n.termsConditions,
@@ -385,6 +403,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       .setNotificationsEnabled(value);
                 },
               ),
+
               PreferenceSwitchRow(
                 icon: Icons.bloodtype_outlined,
                 title: l10n.donationReminder,
@@ -396,6 +415,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       .setDonationRemindersEnabled(value);
                 },
               ),
+
               PreferenceSegmentedTile<String>(
                 icon: Icons.palette_outlined,
                 title: l10n.theme,
@@ -417,6 +437,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ref.read(appPreferencesProvider.notifier).setTheme(value);
                 },
               ),
+
               PreferenceSegmentedTile<String>(
                 icon: Icons.language_outlined,
                 title: l10n.language,
@@ -457,10 +478,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             subtitle: l10n.findAnswersCommonQuestions,
             onTap: () {
               Navigator.of(context).pop();
-
               context.push(AppRoutes.faqs);
             },
           ),
+
           ProfileMenuItem(
             icon: Icons.support_agent_outlined,
             title: l10n.contactSupport,
@@ -475,6 +496,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               );
             },
           ),
+
           ProfileMenuItem(
             icon: Icons.bug_report_outlined,
             title: l10n.reportProblem,
@@ -489,6 +511,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               );
             },
           ),
+
           ProfileMenuItem(
             icon: Icons.feedback_outlined,
             title: l10n.feedback,
@@ -503,6 +526,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               );
             },
           ),
+
           ProfileMenuItem(
             icon: Icons.info_outline_rounded,
             title: l10n.aboutPulze,
@@ -543,7 +567,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
+
           const SizedBox(height: AppSpacing.md),
+
           _AvatarSourceOption(
             icon: Icons.camera_alt_rounded,
             title: l10n.takePhoto,
@@ -552,7 +578,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Navigator.of(context).pop(ImageSource.camera);
             },
           ),
+
           const SizedBox(height: AppSpacing.sm),
+
           _AvatarSourceOption(
             icon: Icons.photo_library_rounded,
             title: l10n.chooseFromGallery,
@@ -561,7 +589,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Navigator.of(context).pop(ImageSource.gallery);
             },
           ),
+
           const SizedBox(height: AppSpacing.sm),
+
           AppButton(
             label: l10n.cancel,
             variant: AppButtonVariant.text,
@@ -580,7 +610,178 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     await _pickAndUploadAvatar(source);
   }
 
+  // ---------------------------------------------------------------------------
+  // Donor Status
+  // ---------------------------------------------------------------------------
+
+  Future<bool> _showFirstTimeLocationDialog(AppLocalizations l10n) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final shouldContinue = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          backgroundColor: colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.xl),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Location icon
+                Container(
+                  width: 68,
+                  height: 68,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.10),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.location_on_rounded,
+                    size: 34,
+                    color: colorScheme.primary,
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.md),
+
+                // Title
+                Text(
+                  l10n.locationHelpsSaveLives,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.sm),
+
+                // Description
+                Text(
+                  l10n.donorLocationDescription,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.md),
+
+                // Privacy information
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.55,
+                    ),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.shield_outlined,
+                        size: 22,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.yourPrivacyIsProtected,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              l10n.donorLocationPrivacyDescription,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                // Allow location
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(true);
+                    },
+                    icon: const Icon(Icons.location_on_outlined),
+                    label: Text(l10n.allowLocation),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xs),
+
+                // Not now
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                  child: Text(
+                    l10n.notNow,
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    return shouldContinue ?? false;
+  }
+
   Future<void> _updateDonorStatus(bool value, AppLocalizations l10n) async {
+    if (_isUpdatingDonor) {
+      return;
+    }
+
+    if (value) {
+      final profile = ref.read(profileProvider).profile;
+
+      final hasLocation =
+          profile?.latitude != null && profile?.longitude != null;
+
+      if (!hasLocation) {
+        final shouldContinue = await _showFirstTimeLocationDialog(l10n);
+
+        if (!shouldContinue || !mounted) {
+          return;
+        }
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _isUpdatingDonor = true;
+    });
+
     try {
       await ref
           .read(profileProvider.notifier)
@@ -596,8 +797,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (!mounted) return;
 
       AppSnackBar.error(context, error.toString());
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        _isUpdatingDonor = false;
+      });
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Avatar Upload
+  // ---------------------------------------------------------------------------
 
   Future<void> _pickAndUploadAvatar(ImageSource source) async {
     if (_isUploadingAvatar) return;
@@ -733,6 +944,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // ---------------------------------------------------------------------------
+  // Location Setting
+  // ---------------------------------------------------------------------------
+
+  Future<void> _updateLocationSetting(bool value, AppLocalizations l10n) async {
+    try {
+      await ref.read(profileProvider.notifier).setLocationEnabled(value);
+    } catch (error) {
+      if (!mounted) return;
+
+      AppSnackBar.error(context, error.toString());
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Logout
   // ---------------------------------------------------------------------------
 
@@ -756,6 +981,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     await ref.read(authProvider.notifier).logout();
   }
 
+  // ---------------------------------------------------------------------------
+  // Donation Details
+  // ---------------------------------------------------------------------------
+
   Widget _buildDonationDetailRow(
     BuildContext context, {
     required IconData icon,
@@ -777,7 +1006,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           child: Icon(icon, size: 18, color: AppColors.primary),
         ),
+
         const SizedBox(width: AppSpacing.sm),
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -789,7 +1020,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+
               const SizedBox(height: 2),
+
               Text(
                 value,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -843,7 +1076,9 @@ class _AvatarSourceOption extends StatelessWidget {
                 ),
                 child: Icon(icon, color: AppColors.primary, size: 22),
               ),
+
               const SizedBox(width: AppSpacing.md),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -857,7 +1092,9 @@ class _AvatarSourceOption extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+
                     const SizedBox(height: AppSpacing.xxs),
+
                     Text(
                       subtitle,
                       maxLines: 1,
@@ -869,7 +1106,9 @@ class _AvatarSourceOption extends StatelessWidget {
                   ],
                 ),
               ),
+
               const SizedBox(width: AppSpacing.sm),
+
               Icon(
                 Icons.chevron_right_rounded,
                 size: 22,

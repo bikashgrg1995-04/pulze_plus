@@ -1,18 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:pulze_plus/core/network/network_providers.dart';
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/features/profile/data/profile_repository.dart';
 import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/models/profile_state.dart';
+import 'package:pulze_plus/core/location/location_providers.dart';
+import 'package:pulze_plus/core/location/location_service.dart';
 
 class ProfileNotifier extends Notifier<ProfileState> {
   late final ProfileRepository _profileRepository;
+  late final LocationService _locationService;
 
   @override
   ProfileState build() {
     _profileRepository = ref.read(profileRepositoryProvider);
+    _locationService = ref.read(locationServiceProvider);
 
     return const ProfileState.initial();
   }
@@ -53,6 +59,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
     String? bloodType,
     String? address,
     String? city,
+    double? latitude,
+    double? longitude,
   }) async {
     state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
@@ -64,6 +72,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
         bloodType: bloodType,
         address: address,
         city: city,
+        latitude: latitude,
+        longitude: longitude,
       );
 
       state = ProfileState(status: ProfileStatus.loaded, profile: profile);
@@ -85,6 +95,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
     String? bloodType,
     String? address,
     String? city,
+    double? latitude,
+    double? longitude,
   }) async {
     state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
@@ -96,6 +108,8 @@ class ProfileNotifier extends Notifier<ProfileState> {
         bloodType: bloodType,
         address: address,
         city: city,
+        latitude: latitude,
+        longitude: longitude,
       );
 
       state = ProfileState(status: ProfileStatus.loaded, profile: profile);
@@ -120,13 +134,61 @@ class ProfileNotifier extends Notifier<ProfileState> {
     state = state.copyWith(status: ProfileStatus.loading, clearMessage: true);
 
     try {
-      final updatedIsDonor = await _profileRepository.updateDonorStatus(
-        isDonor: isDonor,
+      if (!isDonor) {
+        final updatedIsDonor = await _profileRepository.updateDonorStatus(
+          isDonor: false,
+        );
+
+        state = ProfileState(
+          status: ProfileStatus.loaded,
+          profile: currentProfile.copyWith(isDonor: updatedIsDonor),
+        );
+
+        return;
+      }
+
+      // --------------------------------------------------
+      // 1. Location permission/service
+      // --------------------------------------------------
+
+      await _locationService.ensurePermission();
+
+      // --------------------------------------------------
+      // 2. Current GPS location
+      // --------------------------------------------------
+
+      final position = await _locationService.getCurrentPosition();
+
+      // --------------------------------------------------
+      // 3. Save donor location
+      // --------------------------------------------------
+
+      final updatedProfile = await _profileRepository.updateProfile(
+        latitude: position.latitude,
+        longitude: position.longitude,
       );
+
+      // --------------------------------------------------
+      // 4. Enable Pulze+ location setting
+      // --------------------------------------------------
+
+      await ref.read(appPreferencesProvider.notifier).setLocationEnabled(true);
+
+      // --------------------------------------------------
+      // 5. Activate donor
+      // --------------------------------------------------
+
+      final updatedIsDonor = await _profileRepository.updateDonorStatus(
+        isDonor: true,
+      );
+
+      // --------------------------------------------------
+      // 6. Update local state
+      // --------------------------------------------------
 
       state = ProfileState(
         status: ProfileStatus.loaded,
-        profile: currentProfile.copyWith(isDonor: updatedIsDonor),
+        profile: updatedProfile.copyWith(isDonor: updatedIsDonor),
       );
     } catch (error) {
       state = ProfileState(
@@ -186,6 +248,21 @@ class ProfileNotifier extends Notifier<ProfileState> {
 
       rethrow;
     }
+  }
+
+  Future<Position> getCurrentLocation() async {
+    return _locationService.getCurrentPosition();
+  }
+
+  Future<void> setLocationEnabled(bool value) async {
+    if (!value) {
+      await ref.read(appPreferencesProvider.notifier).setLocationEnabled(false);
+      return;
+    }
+
+    await _locationService.ensurePermission();
+
+    await ref.read(appPreferencesProvider.notifier).setLocationEnabled(true);
   }
 
   void setProfile(ProfileModel profile) {

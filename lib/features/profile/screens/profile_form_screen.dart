@@ -186,8 +186,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
 
       Navigator.of(context).pop(true);
     } catch (error) {
-      debugPrint('PROFILE SUBMIT ERROR: $error');
-
       if (!mounted) {
         return;
       }

@@ -1236,5 +1236,35 @@
   "viewBloodDonationActivity": "View your blood donation and request activity",
   "@viewBloodDonationActivity": {
     "description": "Subtitle for the Blood & Activity section."
+  },
+
+  "locationHelpsSaveLives": "Location helps save lives",
+  "@locationHelpsSaveLives": {
+    "description": "Title for the first-time donor location dialog."
+  },
+
+  "donorLocationDescription": "To make you available as a donor, Pulze+ needs your current location. This helps people find nearby eligible donors when blood is urgently needed.",
+  "@donorLocationDescription": {
+    "description": "Description explaining why donor location is required."
+  },
+
+  "yourPrivacyIsProtected": "Your privacy is protected",
+  "@yourPrivacyIsProtected": {
+    "description": "Privacy heading in the donor location dialog."
+  },
+
+  "donorLocationPrivacyDescription": "Your exact location is never shown publicly. It is used to calculate distance and connect you with nearby blood requests.",
+  "@donorLocationPrivacyDescription": {
+    "description": "Privacy information explaining how donor location is used."
+  },
+
+  "allowLocation": "Allow Location",
+  "@allowLocation": {
+    "description": "Button label to allow location access."
+  },
+
+  "notNow": "Not Now",
+  "@notNow": {
+    "description": "Button label to dismiss the location dialog."
   }
 }

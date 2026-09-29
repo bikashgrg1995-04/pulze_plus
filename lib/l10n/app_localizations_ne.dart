@@ -861,4 +861,24 @@ class AppLocalizationsNe extends AppLocalizations {
   @override
   String get viewBloodDonationActivity =>
       'आफ्नो रक्तदान तथा अनुरोधसम्बन्धी गतिविधि हेर्नुहोस्';
+
+  @override
+  String get locationHelpsSaveLives => 'स्थानले जीवन बचाउन मद्दत गर्छ';
+
+  @override
+  String get donorLocationDescription =>
+      'तपाईंलाई रक्तदाता रूपमा उपलब्ध गराउन Pulze+ लाई तपाईंको हालको स्थान आवश्यक पर्छ। यसले आपत्कालीन अवस्थामा नजिकका योग्य रक्तदाताहरू फेला पार्न मद्दत गर्छ।';
+
+  @override
+  String get yourPrivacyIsProtected => 'तपाईंको गोपनीयता सुरक्षित छ';
+
+  @override
+  String get donorLocationPrivacyDescription =>
+      'तपाईंको वास्तविक स्थान सार्वजनिक रूपमा देखाइँदैन। यसको प्रयोग दूरी गणना गर्न र नजिकका रक्त अनुरोधहरूसँग तपाईंलाई जोड्न मात्र गरिन्छ।';
+
+  @override
+  String get allowLocation => 'स्थान अनुमति दिनुहोस्';
+
+  @override
+  String get notNow => 'अहिले होइन';
 }

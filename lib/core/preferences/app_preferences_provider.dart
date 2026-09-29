@@ -10,6 +10,7 @@ class AppPreferencesState {
     required this.theme,
     required this.language,
     required this.hasCompletedEntry,
+    required this.locationEnabled,
   });
 
   final bool notificationsEnabled;
@@ -17,6 +18,7 @@ class AppPreferencesState {
   final String theme;
   final String language;
   final bool hasCompletedEntry;
+  final bool locationEnabled;
 
   AppPreferencesState copyWith({
     bool? notificationsEnabled,
@@ -24,22 +26,21 @@ class AppPreferencesState {
     String? theme,
     String? language,
     bool? hasCompletedEntry,
+    bool? locationEnabled,
   }) {
     return AppPreferencesState(
-      notificationsEnabled:
-          notificationsEnabled ?? this.notificationsEnabled,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       donationRemindersEnabled:
           donationRemindersEnabled ?? this.donationRemindersEnabled,
       theme: theme ?? this.theme,
       language: language ?? this.language,
-      hasCompletedEntry:
-          hasCompletedEntry ?? this.hasCompletedEntry,
+      hasCompletedEntry: hasCompletedEntry ?? this.hasCompletedEntry,
+      locationEnabled: locationEnabled ?? this.locationEnabled,
     );
   }
 }
 
-class AppPreferencesNotifier
-    extends Notifier<AppPreferencesState> {
+class AppPreferencesNotifier extends Notifier<AppPreferencesState> {
   late final AppPreferencesStorage _storage;
 
   @override
@@ -47,53 +48,47 @@ class AppPreferencesNotifier
     _storage = ref.read(appPreferencesStorageProvider);
 
     return AppPreferencesState(
-      notificationsEnabled:
-          _storage.getNotificationsEnabled(),
-      donationRemindersEnabled:
-          _storage.getDonationRemindersEnabled(),
+      notificationsEnabled: _storage.getNotificationsEnabled(),
+      donationRemindersEnabled: _storage.getDonationRemindersEnabled(),
       theme: _storage.getTheme(),
       language: _storage.getLanguage(),
-      hasCompletedEntry:
-          _storage.getHasCompletedEntry(),
+      hasCompletedEntry: _storage.getHasCompletedEntry(),
+      locationEnabled: _storage.getLocationEnabled(),
     );
   }
 
   Future<void> setNotificationsEnabled(bool value) async {
-    state = state.copyWith(
-      notificationsEnabled: value,
-    );
+    state = state.copyWith(notificationsEnabled: value);
 
     await _storage.setNotificationsEnabled(value);
   }
 
   Future<void> setDonationRemindersEnabled(bool value) async {
-    state = state.copyWith(
-      donationRemindersEnabled: value,
-    );
+    state = state.copyWith(donationRemindersEnabled: value);
 
     await _storage.setDonationRemindersEnabled(value);
   }
 
   Future<void> setTheme(String value) async {
-    state = state.copyWith(
-      theme: value,
-    );
+    state = state.copyWith(theme: value);
 
     await _storage.setTheme(value);
   }
 
   Future<void> setLanguage(String value) async {
-    state = state.copyWith(
-      language: value,
-    );
+    state = state.copyWith(language: value);
 
     await _storage.setLanguage(value);
   }
 
+  Future<void> setLocationEnabled(bool value) async {
+    state = state.copyWith(locationEnabled: value);
+
+    await _storage.setLocationEnabled(value);
+  }
+
   Future<void> completeEntry() async {
-    state = state.copyWith(
-      hasCompletedEntry: true,
-    );
+    state = state.copyWith(hasCompletedEntry: true);
 
     await _storage.setHasCompletedEntry(true);
   }
@@ -101,5 +96,5 @@ class AppPreferencesNotifier
 
 final appPreferencesProvider =
     NotifierProvider<AppPreferencesNotifier, AppPreferencesState>(
-  AppPreferencesNotifier.new,
-);
+      AppPreferencesNotifier.new,
+    );

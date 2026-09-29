@@ -1639,6 +1639,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View your blood donation and request activity'**
   String get viewBloodDonationActivity;
+
+  /// Title for the first-time donor location dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Location helps save lives'**
+  String get locationHelpsSaveLives;
+
+  /// Description explaining why donor location is required.
+  ///
+  /// In en, this message translates to:
+  /// **'To make you available as a donor, Pulze+ needs your current location. This helps people find nearby eligible donors when blood is urgently needed.'**
+  String get donorLocationDescription;
+
+  /// Privacy heading in the donor location dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Your privacy is protected'**
+  String get yourPrivacyIsProtected;
+
+  /// Privacy information explaining how donor location is used.
+  ///
+  /// In en, this message translates to:
+  /// **'Your exact location is never shown publicly. It is used to calculate distance and connect you with nearby blood requests.'**
+  String get donorLocationPrivacyDescription;
+
+  /// Button label to allow location access.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Location'**
+  String get allowLocation;
+
+  /// Button label to dismiss the location dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Now'**
+  String get notNow;
 }
 
 class _AppLocalizationsDelegate

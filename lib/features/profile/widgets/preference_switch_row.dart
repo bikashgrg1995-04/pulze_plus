@@ -12,6 +12,7 @@ class PreferenceSwitchRow extends StatelessWidget {
     required this.subtitle,
     required this.value,
     required this.onChanged,
+    this.isLoading = false,
   });
 
   final IconData icon;
@@ -19,6 +20,7 @@ class PreferenceSwitchRow extends StatelessWidget {
   final String subtitle;
   final bool value;
   final ValueChanged<bool> onChanged;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -86,14 +88,25 @@ class PreferenceSwitchRow extends StatelessWidget {
               SizedBox(
                 width: 70,
                 height: 50,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: AppSwitch(
-                    value: value,
-                    onChanged: onChanged,
-                    scale: 0.75,
-                  ),
-                ),
+                child: isLoading
+                    ? Center(
+                        child: SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    : FittedBox(
+                        fit: BoxFit.contain,
+                        child: AppSwitch(
+                          value: value,
+                          onChanged: onChanged,
+                          scale: 0.75,
+                        ),
+                      ),
               ),
             ],
           ),

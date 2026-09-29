@@ -45,8 +45,6 @@ class DioClient {
 
     await tokenStorage.clearTokens();
 
-    debugPrint('[AUTH] Session expired. Notifying auth state.');
-
     onSessionExpired?.call();
   }
 
@@ -72,16 +70,12 @@ class DioClient {
     final refreshToken = await tokenStorage.getRefreshToken();
 
     if (refreshToken == null || refreshToken.isEmpty) {
-      debugPrint('[AUTH] No refresh token available.');
-
       await _handleSessionExpired();
 
       return null;
     }
 
     try {
-      debugPrint('[AUTH] Attempting token refresh...');
-
       final refreshDio = Dio(
         BaseOptions(
           baseUrl: ApiEndpoints.baseUrl,
@@ -100,16 +94,9 @@ class DioClient {
         data: {'refresh': refreshToken},
       );
 
-      debugPrint(
-        '[AUTH] Token refresh response: '
-        '${response.statusCode}',
-      );
-
       final data = response.data;
 
       if (data is! Map<String, dynamic>) {
-        debugPrint('[AUTH] Invalid refresh response.');
-
         await _handleSessionExpired();
 
         return null;
@@ -118,8 +105,6 @@ class DioClient {
       final newAccessToken = data['access'];
 
       if (newAccessToken is! String || newAccessToken.isEmpty) {
-        debugPrint('[AUTH] New access token is missing.');
-
         await _handleSessionExpired();
 
         return null;
@@ -137,22 +122,12 @@ class DioClient {
       // A successful refresh means the session is valid again.
       _sessionExpiredHandled = false;
 
-      debugPrint('[AUTH] New access token saved.');
-
       return newAccessToken;
-    } on DioException catch (error) {
-      debugPrint(
-        '[AUTH] Token refresh failed: '
-        '${error.response?.statusCode} '
-        '${error.response?.data}',
-      );
-
+    } on DioException catch (_) {
       await _handleSessionExpired();
 
       return null;
     } catch (error) {
-      debugPrint('[AUTH] Token refresh error: $error');
-
       await _handleSessionExpired();
 
       return null;
@@ -193,29 +168,15 @@ class DioClient {
 
           // Never try to refresh the refresh endpoint itself.
           if (requestOptions.path == ApiEndpoints.tokenRefresh) {
-            debugPrint('[AUTH] Refresh endpoint returned 401.');
-
             await _handleSessionExpired();
 
             handler.next(error);
             return;
           }
 
-          debugPrint(
-            '[AUTH] 401 received: '
-            '${requestOptions.path}',
-          );
-
           final refreshToken = await tokenStorage.getRefreshToken();
 
-          debugPrint(
-            '[AUTH] Refresh token exists: '
-            '${refreshToken != null && refreshToken.isNotEmpty}',
-          );
-
           if (refreshToken == null || refreshToken.isEmpty) {
-            debugPrint('[AUTH] No refresh token available.');
-
             await _handleSessionExpired();
 
             handler.next(error);
@@ -225,8 +186,6 @@ class DioClient {
           final newAccessToken = await _refreshAccessToken();
 
           if (newAccessToken == null || newAccessToken.isEmpty) {
-            debugPrint('[AUTH] Unable to refresh access token.');
-
             handler.next(error);
             return;
           }
@@ -234,24 +193,12 @@ class DioClient {
           try {
             requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
 
-            debugPrint(
-              '[AUTH] Retrying original request: '
-              '${requestOptions.path}',
-            );
-
             final retryResponse = await _dio.fetch(requestOptions);
 
             handler.resolve(retryResponse);
           } on DioException catch (retryError) {
-            debugPrint(
-              '[AUTH] Retry failed: '
-              '${retryError.response?.statusCode}',
-            );
-
             handler.next(retryError);
           } catch (error) {
-            debugPrint('[AUTH] Retry error: $error');
-
             handler.next(
               DioException(requestOptions: requestOptions, error: error),
             );
