@@ -21,6 +21,7 @@ import 'package:pulze_plus/features/profile/models/profile_model.dart';
 import 'package:pulze_plus/features/profile/providers/profile_provider.dart';
 import 'package:pulze_plus/features/profile/widgets/about_pulze_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/change_password_dialog.dart';
+import 'package:pulze_plus/features/profile/widgets/change_phone_dialog.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_segmented_tile.dart';
 import 'package:pulze_plus/features/profile/widgets/preference_switch_row.dart';
 import 'package:pulze_plus/features/profile/widgets/support_request_dialog.dart';
@@ -130,6 +131,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           profile: profile,
                           onEdit: () {
                             _openEditProfile(context, profile);
+                          },
+                          onChangePhone: () async {
+                            final result = await showDialog<bool>(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const ChangePhoneDialog(),
+                            );
+
+                            if (!mounted || result != true) {
+                              return;
+                            }
+
+                            AppSnackBar.success(
+                              context,
+                              l10n.phoneNumberChangedSuccessfully,
+                            );
                           },
                         ),
 
@@ -330,6 +347,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               AppSnackBar.success(
                 this.context,
                 l10n.passwordChangedSuccessfully,
+              );
+            },
+          ),
+          ProfileSettingsSheetItem(
+            icon: Icons.phone_outlined,
+            title: l10n.changePhoneNumber,
+            subtitle: l10n.updatePhoneNumber,
+            onTap: () async {
+              Navigator.of(context).pop();
+
+              final result = await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => const ChangePhoneDialog(),
+              );
+
+              if (!mounted || result != true) {
+                return;
+              }
+
+              AppSnackBar.success(
+                this.context,
+                l10n.phoneNumberChangedSuccessfully,
               );
             },
           ),
@@ -763,10 +803,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     if (value) {
       final profile = ref.read(profileProvider).profile;
+      final appPreferences = ref.read(appPreferencesProvider);
 
       final hasLocation =
           profile?.latitude != null && profile?.longitude != null;
 
+      // Location already exists, but Pulze+ location setting is OFF.
+      if (hasLocation && !appPreferences.locationEnabled) {
+        AppSnackBar.error(context, l10n.enableLocationToBecomeDonor);
+        return;
+      }
+
+      // First-time donor activation: no stored location.
       if (!hasLocation) {
         final shouldContinue = await _showFirstTimeLocationDialog(l10n);
 

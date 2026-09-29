@@ -1675,6 +1675,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not Now'**
   String get notNow;
+
+  /// Message shown when a user has a saved location but app location setting is disabled while enabling donor status.
+  ///
+  /// In en, this message translates to:
+  /// **'Please turn on location to become a donor.'**
+  String get enableLocationToBecomeDonor;
+
+  /// Subtitle shown for the change phone number setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your verified phone number.'**
+  String get updatePhoneNumber;
+
+  /// Success message shown after the phone number is successfully verified and changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number changed successfully.'**
+  String get phoneNumberChangedSuccessfully;
+
+  /// Title shown when the user needs to verify their new phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify phone number'**
+  String get verifyPhoneNumber;
+
+  /// Hint shown in the phone number input field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number'**
+  String get enterPhoneNumber;
+
+  /// Button label used to send a phone verification code.
+  ///
+  /// In en, this message translates to:
+  /// **'Send verification code'**
+  String get sendVerificationCode;
+
+  /// Label for the phone verification code field.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code'**
+  String get verificationCode;
+
+  /// Instruction shown above the phone verification code field.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit verification code.'**
+  String get enterVerificationCode;
+
+  /// Button label used to request another phone verification code.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCode;
+
+  /// Countdown shown before another phone verification code can be requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {seconds}s'**
+  String resendCodeIn(int seconds);
+
+  /// Success message shown after a phone verification code is sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent successfully.'**
+  String get verificationCodeSentSuccessfully;
+
+  /// Success message shown after a new phone verification code is sent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new verification code has been sent.'**
+  String get newVerificationCodeSent;
+
+  /// Validation message shown when the phone number is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your phone number.'**
+  String get pleaseEnterPhoneNumber;
+
+  /// Validation message shown when the verification code is invalid or incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the 6-digit verification code.'**
+  String get pleaseEnterSixDigitCode;
+
+  /// Information message explaining why phone verification is required.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone number must be verified before it can be used for protected account features.'**
+  String get phoneVerificationSecurityMessage;
+
+  /// Tooltip or action label used to change the entered phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Change number'**
+  String get changeNumber;
+
+  /// Description shown when the user is entering a new phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new number. We\'ll send you a verification code.'**
+  String get changePhoneNumberDescription;
+
+  /// Description shown when the user has not added a phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Add and verify your phone number to keep your account secure.'**
+  String get addPhoneSecurityDescription;
+
+  /// Description shown when the user is changing their phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new phone number. We will send you a verification code.'**
+  String get changeNumberDescription;
 }
 
 class _AppLocalizationsDelegate

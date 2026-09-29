@@ -133,7 +133,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     try {
       final notifier = ref.read(profileProvider.notifier);
 
-      final phoneNumber = _phoneController.text.trim();
       final address = _addressController.text.trim();
       final city = _cityController.text.trim();
 
@@ -142,7 +141,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
           gender: _selectedGender!,
           dateOfBirth: _selectedDateOfBirth!,
           bloodType: _selectedBloodType!,
-          phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
           address: address,
           city: city,
         );
@@ -171,7 +169,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
         gender: _selectedGender,
         dateOfBirth: _selectedDateOfBirth,
         bloodType: _selectedBloodType,
-        phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
         address: address,
         city: city,
       );
@@ -235,10 +232,6 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
                     _buildHeader(),
 
                     const SizedBox(height: AppSpacing.xl),
-
-                    _buildPhoneField(),
-
-                    const SizedBox(height: AppSpacing.md),
 
                     _buildBloodTypeField(),
 
@@ -323,30 +316,7 @@ class _ProfileFormScreenState extends ConsumerState<ProfileFormScreen> {
     );
   }
 
-  // ===========================================================================
-  // Phone
-  // ===========================================================================
-
-  Widget _buildPhoneField() {
-    final l10n = AppLocalizations.of(context)!;
-
-    return AppTextField(
-      controller: _phoneController,
-      label: l10n.phoneNumber,
-      hint: l10n.enterYourPhoneNumber,
-      prefixIcon: Icons.phone_outlined,
-      keyboardType: TextInputType.phone,
-      textInputAction: TextInputAction.next,
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return null;
-        }
-
-        return null;
-      },
-    );
-  }
-
+ 
   // ===========================================================================
   // Blood type
   // ===========================================================================

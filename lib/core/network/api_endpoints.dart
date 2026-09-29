@@ -13,6 +13,11 @@ class ApiEndpoints {
   static const verifyEmail = 'auth/verify-email/';
   static const resendVerification = 'auth/resend-verification/';
 
+  // Phone verification
+  static const sendPhoneVerification = 'auth/phone/send/';
+  static const verifyPhone = 'auth/phone/verify/';
+  static const resendPhoneVerification = 'auth/phone/resend/';
+
   // Reset password
   static const forgotPassword = 'auth/forgot-password/';
   static const verifyPasswordReset = 'auth/verify-password-reset/';
@@ -22,7 +27,7 @@ class ApiEndpoints {
   static const profile = 'auth/profile/';
   static const profileAvatar = 'auth/profile/avatar/';
   static const profileDonor = 'auth/profile/donor/';
-  static const changePassword = '/auth/change-password/';
+  static const changePassword = 'auth/change-password/';
 
   // Help & Support
   static const faqs = 'help-support/faqs/';

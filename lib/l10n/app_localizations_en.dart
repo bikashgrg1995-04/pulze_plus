@@ -870,4 +870,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notNow => 'Not Now';
+
+  @override
+  String get enableLocationToBecomeDonor =>
+      'Please turn on location to become a donor.';
+
+  @override
+  String get updatePhoneNumber => 'Update your verified phone number.';
+
+  @override
+  String get phoneNumberChangedSuccessfully =>
+      'Phone number changed successfully.';
+
+  @override
+  String get verifyPhoneNumber => 'Verify phone number';
+
+  @override
+  String get enterPhoneNumber => 'Enter phone number';
+
+  @override
+  String get sendVerificationCode => 'Send verification code';
+
+  @override
+  String get verificationCode => 'Verification code';
+
+  @override
+  String get enterVerificationCode => 'Enter the 6-digit verification code.';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Resend code in ${seconds}s';
+  }
+
+  @override
+  String get verificationCodeSentSuccessfully =>
+      'Verification code sent successfully.';
+
+  @override
+  String get newVerificationCodeSent =>
+      'A new verification code has been sent.';
+
+  @override
+  String get pleaseEnterPhoneNumber => 'Please enter your phone number.';
+
+  @override
+  String get pleaseEnterSixDigitCode =>
+      'Please enter the 6-digit verification code.';
+
+  @override
+  String get phoneVerificationSecurityMessage =>
+      'Your phone number must be verified before it can be used for protected account features.';
+
+  @override
+  String get changeNumber => 'Change number';
+
+  @override
+  String get changePhoneNumberDescription =>
+      'Enter your new number. We\'ll send you a verification code.';
+
+  @override
+  String get addPhoneSecurityDescription =>
+      'Add and verify your phone number to keep your account secure.';
+
+  @override
+  String get changeNumberDescription =>
+      'Enter a new phone number. We will send you a verification code.';
 }

@@ -23,7 +23,6 @@ class ProfileRepository {
   Future<ProfileModel> createProfile({
     required String gender,
     required DateTime dateOfBirth,
-    String? phoneNumber,
     String? bloodType,
     String? address,
     String? city,
@@ -35,7 +34,6 @@ class ProfileRepository {
       data: {
         'gender': gender,
         'date_of_birth': _formatDate(dateOfBirth),
-        'phone_number': phoneNumber,
         'blood_type': bloodType,
         'address': address,
         'city': city,
@@ -54,7 +52,6 @@ class ProfileRepository {
   Future<ProfileModel> updateProfile({
     String? gender,
     DateTime? dateOfBirth,
-    String? phoneNumber,
     String? bloodType,
     String? address,
     String? city,
@@ -69,10 +66,6 @@ class ProfileRepository {
 
     if (dateOfBirth != null) {
       data['date_of_birth'] = _formatDate(dateOfBirth);
-    }
-
-    if (phoneNumber != null) {
-      data['phone_number'] = phoneNumber;
     }
 
     if (bloodType != null) {
@@ -110,7 +103,6 @@ class ProfileRepository {
       data: {'is_donor': isDonor},
     );
 
-
     final data = Map<String, dynamic>.from(response.data);
 
     return data['is_donor'] as bool;
@@ -146,6 +138,37 @@ class ProfileRepository {
         'new_password': newPassword,
         'confirm_password': confirmPassword,
       },
+    );
+  }
+
+  Future<void> sendPhoneVerification({
+    required String phoneNumber,
+    required String purpose,
+  }) async {
+    await _apiService.post(
+      ApiEndpoints.sendPhoneVerification,
+      data: {'phone_number': phoneNumber, 'purpose': purpose},
+    );
+  }
+
+  Future<void> verifyPhone({
+    required String phoneNumber,
+    required String purpose,
+    required String code,
+  }) async {
+    await _apiService.post(
+      ApiEndpoints.verifyPhone,
+      data: {'phone_number': phoneNumber, 'purpose': purpose, 'code': code},
+    );
+  }
+
+  Future<void> resendPhoneVerification({
+    required String phoneNumber,
+    required String purpose,
+  }) async {
+    await _apiService.post(
+      ApiEndpoints.resendPhoneVerification,
+      data: {'phone_number': phoneNumber, 'purpose': purpose},
     );
   }
 

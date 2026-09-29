@@ -881,4 +881,73 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get notNow => 'अहिले होइन';
+
+  @override
+  String get enableLocationToBecomeDonor =>
+      'रक्तदाता बन्न कृपया स्थान सुविधा अन गर्नुहोस्।';
+
+  @override
+  String get updatePhoneNumber => 'आफ्नो प्रमाणित फोन नम्बर अपडेट गर्नुहोस्।';
+
+  @override
+  String get phoneNumberChangedSuccessfully =>
+      'फोन नम्बर सफलतापूर्वक परिवर्तन भयो।';
+
+  @override
+  String get verifyPhoneNumber => 'फोन नम्बर प्रमाणित गर्नुहोस्';
+
+  @override
+  String get enterPhoneNumber => 'फोन नम्बर प्रविष्ट गर्नुहोस्';
+
+  @override
+  String get sendVerificationCode => 'प्रमाणीकरण कोड पठाउनुहोस्';
+
+  @override
+  String get verificationCode => 'प्रमाणीकरण कोड';
+
+  @override
+  String get enterVerificationCode =>
+      '६ अंकको प्रमाणीकरण कोड प्रविष्ट गर्नुहोस्।';
+
+  @override
+  String get resendCode => 'कोड पुनः पठाउनुहोस्';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return '$seconds सेकेन्डपछि कोड पुनः पठाउनुहोस्';
+  }
+
+  @override
+  String get verificationCodeSentSuccessfully =>
+      'प्रमाणीकरण कोड सफलतापूर्वक पठाइयो।';
+
+  @override
+  String get newVerificationCodeSent => 'नयाँ प्रमाणीकरण कोड पठाइएको छ।';
+
+  @override
+  String get pleaseEnterPhoneNumber =>
+      'कृपया आफ्नो फोन नम्बर प्रविष्ट गर्नुहोस्।';
+
+  @override
+  String get pleaseEnterSixDigitCode =>
+      'कृपया ६ अंकको प्रमाणीकरण कोड प्रविष्ट गर्नुहोस्।';
+
+  @override
+  String get phoneVerificationSecurityMessage =>
+      'सुरक्षित अकाउन्ट सुविधाहरू प्रयोग गर्नुअघि तपाईंको फोन नम्बर प्रमाणित हुनुपर्छ।';
+
+  @override
+  String get changeNumber => 'नम्बर परिवर्तन गर्नुहोस्';
+
+  @override
+  String get changePhoneNumberDescription =>
+      'Enter your new number. We\'ll send you a verification code.';
+
+  @override
+  String get addPhoneSecurityDescription =>
+      'आफ्नो खाता सुरक्षित राख्न फोन नम्बर थपेर प्रमाणीकरण गर्नुहोस्।';
+
+  @override
+  String get changeNumberDescription =>
+      'आफ्नो नयाँ नम्बर प्रविष्ट गर्नुहोस्। हामी तपाईंलाई प्रमाणीकरण कोड पठाउनेछौँ।';
 }

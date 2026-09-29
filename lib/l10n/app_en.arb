@@ -1266,5 +1266,106 @@
   "notNow": "Not Now",
   "@notNow": {
     "description": "Button label to dismiss the location dialog."
+  },
+
+  "enableLocationToBecomeDonor": "Please turn on location to become a donor.",
+  "@enableLocationToBecomeDonor": {
+    "description": "Message shown when a user has a saved location but app location setting is disabled while enabling donor status."
+  },
+
+  "updatePhoneNumber": "Update your verified phone number.",
+  "@updatePhoneNumber": {
+    "description": "Subtitle shown for the change phone number setting."
+  },
+
+  "phoneNumberChangedSuccessfully": "Phone number changed successfully.",
+  "@phoneNumberChangedSuccessfully": {
+    "description": "Success message shown after the phone number is successfully verified and changed."
+  },
+
+  "verifyPhoneNumber": "Verify phone number",
+  "@verifyPhoneNumber": {
+    "description": "Title shown when the user needs to verify their new phone number."
+  },
+
+  "enterPhoneNumber": "Enter phone number",
+  "@enterPhoneNumber": {
+    "description": "Hint shown in the phone number input field."
+  },
+
+  "sendVerificationCode": "Send verification code",
+  "@sendVerificationCode": {
+    "description": "Button label used to send a phone verification code."
+  },
+
+  "verificationCode": "Verification code",
+  "@verificationCode": {
+    "description": "Label for the phone verification code field."
+  },
+
+  "enterVerificationCode": "Enter the 6-digit verification code.",
+  "@enterVerificationCode": {
+    "description": "Instruction shown above the phone verification code field."
+  },
+
+  "resendCode": "Resend code",
+  "@resendCode": {
+    "description": "Button label used to request another phone verification code."
+  },
+
+  "resendCodeIn": "Resend code in {seconds}s",
+  "@resendCodeIn": {
+    "description": "Countdown shown before another phone verification code can be requested.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "verificationCodeSentSuccessfully": "Verification code sent successfully.",
+  "@verificationCodeSentSuccessfully": {
+    "description": "Success message shown after a phone verification code is sent."
+  },
+
+  "newVerificationCodeSent": "A new verification code has been sent.",
+  "@newVerificationCodeSent": {
+    "description": "Success message shown after a new phone verification code is sent."
+  },
+
+  "pleaseEnterPhoneNumber": "Please enter your phone number.",
+  "@pleaseEnterPhoneNumber": {
+    "description": "Validation message shown when the phone number is empty."
+  },
+
+  "pleaseEnterSixDigitCode": "Please enter the 6-digit verification code.",
+  "@pleaseEnterSixDigitCode": {
+    "description": "Validation message shown when the verification code is invalid or incomplete."
+  },
+
+  "phoneVerificationSecurityMessage": "Your phone number must be verified before it can be used for protected account features.",
+  "@phoneVerificationSecurityMessage": {
+    "description": "Information message explaining why phone verification is required."
+  },
+
+  "changeNumber": "Change number",
+  "@changeNumber": {
+    "description": "Tooltip or action label used to change the entered phone number."
+  },
+
+  "changePhoneNumberDescription": "Enter your new number. We'll send you a verification code.",
+  "@changePhoneNumberDescription": {
+    "description": "Description shown when the user is entering a new phone number."
+  },
+
+  "addPhoneSecurityDescription": "Add and verify your phone number to keep your account secure.",
+  "@addPhoneSecurityDescription": {
+    "description": "Description shown when the user has not added a phone number."
+  },
+
+  "changeNumberDescription": "Enter a new phone number. We will send you a verification code.",
+  "@changeNumberDescription": {
+    "description": "Description shown when the user is changing their phone number."
   }
+
 }

@@ -55,7 +55,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> createProfile({
     required String gender,
     required DateTime dateOfBirth,
-    String? phoneNumber,
     String? bloodType,
     String? address,
     String? city,
@@ -68,7 +67,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
       final profile = await _profileRepository.createProfile(
         gender: gender,
         dateOfBirth: dateOfBirth,
-        phoneNumber: phoneNumber,
         bloodType: bloodType,
         address: address,
         city: city,
@@ -91,7 +89,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> updateProfile({
     String? gender,
     DateTime? dateOfBirth,
-    String? phoneNumber,
     String? bloodType,
     String? address,
     String? city,
@@ -104,7 +101,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
       final profile = await _profileRepository.updateProfile(
         gender: gender,
         dateOfBirth: dateOfBirth,
-        phoneNumber: phoneNumber,
         bloodType: bloodType,
         address: address,
         city: city,
@@ -246,6 +242,64 @@ class ProfileNotifier extends Notifier<ProfileState> {
     } catch (error) {
       state = state.copyWith(message: error.toString());
 
+      rethrow;
+    }
+  }
+
+  Future<void> sendPhoneVerification({required String phoneNumber}) async {
+    state = state.copyWith(clearMessage: true);
+
+    try {
+      await _profileRepository.sendPhoneVerification(
+        phoneNumber: phoneNumber,
+        purpose: 'PROFILE_PHONE',
+      );
+    } catch (error) {
+      state = state.copyWith(message: error.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> verifyPhone({
+    required String phoneNumber,
+    required String code,
+  }) async {
+    state = state.copyWith(clearMessage: true);
+
+    try {
+      await _profileRepository.verifyPhone(
+        phoneNumber: phoneNumber,
+        purpose: 'PROFILE_PHONE',
+        code: code,
+      );
+
+      final currentProfile = state.profile;
+
+      if (currentProfile != null) {
+        state = ProfileState(
+          status: ProfileStatus.loaded,
+          profile: currentProfile.copyWith(
+            phoneNumber: phoneNumber,
+            isPhoneVerified: true,
+          ),
+        );
+      }
+    } catch (error) {
+      state = state.copyWith(message: error.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> resendPhoneVerification({required String phoneNumber}) async {
+    state = state.copyWith(clearMessage: true);
+
+    try {
+      await _profileRepository.resendPhoneVerification(
+        phoneNumber: phoneNumber,
+        purpose: 'PROFILE_PHONE',
+      );
+    } catch (error) {
+      state = state.copyWith(message: error.toString());
       rethrow;
     }
   }

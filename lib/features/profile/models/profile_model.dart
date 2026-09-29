@@ -53,7 +53,6 @@ class ProfileModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'phone_number': phoneNumber,
       'blood_type': bloodType,
       'gender': gender,
       'date_of_birth': _formatDate(dateOfBirth),

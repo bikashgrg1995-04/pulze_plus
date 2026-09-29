@@ -1049,5 +1049,101 @@
   "notNow": "अहिले होइन",
   "@notNow": {
     "description": "स्थान संवाद बन्द गर्न प्रयोग गरिने बटन।"
+  },
+
+  "enableLocationToBecomeDonor": "रक्तदाता बन्न कृपया स्थान सुविधा अन गर्नुहोस्।",
+  "@enableLocationToBecomeDonor": {
+    "description": "रक्तदाता स्थिति सक्रिय गर्न खोज्दा स्थान सुविधा बन्द भएको अवस्थामा देखाइने सन्देश।"
+  },
+
+  "updatePhoneNumber": "आफ्नो प्रमाणित फोन नम्बर अपडेट गर्नुहोस्।",
+  "@updatePhoneNumber": {
+    "description": "फोन नम्बर परिवर्तन सेटिङमा देखाइने विवरण।"
+  },
+
+  "phoneNumberChangedSuccessfully": "फोन नम्बर सफलतापूर्वक परिवर्तन भयो।",
+  "@phoneNumberChangedSuccessfully": {
+    "description": "फोन नम्बर सफलतापूर्वक प्रमाणित भएपछि देखाइने सन्देश।"
+  },
+
+  "verifyPhoneNumber": "फोन नम्बर प्रमाणित गर्नुहोस्",
+  "@verifyPhoneNumber": {
+    "description": "नयाँ फोन नम्बर प्रमाणित गर्न देखाइने शीर्षक।"
+  },
+
+  "enterPhoneNumber": "फोन नम्बर प्रविष्ट गर्नुहोस्",
+  "@enterPhoneNumber": {
+    "description": "फोन नम्बर इनपुट फिल्डमा देखाइने संकेत।"
+  },
+
+  "sendVerificationCode": "प्रमाणीकरण कोड पठाउनुहोस्",
+  "@sendVerificationCode": {
+    "description": "फोन प्रमाणीकरण कोड पठाउन प्रयोग हुने बटन।"
+  },
+
+  "verificationCode": "प्रमाणीकरण कोड",
+  "@verificationCode": {
+    "description": "फोन प्रमाणीकरण कोड फिल्डको लेबल।"
+  },
+
+  "enterVerificationCode": "६ अंकको प्रमाणीकरण कोड प्रविष्ट गर्नुहोस्।",
+  "@enterVerificationCode": {
+    "description": "फोन प्रमाणीकरण कोड फिल्ड माथि देखाइने निर्देशन।"
+  },
+
+  "resendCode": "कोड पुनः पठाउनुहोस्",
+  "@resendCode": {
+    "description": "नयाँ प्रमाणीकरण कोड माग्न प्रयोग हुने बटन।"
+  },
+
+  "resendCodeIn": "{seconds} सेकेन्डपछि कोड पुनः पठाउनुहोस्",
+  "@resendCodeIn": {
+    "description": "अर्को प्रमाणीकरण कोड माग्नुअघि देखाइने काउन्टडाउन।",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "verificationCodeSentSuccessfully": "प्रमाणीकरण कोड सफलतापूर्वक पठाइयो।",
+  "@verificationCodeSentSuccessfully": {
+    "description": "फोन प्रमाणीकरण कोड पठाएपछि देखाइने सफलताको सन्देश।"
+  },
+
+  "newVerificationCodeSent": "नयाँ प्रमाणीकरण कोड पठाइएको छ।",
+  "@newVerificationCodeSent": {
+    "description": "नयाँ फोन प्रमाणीकरण कोड पठाएपछि देखाइने सफलताको सन्देश।"
+  },
+
+  "pleaseEnterPhoneNumber": "कृपया आफ्नो फोन नम्बर प्रविष्ट गर्नुहोस्।",
+  "@pleaseEnterPhoneNumber": {
+    "description": "फोन नम्बर खाली हुँदा देखाइने validation message।"
+  },
+
+  "pleaseEnterSixDigitCode": "कृपया ६ अंकको प्रमाणीकरण कोड प्रविष्ट गर्नुहोस्।",
+  "@pleaseEnterSixDigitCode": {
+    "description": "प्रमाणीकरण कोड गलत वा अधुरो हुँदा देखाइने validation message।"
+  },
+
+  "phoneVerificationSecurityMessage": "सुरक्षित अकाउन्ट सुविधाहरू प्रयोग गर्नुअघि तपाईंको फोन नम्बर प्रमाणित हुनुपर्छ।",
+  "@phoneVerificationSecurityMessage": {
+    "description": "फोन प्रमाणीकरण किन आवश्यक छ भनेर बताउने जानकारी सन्देश।"
+  },
+
+  "changeNumber": "नम्बर परिवर्तन गर्नुहोस्",
+  "@changeNumber": {
+    "description": "प्रविष्ट गरिएको फोन नम्बर परिवर्तन गर्न प्रयोग हुने लेबल।"
+  },
+
+  "changeNumberDescription": "आफ्नो नयाँ नम्बर प्रविष्ट गर्नुहोस्। हामी तपाईंलाई प्रमाणीकरण कोड पठाउनेछौँ।",
+  "@changeNumberDescription": {
+    "description": "नयाँ फोन नम्बर प्रविष्ट गर्दा देखाइने विवरण।"
+  },
+
+  "addPhoneSecurityDescription": "आफ्नो खाता सुरक्षित राख्न फोन नम्बर थपेर प्रमाणीकरण गर्नुहोस्।",
+  "@addPhoneSecurityDescription": {
+    "description": "फोन नम्बर थपिएको छैन भने देखाइने विवरण।"
   }
+
 }

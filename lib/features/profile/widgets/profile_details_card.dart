@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+
 import 'package:pulze_plus/core/utils/responsive_utils.dart';
 import 'package:pulze_plus/core/widgets/app_button.dart';
 import 'package:pulze_plus/core/widgets/app_section_header.dart';
@@ -16,11 +18,13 @@ class ProfileUserCard extends StatefulWidget {
     required this.user,
     required this.profile,
     this.onEdit,
+    this.onChangePhone,
   });
 
   final UserModel user;
   final ProfileModel? profile;
   final VoidCallback? onEdit;
+  final VoidCallback? onChangePhone;
 
   @override
   State<ProfileUserCard> createState() => _ProfileUserCardState();
@@ -41,11 +45,15 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: colorScheme.outline),
+        border: Border.all(
+          color: colorScheme.outline,
+        ),
       ),
       child: Stack(
         children: [
-          const Positioned.fill(child: _DetailsBackground()),
+          const Positioned.fill(
+            child: _DetailsBackground(),
+          ),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
@@ -116,6 +124,19 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                                 isVerified:
                                     widget.profile?.isPhoneVerified == true,
                               ),
+                              action: widget.onChangePhone == null
+                                  ? null
+                                  : IconButton(
+                                      tooltip: l10n.changePhoneNumber,
+                                      onPressed: widget.onChangePhone,
+                                      visualDensity:
+                                          VisualDensity.compact,
+                                      color: colorScheme.primary,
+                                      icon: const Icon(
+                                        Icons.edit_outlined,
+                                        size: 18,
+                                      ),
+                                    ),
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             _DetailRow(
@@ -141,9 +162,9 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
                               label: l10n.city,
                               value:
                                   widget.profile?.city?.trim().isNotEmpty ==
-                                      true
-                                  ? widget.profile!.city!
-                                  : l10n.notAdded,
+                                          true
+                                      ? widget.profile!.city!
+                                      : l10n.notAdded,
                             ),
                           ],
                         )
@@ -157,7 +178,10 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
     );
   }
 
-  String _formatGender(String? gender, AppLocalizations l10n) {
+  String _formatGender(
+    String? gender,
+    AppLocalizations l10n,
+  ) {
     switch (gender) {
       case 'male':
         return l10n.male;
@@ -172,7 +196,10 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
     }
   }
 
-  String _formatDate(DateTime? date, AppLocalizations l10n) {
+  String _formatDate(
+    DateTime? date,
+    AppLocalizations l10n,
+  ) {
     if (date == null) {
       return l10n.notAdded;
     }
@@ -186,7 +213,10 @@ class _ProfileUserCardState extends State<ProfileUserCard> {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.isExpanded, required this.onTap});
+  const _SectionHeader({
+    required this.isExpanded,
+    required this.onTap,
+  });
 
   final bool isExpanded;
   final VoidCallback onTap;
@@ -201,15 +231,21 @@ class _SectionHeader extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.md),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.xs,
+        ),
         child: Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppSectionHeader(title: l10n.personalDetails),
-                  const SizedBox(height: AppSpacing.xxs),
+                  AppSectionHeader(
+                    title: l10n.personalDetails,
+                  ),
+                  const SizedBox(
+                    height: AppSpacing.xxs,
+                  ),
                   Text(
                     l10n.viewYourPersonalInformation,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -220,10 +256,14 @@ class _SectionHeader extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.sm),
+            const SizedBox(
+              width: AppSpacing.sm,
+            ),
             AnimatedRotation(
               turns: isExpanded ? 0.5 : 0,
-              duration: const Duration(milliseconds: 280),
+              duration: const Duration(
+                milliseconds: 280,
+              ),
               child: Icon(
                 Icons.expand_more_rounded,
                 size: 24,
@@ -243,12 +283,14 @@ class _DetailRow extends StatelessWidget {
     required this.label,
     required this.value,
     this.trailing,
+    this.action,
   });
 
   final IconData icon;
   final String label;
   final String value;
   final Widget? trailing;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -263,12 +305,20 @@ class _DetailRow extends StatelessWidget {
           height: 36,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.primary.withValues(
+              alpha: 0.08,
+            ),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 18, color: AppColors.primary),
+          child: Icon(
+            icon,
+            size: 18,
+            color: AppColors.primary,
+          ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(
+          width: AppSpacing.sm,
+        ),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,38 +343,61 @@ class _DetailRow extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              if (trailing != null) ...[const SizedBox(height: 2), trailing!],
+              if (trailing != null) ...[
+                const SizedBox(height: 2),
+                trailing!,
+              ],
             ],
           ),
         ),
+        if (action != null) ...[
+          const SizedBox(
+            width: AppSpacing.xs,
+          ),
+          action!,
+        ],
       ],
     );
   }
 }
 
 class _VerificationStatus extends StatelessWidget {
-  const _VerificationStatus({required this.isVerified});
+  const _VerificationStatus({
+    required this.isVerified,
+  });
 
   final bool isVerified;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final statusColor = isVerified ? AppColors.success : AppColors.error;
+
+    final statusColor = isVerified
+        ? AppColors.success
+        : AppColors.error;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          isVerified ? Icons.verified_rounded : Icons.info_outline_rounded,
+          isVerified
+              ? Icons.verified_rounded
+              : Icons.info_outline_rounded,
           size: 13,
           color: statusColor,
         ),
         const SizedBox(width: 4),
         Text(
-          isVerified ? l10n.verified : l10n.unverified,
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
+          isVerified
+              ? l10n.verified
+              : l10n.unverified,
+          style: Theme.of(context)
+              .textTheme
+              .labelSmall
+              ?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.w600,
+              ),
         ),
       ],
     );
@@ -336,19 +409,29 @@ class _DetailsBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: _DetailsBackgroundPainter());
+    return CustomPaint(
+      painter: _DetailsBackgroundPainter(),
+    );
   }
 }
 
 class _DetailsBackgroundPainter extends CustomPainter {
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(
+    Canvas canvas,
+    Size size,
+  ) {
     final topPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.035)
+      ..color = AppColors.primary.withValues(
+        alpha: 0.035,
+      )
       ..style = PaintingStyle.fill;
 
     final topPath = Path()
-      ..moveTo(size.width * 0.55, 0)
+      ..moveTo(
+        size.width * 0.55,
+        0,
+      )
       ..cubicTo(
         size.width * 0.72,
         size.height * 0.08,
@@ -357,17 +440,28 @@ class _DetailsBackgroundPainter extends CustomPainter {
         size.width,
         size.height * 0.12,
       )
-      ..lineTo(size.width, 0)
+      ..lineTo(
+        size.width,
+        0,
+      )
       ..close();
 
-    canvas.drawPath(topPath, topPaint);
+    canvas.drawPath(
+      topPath,
+      topPaint,
+    );
 
     final bottomPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.025)
+      ..color = AppColors.primary.withValues(
+        alpha: 0.025,
+      )
       ..style = PaintingStyle.fill;
 
     final bottomPath = Path()
-      ..moveTo(0, size.height * 0.90)
+      ..moveTo(
+        0,
+        size.height * 0.90,
+      )
       ..cubicTo(
         size.width * 0.22,
         size.height * 0.80,
@@ -384,15 +478,26 @@ class _DetailsBackgroundPainter extends CustomPainter {
         size.width,
         size.height * 0.78,
       )
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
+      ..lineTo(
+        size.width,
+        size.height,
+      )
+      ..lineTo(
+        0,
+        size.height,
+      )
       ..close();
 
-    canvas.drawPath(bottomPath, bottomPaint);
+    canvas.drawPath(
+      bottomPath,
+      bottomPaint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(
+    covariant CustomPainter oldDelegate,
+  ) {
     return false;
   }
 }

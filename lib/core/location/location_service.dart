@@ -40,17 +40,14 @@ class LocationService {
   }
 
   Future<Position> getCurrentPosition() async {
-    try {
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-        ),
-      ).timeout(const Duration(seconds: 10));
-
-      return position;
-    } on Exception catch (_) {
-      rethrow;
-    }
+    return Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.medium,
+        distanceFilter: 0,
+      ),
+    ).timeout(
+      const Duration(seconds: 20),
+    );
   }
 }
 
