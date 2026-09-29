@@ -1144,6 +1144,11 @@
   "addPhoneSecurityDescription": "आफ्नो खाता सुरक्षित राख्न फोन नम्बर थपेर प्रमाणीकरण गर्नुहोस्।",
   "@addPhoneSecurityDescription": {
     "description": "फोन नम्बर थपिएको छैन भने देखाइने विवरण।"
+  },
+
+  "changePhoneNumberDescription": "आफ्नो फोन नम्बर परिवर्तन गर्न नयाँ नम्बर प्रविष्ट गर्नुहोस्। हामी तपाईंलाई प्रमाणीकरण कोड पठाउनेछौं।",
+  "@changePhoneNumberDescription": {
+    "description": "फोन नम्बर परिवर्तन गर्दा देखाइने विवरण।"
   }
 
 }

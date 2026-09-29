@@ -37,7 +37,8 @@ class MyRequestItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        '${request.bloodGroup} • ${request.units} ${request.units == 1 ? 'Unit' : 'Units'}',
+                        '${request.bloodGroup} • ${request.unitsRequired} '
+                        '${request.unitsRequired == 1 ? 'Unit' : 'Units'}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
@@ -46,6 +47,7 @@ class MyRequestItem extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(width: AppSpacing.xs),
                     RequestStatusChip(
                       status: request.status,
                     ),
@@ -55,14 +57,14 @@ class MyRequestItem extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(
-                      Icons.location_on_outlined,
+                      Icons.local_hospital_outlined,
                       size: 16,
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        request.location,
+                        request.hospitalName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -83,7 +85,7 @@ class MyRequestItem extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        'Required ${request.requiredBy}',
+                        'Required ${_formatDateTime(request.requiredAt)}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -104,6 +106,17 @@ class MyRequestItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    final local = dateTime.toLocal();
+
+    final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final minute = local.minute.toString().padLeft(2, '0');
+    final period = local.hour >= 12 ? 'PM' : 'AM';
+
+    return '${local.day}/${local.month}/${local.year} '
+        '$hour:$minute $period';
   }
 }
 

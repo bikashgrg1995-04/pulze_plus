@@ -35,4 +35,7 @@ class ApiEndpoints {
   static const reportProblem = 'help-support/report-problem/';
   static const feedback = 'help-support/feedback/';
   static const aboutPulze = 'help-support/about/';
+
+   // Blood requests
+  static const bloodRequests = 'blood-requests/';
 }

@@ -246,13 +246,16 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  Future<void> sendPhoneVerification({required String phoneNumber}) async {
+  Future<void> sendPhoneVerification({
+    required String phoneNumber,
+    String purpose = 'PROFILE_PHONE',
+  }) async {
     state = state.copyWith(clearMessage: true);
 
     try {
       await _profileRepository.sendPhoneVerification(
         phoneNumber: phoneNumber,
-        purpose: 'PROFILE_PHONE',
+        purpose: purpose,
       );
     } catch (error) {
       state = state.copyWith(message: error.toString());
@@ -263,26 +266,30 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> verifyPhone({
     required String phoneNumber,
     required String code,
+    String purpose = 'PROFILE_PHONE',
   }) async {
     state = state.copyWith(clearMessage: true);
 
     try {
       await _profileRepository.verifyPhone(
         phoneNumber: phoneNumber,
-        purpose: 'PROFILE_PHONE',
+        purpose: purpose,
         code: code,
       );
 
-      final currentProfile = state.profile;
+      // Only PROFILE_PHONE verification updates the local profile.
+      if (purpose == 'PROFILE_PHONE') {
+        final currentProfile = state.profile;
 
-      if (currentProfile != null) {
-        state = ProfileState(
-          status: ProfileStatus.loaded,
-          profile: currentProfile.copyWith(
-            phoneNumber: phoneNumber,
-            isPhoneVerified: true,
-          ),
-        );
+        if (currentProfile != null) {
+          state = ProfileState(
+            status: ProfileStatus.loaded,
+            profile: currentProfile.copyWith(
+              phoneNumber: phoneNumber,
+              isPhoneVerified: true,
+            ),
+          );
+        }
       }
     } catch (error) {
       state = state.copyWith(message: error.toString());
@@ -290,13 +297,16 @@ class ProfileNotifier extends Notifier<ProfileState> {
     }
   }
 
-  Future<void> resendPhoneVerification({required String phoneNumber}) async {
+  Future<void> resendPhoneVerification({
+    required String phoneNumber,
+    String purpose = 'PROFILE_PHONE',
+  }) async {
     state = state.copyWith(clearMessage: true);
 
     try {
       await _profileRepository.resendPhoneVerification(
         phoneNumber: phoneNumber,
-        purpose: 'PROFILE_PHONE',
+        purpose: purpose,
       );
     } catch (error) {
       state = state.copyWith(message: error.toString());

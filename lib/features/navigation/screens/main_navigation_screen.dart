@@ -10,6 +10,7 @@ import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
 import 'package:pulze_plus/features/home/screens/home_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
+import 'package:pulze_plus/features/requests/providers/profile_provider.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
 
@@ -48,7 +49,10 @@ class MainNavigationScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(index: currentIndex, children: screens),
+      body: IndexedStack(
+        index: currentIndex,
+        children: screens,
+      ),
       bottomNavigationBar: _BottomNavigation(
         currentIndex: currentIndex,
         onItemSelected: (index) {
@@ -64,7 +68,9 @@ class MainNavigationScreen extends ConsumerWidget {
         return const ProfileScreen();
 
       case AuthStatus.needsProfile:
-        return const ProfileFormScreen(mode: ProfileFormMode.create);
+        return const ProfileFormScreen(
+          mode: ProfileFormMode.create,
+        );
 
       case AuthStatus.unauthenticated:
       case AuthStatus.needsVerification:
@@ -75,7 +81,7 @@ class MainNavigationScreen extends ConsumerWidget {
   }
 }
 
-class _BottomNavigation extends StatelessWidget {
+class _BottomNavigation extends ConsumerWidget {
   const _BottomNavigation({
     required this.currentIndex,
     required this.onItemSelected,
@@ -84,7 +90,10 @@ class _BottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onItemSelected;
 
-  void _openCreateBloodRequest(BuildContext context) {
+  void _openCreateBloodRequest(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -94,24 +103,61 @@ class _BottomNavigation extends StatelessWidget {
           top: Radius.circular(AppRadius.xxl),
         ),
       ),
-      builder: (_) {
+      builder: (sheetContext) {
         return CreateBloodRequestSheet(
-          onCreate: () {
-            Navigator.of(context).pop();
+          onCreate: (data) async {
+            try {
+              await ref
+                  .read(bloodRequestsProvider.notifier)
+                  .createRequest(
+                    data: data,
+                  );
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Blood request created successfully.'),
-              ),
-            );
+              if (!sheetContext.mounted) return;
+
+              Navigator.of(sheetContext).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Blood request created successfully.',
+                  ),
+                ),
+              );
+            } catch (error) {
+              if (!sheetContext.mounted) return;
+
+              ScaffoldMessenger.of(sheetContext).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    _getErrorMessage(error),
+                  ),
+                ),
+              );
+            }
           },
         );
       },
     );
   }
 
+  static String _getErrorMessage(Object error) {
+    final message = error.toString();
+
+    if (message.startsWith('Exception: ')) {
+      return message.substring('Exception: '.length);
+    }
+
+    return message.isEmpty
+        ? 'Unable to create blood request.'
+        : message;
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     final horizontalPadding = ResponsiveUtils.value(
       context,
       mobile: AppSpacing.md,
@@ -144,7 +190,10 @@ class _BottomNavigation extends StatelessWidget {
               top: -22,
               child: _CreateButton(
                 onTap: () {
-                  _openCreateBloodRequest(context);
+                  _openCreateBloodRequest(
+                    context,
+                    ref,
+                  );
                 },
               ),
             ),
@@ -167,7 +216,10 @@ class _NavigationDock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 8,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -205,9 +257,7 @@ class _NavigationDock extends StatelessWidget {
               onTap: () => onItemSelected(1),
             ),
           ),
-
           const SizedBox(width: 64),
-
           Expanded(
             child: _NavigationItem(
               icon: Icons.chat_bubble_outline_rounded,
@@ -249,7 +299,8 @@ class _NavigationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.textSecondary;
+    final color =
+        selected ? AppColors.primary : AppColors.textSecondary;
 
     return Material(
       color: Colors.transparent,
@@ -259,7 +310,10 @@ class _NavigationItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 4,
+            vertical: 8,
+          ),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary.withValues(alpha: 0.08)
@@ -283,12 +337,15 @@ class _NavigationItem extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 11,
-                  height: 16 / 11,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: color,
-                ),
+                style:
+                    Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontSize: 11,
+                          height: 16 / 11,
+                          fontWeight: selected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                          color: color,
+                        ),
               ),
             ],
           ),
@@ -299,7 +356,9 @@ class _NavigationItem extends StatelessWidget {
 }
 
 class _CreateButton extends StatelessWidget {
-  const _CreateButton({required this.onTap});
+  const _CreateButton({
+    required this.onTap,
+  });
 
   final VoidCallback onTap;
 
@@ -309,7 +368,9 @@ class _CreateButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
+        borderRadius: BorderRadius.circular(
+          AppRadius.pill,
+        ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
@@ -331,7 +392,11 @@ class _CreateButton extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.add_rounded, size: 31, color: Colors.white),
+          child: const Icon(
+            Icons.add_rounded,
+            size: 31,
+            color: Colors.white,
+          ),
         ),
       ),
     );

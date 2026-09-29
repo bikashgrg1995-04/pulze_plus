@@ -144,7 +144,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             }
 
                             AppSnackBar.success(
-                              context,
+                              this.context,
                               l10n.phoneNumberChangedSuccessfully,
                             );
                           },
@@ -846,11 +846,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       AppSnackBar.error(context, error.toString());
     } finally {
-      if (!mounted) return;
-
-      setState(() {
-        _isUpdatingDonor = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isUpdatingDonor = false;
+        });
+      }
     }
   }
 

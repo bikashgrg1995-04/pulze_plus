@@ -33,28 +33,31 @@ class DonorListSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         if (visibleDonors.isEmpty)
           const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: AppSpacing.xl,
-            ),
-            child: Text(
-              'No matching donors found.',
-            ),
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            child: Text('No matching donors found.'),
           )
         else
-          ...visibleDonors.map(
-            (donor) => Padding(
-              padding: const EdgeInsets.only(
-                bottom: AppSpacing.sm,
-              ),
-              child: DonorListItem(
-                donor: donor,
-                onRequest: () {
-                  onDonorRequest?.call(donor);
-                },
-                onTap: () {
-                  onDonorTap?.call(donor);
-                },
-              ),
+          SizedBox(
+            height: 320,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: visibleDonors.length,
+              itemBuilder: (context, index) {
+                final donor = visibleDonors[index];
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: DonorListItem(
+                    donor: donor,
+                    onRequest: () {
+                      onDonorRequest?.call(donor);
+                    },
+                    onTap: () {
+                      onDonorTap?.call(donor);
+                    },
+                  ),
+                );
+              },
             ),
           ),
       ],

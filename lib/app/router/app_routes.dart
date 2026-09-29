@@ -6,6 +6,7 @@ abstract final class AppRoutes {
   static const home = '/home';
 
   static const requests = '/requests';
+  static const bloodRequestDetail = '/requests/detail';
 
   static const chat = '/chat';
 
@@ -28,7 +29,6 @@ abstract final class AppRoutes {
   static const donate = '/donate';
 
   static const notifications = '/notifications';
-
 
   //help & support
   static const faqs = '/faqs';

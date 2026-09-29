@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/app_status_badge.dart';
-import '../models/blood_request_model.dart';
 
 class RequestStatusChip extends StatelessWidget {
   const RequestStatusChip({
@@ -9,7 +8,7 @@ class RequestStatusChip extends StatelessWidget {
     required this.status,
   });
 
-  final BloodRequestStatus status;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -22,39 +21,39 @@ class RequestStatusChip extends StatelessWidget {
 
   String get _label {
     switch (status) {
-      case BloodRequestStatus.pending:
-        return 'Pending';
+      case 'ACTIVE':
+        return 'Active';
 
-      case BloodRequestStatus.matched:
-        return 'Matched';
+      case 'FULFILLED':
+        return 'Fulfilled';
 
-      case BloodRequestStatus.accepted:
-        return 'Accepted';
-
-      case BloodRequestStatus.completed:
-        return 'Completed';
-
-      case BloodRequestStatus.cancelled:
+      case 'CANCELLED':
         return 'Cancelled';
+
+      case 'EXPIRED':
+        return 'Expired';
+
+      default:
+        return status.isEmpty ? 'Unknown' : status;
     }
   }
 
   AppStatusType get _statusType {
     switch (status) {
-      case BloodRequestStatus.pending:
-        return AppStatusType.pending;
-
-      case BloodRequestStatus.matched:
+      case 'ACTIVE':
         return AppStatusType.open;
 
-      case BloodRequestStatus.accepted:
-        return AppStatusType.accepted;
-
-      case BloodRequestStatus.completed:
+      case 'FULFILLED':
         return AppStatusType.completed;
 
-      case BloodRequestStatus.cancelled:
+      case 'CANCELLED':
         return AppStatusType.cancelled;
+
+      case 'EXPIRED':
+        return AppStatusType.pending;
+
+      default:
+        return AppStatusType.pending;
     }
   }
 }

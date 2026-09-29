@@ -941,7 +941,7 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get changePhoneNumberDescription =>
-      'Enter your new number. We\'ll send you a verification code.';
+      'आफ्नो फोन नम्बर परिवर्तन गर्न नयाँ नम्बर प्रविष्ट गर्नुहोस्। हामी तपाईंलाई प्रमाणीकरण कोड पठाउनेछौं।';
 
   @override
   String get addPhoneSecurityDescription =>

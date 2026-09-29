@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/features/auth/models/auth_state.dart';
+import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/features/requests/providers/profile_provider.dart';
+import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
+import 'package:pulze_plus/features/requests/widgets/my_request_item.dart';
 import 'package:pulze_plus/features/requests/widgets/request_donor_sheet.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_empty_state.dart';
-import '../data/demo_blood_requests.dart';
 import '../data/demo_donors.dart';
 import '../models/donor_model.dart';
 import '../widgets/create_request_card.dart';
 import '../widgets/donor_filter_bar.dart';
 import '../widgets/donor_list_section.dart';
-import '../widgets/my_requests_section.dart';
 import '../widgets/requests_header.dart';
 
-class RequestsScreen extends StatefulWidget {
+class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});
 
   @override
-  State<RequestsScreen> createState() => _RequestsScreenState();
+  ConsumerState<RequestsScreen> createState() => _RequestsScreenState();
 }
 
-class _RequestsScreenState extends State<RequestsScreen> {
+class _RequestsScreenState extends ConsumerState<RequestsScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   String? _selectedBloodGroup;
@@ -83,80 +89,187 @@ class _RequestsScreenState extends State<RequestsScreen> {
   }
 
   void _handleCreateRequest() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Create blood request')));
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return CreateBloodRequestSheet(
+          onCreate: (data) async {
+            try {
+              await ref
+                  .read(bloodRequestsProvider.notifier)
+                  .createRequest(data: data);
+
+              if (!sheetContext.mounted) return;
+
+              Navigator.of(sheetContext).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Blood request created successfully.'),
+                ),
+              );
+            } catch (error) {
+              if (!sheetContext.mounted) return;
+
+              ScaffoldMessenger.of(sheetContext)
+                  .showSnackBar(SnackBar(content: Text(error.toString())));
+
+              rethrow;
+            }
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _refreshRequests() async {
+    await ref.read(bloodRequestsProvider.notifier).refreshRequests();
+  }
+
+  Widget _buildMyRequestsSection() {
+    final requestsAsync = ref.watch(bloodRequestsProvider);
+
+    return requestsAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stackTrace) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+        child: AppEmptyState(
+          title: 'Unable to load requests',
+          description: 'Something went wrong while loading your requests.',
+          icon: Icons.error_outline,
+          actionLabel: 'Try again',
+          onActionPressed: _refreshRequests,
+        ),
+      ),
+      data: (requests) {
+        if (requests.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+            child: AppEmptyState(
+              title: 'No blood requests',
+              description:
+                  'Your blood requests will appear here once you create one.',
+              icon: Icons.bloodtype_outlined,
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'My Blood Requests',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              height: 320,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: requests.length,
+                itemBuilder: (context, index) {
+                  final request = requests[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: MyRequestItem(
+                      request: request,
+                      onTap: () {
+                        context.push(
+                          AppRoutes.bloodRequestDetail,
+                          extra: request,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final filteredDonors = _filteredDonors;
+    final isAuthenticated =
+        ref.watch(authProvider).status == AuthStatus.authenticated;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.md,
-            AppSpacing.lg,
-            AppSpacing.md,
-            AppSpacing.huge,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RequestsHeader(
-                controller: _searchController,
-                onSearchChanged: _handleSearchChanged,
-              ),
-
-              const SizedBox(height: AppSpacing.md),
-
-              DonorFilterBar(
-                selectedBloodGroup: _selectedBloodGroup,
-                onBloodGroupChanged: _handleBloodGroupChanged,
-                onFilterPressed: () {
-                  // More filters will be added here.
-                },
-              ),
-
-              const SizedBox(height: AppSpacing.xl),
-
-              if (filteredDonors.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
-                  child: AppEmptyState(
-                    title: 'No matching donors',
-                    description:
-                        'Try changing your blood group or search criteria.',
-                    icon: Icons.person_search_outlined,
-                  ),
-                )
-              else
-                DonorListSection(
-                  donors: filteredDonors,
-                  onViewAll: () {
-                    // Full donor list will be added later.
-                  },
-                  onDonorRequest: _handleDonorRequest,
+        child: RefreshIndicator(
+          onRefresh: _refreshRequests,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.huge,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RequestsHeader(
+                  controller: _searchController,
+                  onSearchChanged: _handleSearchChanged,
                 ),
 
-              const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.md),
 
-              CreateRequestCard(onPressed: _handleCreateRequest),
+                DonorFilterBar(
+                  selectedBloodGroup: _selectedBloodGroup,
+                  onBloodGroupChanged: _handleBloodGroupChanged,
+                  onFilterPressed: () {
+                    // More filters will be added here.
+                  },
+                ),
 
-              const SizedBox(height: AppSpacing.xxl),
+                const SizedBox(height: AppSpacing.xl),
 
-              MyRequestsSection(
-                requests: demoBloodRequests,
-                onViewAll: () {
-                  // Full request history will be added later.
-                },
-                onRequestTap: (request) {
-                  // Request detail will be added later.
-                },
-              ),
-            ],
+                if (filteredDonors.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+                    child: AppEmptyState(
+                      title: 'No matching donors',
+                      description:
+                          'Try changing your blood group or search criteria.',
+                      icon: Icons.person_search_outlined,
+                    ),
+                  )
+                else
+                  DonorListSection(
+                    donors: filteredDonors,
+                    onViewAll: () {
+                      // Full donor list will be added later.
+                    },
+                    onDonorRequest: _handleDonorRequest,
+                  ),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                if (isAuthenticated) ...[
+                  CreateRequestCard(onPressed: _handleCreateRequest),
+
+                  const SizedBox(height: AppSpacing.xxl),
+
+                  _buildMyRequestsSection(),
+                ],
+              ],
+            ),
           ),
         ),
       ),
