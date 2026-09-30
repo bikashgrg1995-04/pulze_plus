@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pulze_plus/core/widgets/app_confirmation_dialog.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/features/requests/models/blood_request_model.dart';
 
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -12,9 +14,16 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../profile/providers/profile_provider.dart';
 
 class CreateBloodRequestSheet extends ConsumerStatefulWidget {
-  const CreateBloodRequestSheet({super.key, required this.onCreate});
+  const CreateBloodRequestSheet({
+    super.key,
+    required this.onCreate,
+    this.request,
+  });
 
   final Future<void> Function(Map<String, dynamic> data) onCreate;
+  final BloodRequestModel? request;
+
+  bool get isEditing => request != null;
 
   @override
   ConsumerState<CreateBloodRequestSheet> createState() =>
@@ -78,7 +87,7 @@ class _CreateBloodRequestSheetState
     'Specify blood type, quantity and urgency.',
     'When is blood needed and is there anything else to know?',
     'Where should donors respond?',
-    'Review your request before creating it.',
+    'Review your request before submitting.',
   ];
 
   static const _bloodGroups = [
@@ -136,7 +145,13 @@ class _CreateBloodRequestSheetState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeFromProfile();
+      if (!mounted) return;
+
+      if (widget.request != null) {
+        _initializeFromRequest(widget.request!);
+      } else {
+        _initializeFromProfile();
+      }
     });
   }
 
@@ -156,6 +171,56 @@ class _CreateBloodRequestSheetState
         });
       }
     }
+  }
+
+  void _initializeFromRequest(BloodRequestModel request) {
+    final contactPhone = request.contactPhone.trim();
+
+    setState(() {
+      _patientType = request.patientType;
+
+      _patientNameController.text = request.patientName;
+
+      _relationship = request.patientType == 'MYSELF'
+          ? 'SELF'
+          : request.requesterRelationship;
+
+      _otherRelationshipController.text = request.otherRelationship;
+
+      _purpose = request.purpose;
+      _purposeOtherController.text = request.purposeOther;
+
+      _bloodGroup = request.bloodGroup;
+
+      _unitsController.text = request.unitsRequired.toString();
+
+      _urgency = request.urgency;
+
+      _requiredAt = request.requiredAt.toLocal();
+      _expiresAt = request.expiresAt.toLocal();
+
+      _hospitalController.text = request.hospitalName;
+
+      if (request.location != null) {
+        _latitude = request.location!.latitude;
+        _longitude = request.location!.longitude;
+      }
+
+      _contactPhoneController.text = contactPhone;
+
+      _noteController.text = request.note;
+
+      // Existing request contact was already verified when
+      // the request was created.
+      _phoneVerified = request.contactVerifiedAt != null;
+
+      _phoneVerificationSent = false;
+      _otpController.clear();
+      _phoneError = null;
+      _otpError = null;
+      _submitError = null;
+      _errors.clear();
+    });
   }
 
   @override
@@ -244,7 +309,7 @@ class _CreateBloodRequestSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create Request',
+                  widget.isEditing ? 'Edit Request' : 'Create Request',
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colors.onSurface,
                     fontWeight: FontWeight.w700,
@@ -374,10 +439,8 @@ class _CreateBloodRequestSheetState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepHeader(context),
-
         _buildFieldLabel(context, 'Who is this request for?'),
         const SizedBox(height: AppSpacing.sm),
-
         Row(
           children: [
             Expanded(
@@ -399,13 +462,10 @@ class _CreateBloodRequestSheetState
             ),
           ],
         ),
-
         if (_errors['patientType'] != null)
           _buildInlineError(_errors['patientType']!),
-
         if (_patientType != null) ...[
           const SizedBox(height: AppSpacing.lg),
-
           AppTextField(
             controller: _patientNameController,
             label: 'Patient Name',
@@ -416,13 +476,10 @@ class _CreateBloodRequestSheetState
             onChanged: (_) => _clearError('patient'),
           ),
         ],
-
         if (_patientType == 'SOMEONE_ELSE') ...[
           const SizedBox(height: AppSpacing.lg),
-
           _buildFieldLabel(context, 'Relationship'),
           const SizedBox(height: AppSpacing.sm),
-
           _ChoiceWrap(
             items: _relationships,
             selectedValue: _relationship,
@@ -438,14 +495,11 @@ class _CreateBloodRequestSheetState
               });
             },
           ),
-
           if (_errors['relationship'] != null)
             _buildInlineError(_errors['relationship']!),
         ],
-
         if (_relationship == 'OTHER' && _patientType == 'SOMEONE_ELSE') ...[
           const SizedBox(height: AppSpacing.lg),
-
           AppTextField(
             controller: _otherRelationshipController,
             label: 'Specify Relationship',
@@ -454,10 +508,8 @@ class _CreateBloodRequestSheetState
             onChanged: (_) => _clearError('otherRelationship'),
           ),
         ],
-
         if (_patientType != null) ...[
           const SizedBox(height: AppSpacing.xl),
-
           _buildContactSection(context),
         ],
       ],
@@ -506,7 +558,6 @@ class _CreateBloodRequestSheetState
       _patientNameController.clear();
       _otherRelationshipController.clear();
 
-      // Contact remains the logged-in user's contact number.
       if (profilePhone != null && profilePhone.isNotEmpty) {
         _contactPhoneController.text = profilePhone;
         _phoneVerified = profile?.isPhoneVerified ?? false;
@@ -532,15 +583,12 @@ class _CreateBloodRequestSheetState
       children: [
         _buildFieldLabel(context, 'Contact Phone'),
         const SizedBox(height: AppSpacing.xs),
-
         Text(
           'This number will be shared with donors for this request.',
           style: Theme.of(context).textTheme.bodySmall
               ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
-
         const SizedBox(height: AppSpacing.sm),
-
         AppTextField(
           controller: _contactPhoneController,
           label: 'Phone Number',
@@ -549,17 +597,13 @@ class _CreateBloodRequestSheetState
           errorText: _phoneError,
           onChanged: _onPhoneChanged,
         ),
-
         const SizedBox(height: AppSpacing.sm),
-
         if (_phoneVerified)
           _buildVerifiedBanner(context)
         else
           _buildVerifyPhoneCard(context),
-
         if (_phoneVerificationSent && !_phoneVerified) ...[
           const SizedBox(height: AppSpacing.md),
-
           AppTextField(
             controller: _otpController,
             label: 'Verification Code',
@@ -569,9 +613,7 @@ class _CreateBloodRequestSheetState
             maxLength: 6,
             onChanged: (_) => _clearOtpError(),
           ),
-
           const SizedBox(height: AppSpacing.sm),
-
           Row(
             children: [
               Expanded(
@@ -606,7 +648,6 @@ class _CreateBloodRequestSheetState
             ],
           ),
         ],
-
         if (profile?.phoneNumber != null &&
             profile!.phoneNumber!.trim().isNotEmpty &&
             profile.isPhoneVerified &&
@@ -629,10 +670,8 @@ class _CreateBloodRequestSheetState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepHeader(context),
-
         _buildFieldLabel(context, 'Purpose'),
         const SizedBox(height: AppSpacing.sm),
-
         _ChoiceWrap(
           items: _purposes,
           selectedValue: _purpose,
@@ -648,12 +687,9 @@ class _CreateBloodRequestSheetState
             });
           },
         ),
-
         if (_errors['purpose'] != null) _buildInlineError(_errors['purpose']!),
-
         if (_purpose == 'OTHER') ...[
           const SizedBox(height: AppSpacing.lg),
-
           AppTextField(
             controller: _purposeOtherController,
             label: 'Specify Purpose',
@@ -707,6 +743,7 @@ class _CreateBloodRequestSheetState
           children: _urgencies.map((item) {
             final value = item.$1;
             final label = item.$2;
+
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
@@ -789,7 +826,6 @@ class _CreateBloodRequestSheetState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepHeader(context),
-
         AppTextField(
           controller: _hospitalController,
           label: 'Hospital / Medical Center',
@@ -797,9 +833,7 @@ class _CreateBloodRequestSheetState
           errorText: _errors['hospital'],
           onChanged: (_) => _clearError('hospital'),
         ),
-
         const SizedBox(height: AppSpacing.lg),
-
         _LocationPickerCard(
           latitude: _latitude,
           longitude: _longitude,
@@ -816,7 +850,6 @@ class _CreateBloodRequestSheetState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStepHeader(context),
-
         _ReviewCard(
           title: 'Patient & Contact',
           icon: Icons.person_outline_rounded,
@@ -837,9 +870,7 @@ class _CreateBloodRequestSheetState
             const _ReviewRow('Verification', 'Verified', isVerified: true),
           ],
         ),
-
         const SizedBox(height: AppSpacing.sm),
-
         _ReviewCard(
           title: 'Purpose & Blood',
           icon: Icons.bloodtype_outlined,
@@ -855,9 +886,7 @@ class _CreateBloodRequestSheetState
             _ReviewRow('Urgency', _urgencyLabel(_urgency)),
           ],
         ),
-
         const SizedBox(height: AppSpacing.sm),
-
         _ReviewCard(
           title: 'Schedule',
           icon: Icons.schedule_outlined,
@@ -876,9 +905,7 @@ class _CreateBloodRequestSheetState
             ),
           ],
         ),
-
         const SizedBox(height: AppSpacing.sm),
-
         _ReviewCard(
           title: 'Hospital',
           icon: Icons.local_hospital_outlined,
@@ -893,7 +920,6 @@ class _CreateBloodRequestSheetState
             ),
           ],
         ),
-
         if (_noteController.text.trim().isNotEmpty) ...[
           const SizedBox(height: AppSpacing.sm),
           _ReviewCard(
@@ -902,17 +928,16 @@ class _CreateBloodRequestSheetState
             rows: [_ReviewRow('Note', _noteController.text.trim())],
           ),
         ],
-
         const SizedBox(height: AppSpacing.md),
-
         _buildInfoBanner(
           context,
           icon: Icons.check_circle_outline_rounded,
-          text:
-              'Everything looks ready. Tap "Create Blood Request" '
-              'to submit your request.',
+          text: widget.isEditing
+              ? 'Everything looks ready. Tap "Save Changes" '
+                    'to update your request.'
+              : 'Everything looks ready. Tap "Create Request" '
+                    'to submit your request.',
         ),
-
         if (_submitError != null) ...[
           const SizedBox(height: AppSpacing.md),
           _buildErrorBanner(_submitError!),
@@ -924,7 +949,6 @@ class _CreateBloodRequestSheetState
   Future<void> _submitRequest() async {
     FocusScope.of(context).unfocus();
 
-    // Final validation before submitting.
     final patientValid = _validatePatientStep();
     final purposeValid = _validatePurposeStep();
     final bloodValid = _validateBloodStep();
@@ -1011,6 +1035,22 @@ class _CreateBloodRequestSheetState
       'note': note,
     };
 
+    if (widget.isEditing) {
+      final shouldSave = await AppConfirmationDialog.show(
+        context: context,
+        title: 'Save Changes?',
+        description:
+            'Are you sure you want to save the changes to this blood request?',
+        confirmLabel: 'Save Changes',
+        cancelLabel: 'Keep Editing',
+        icon: Icons.save_outlined,
+      );
+
+      if (shouldSave != true) return;
+    }
+
+    if (!mounted) return;
+
     setState(() {
       _isSubmitting = true;
       _submitError = null;
@@ -1074,8 +1114,14 @@ class _CreateBloodRequestSheetState
             flex: 3,
             child: _currentStep == _stepTitles.length - 1
                 ? AppButton(
-                    label: _isSubmitting ? 'Creating...' : 'Create Request',
-                    icon: Icons.bloodtype_outlined,
+                    label: _isSubmitting
+                        ? (widget.isEditing ? 'Saving...' : 'Creating...')
+                        : (widget.isEditing
+                              ? 'Save Changes'
+                              : 'Create Request'),
+                    icon: widget.isEditing
+                        ? Icons.save_outlined
+                        : Icons.bloodtype_outlined,
                     isLoading: _isSubmitting,
                     onPressed: _isSubmitting ? null : _submitRequest,
                   )
@@ -1344,6 +1390,7 @@ class _CreateBloodRequestSheetState
       _errors.clear();
       _submitError = null;
     });
+
     switch (_currentStep) {
       case 0:
         return _validatePatientStep();
@@ -1452,6 +1499,7 @@ class _CreateBloodRequestSheetState
   bool _validateScheduleStep() {
     var valid = true;
     final now = DateTime.now();
+
     if (_requiredAt == null) {
       _errors['requiredAt'] = 'Please select when blood is required.';
       valid = false;
@@ -1459,6 +1507,7 @@ class _CreateBloodRequestSheetState
       _errors['requiredAt'] = 'Required time must be in the future.';
       valid = false;
     }
+
     if (_expiresAt == null) {
       _errors['expiresAt'] = 'Please select request expiry.';
       valid = false;
@@ -1466,18 +1515,23 @@ class _CreateBloodRequestSheetState
       _errors['expiresAt'] = 'Expiry time must be in the future.';
       valid = false;
     }
+
     if (_requiredAt != null &&
         _expiresAt != null &&
         !_expiresAt!.isAfter(_requiredAt!)) {
       _errors['expiresAt'] = 'Expiry must be later than required time.';
       valid = false;
     }
+
     final note = _noteController.text.trim();
+
     if (note.length > 500) {
       _errors['note'] = 'Note cannot exceed 500 characters.';
       valid = false;
     }
+
     setState(() {});
+
     return valid;
   }
 

@@ -21,8 +21,8 @@ import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
 import 'package:pulze_plus/features/profile/screens/legal_document_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
-import 'package:pulze_plus/features/requests/models/blood_request_model.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
+import 'package:pulze_plus/features/requests/screens/my_blood_requests_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -225,11 +225,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
+        path: AppRoutes.myBloodRequests,
+        builder: (context, state) {
+          return const MyBloodRequestsScreen();
+        },
+      ),
+
+      GoRoute(
         path: AppRoutes.bloodRequestDetail,
         builder: (context, state) {
-          final request = state.extra as BloodRequestModel;
+          final args = state.extra as BloodRequestDetailArgs;
 
-          return BloodRequestDetailScreen(request: request);
+          return BloodRequestDetailScreen(
+            request: args.request,
+            onEdit: args.onEdit,
+            onTerminate: args.onTerminate,
+          );
         },
       ),
 

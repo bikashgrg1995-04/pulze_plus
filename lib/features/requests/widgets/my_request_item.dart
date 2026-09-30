@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:pulze_plus/core/theme/app_colors.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
 import '../models/blood_request_model.dart';
@@ -11,92 +12,120 @@ class MyRequestItem extends StatelessWidget {
     super.key,
     required this.request,
     this.onTap,
+    this.onEdit,
+    this.onTerminate,
   });
 
   final BloodRequestModel request;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onTerminate;
+
+  bool get _canManage {
+    final status = request.status.toUpperCase();
+
+    return status != 'COMPLETED' &&
+        status != 'CANCELLED' &&
+        status != 'EXPIRED' &&
+        status != 'FAILED' &&
+        status != 'NO_SHOW';
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.md),
+    final card = AppCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 10,
+      ),
       onTap: onTap,
       child: Row(
         children: [
           _BloodGroupBadge(
             bloodGroup: request.bloodGroup,
           ),
-          const SizedBox(width: AppSpacing.md),
+          const SizedBox(width: 10),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Top row
                 Row(
                   children: [
                     Expanded(
                       child: Text(
-                        '${request.bloodGroup} • ${request.unitsRequired} '
+                        '${request.bloodGroup} • '
+                        '${request.unitsRequired} '
                         '${request.unitsRequired == 1 ? 'Unit' : 'Units'}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.xs),
+                    const SizedBox(width: 6),
                     RequestStatusChip(
                       status: request.status,
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.xs),
+
+                const SizedBox(height: 5),
+
+                // Hospital
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.local_hospital_outlined,
-                      size: 16,
-                      color: AppColors.textSecondary,
+                      size: 14,
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 5),
                     Expanded(
                       child: Text(
                         request.hospitalName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.xs),
+
+                const SizedBox(height: 3),
+
+                // Required time + arrow
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_outlined,
-                      size: 16,
-                      color: AppColors.textSecondary,
+                      size: 14,
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 5),
                     Expanded(
                       child: Text(
                         'Required ${_formatDateTime(request.requiredAt)}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
-                      size: 20,
-                      color: AppColors.textTertiary,
+                      size: 19,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ],
                 ),
@@ -105,6 +134,45 @@ class MyRequestItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    // Don't show slide actions for terminal requests.
+    if (!_canManage || (onEdit == null && onTerminate == null)) {
+      return card;
+    }
+
+    return Slidable(
+      key: ValueKey(request.id),
+      groupTag: 'my-blood-requests',
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.42,
+        children: [
+          if (onEdit != null)
+            SlidableAction(
+              onPressed: (_) => onEdit?.call(),
+              backgroundColor: AppColors.info,
+              foregroundColor: colorScheme.onPrimary,
+              icon: Icons.edit_outlined,
+              label: 'Edit',
+              // borderRadius: const BorderRadius.horizontal(
+              //   right: Radius.circular(14),
+              // ),
+            ),
+          if (onTerminate != null)
+            SlidableAction(
+              onPressed: (_) => onTerminate?.call(),
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
+              icon: Icons.stop_circle_outlined,
+              label: 'Terminate',
+              borderRadius: const BorderRadius.horizontal(
+                right: Radius.circular(14),
+              ),
+            ),
+        ],
+      ),
+      child: card,
     );
   }
 
@@ -129,20 +197,26 @@ class _BloodGroupBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
-      width: 52,
-      height: 52,
+      width: 46,
+      height: 46,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(14),
+        color: colorScheme.primary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.12),
+        ),
       ),
       child: Text(
         bloodGroup,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w800,
-            ),
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }

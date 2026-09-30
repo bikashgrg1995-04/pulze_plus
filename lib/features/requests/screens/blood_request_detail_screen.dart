@@ -1,26 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_confirmation_dialog.dart';
 import '../models/blood_request_model.dart';
+import '../providers/profile_provider.dart';
 import '../widgets/request_status_chip.dart';
 
-class BloodRequestDetailScreen extends StatelessWidget {
-  const BloodRequestDetailScreen({
-    super.key,
+class BloodRequestDetailArgs {
+  const BloodRequestDetailArgs({
     required this.request,
+    this.onEdit,
+    this.onTerminate,
   });
 
   final BloodRequestModel request;
+  final VoidCallback? onEdit;
+  final VoidCallback? onTerminate;
+}
+
+class BloodRequestDetailScreen extends ConsumerWidget {
+  const BloodRequestDetailScreen({
+    super.key,
+    required this.request,
+    this.onEdit,
+    this.onTerminate,
+  });
+
+  final BloodRequestModel request;
+  final VoidCallback? onEdit;
+  final VoidCallback? onTerminate;
+
+  bool _canManage(BloodRequestModel request) {
+    final status = request.status.toUpperCase();
+
+    return status != 'COMPLETED' &&
+        status != 'CANCELLED' &&
+        status != 'EXPIRED' &&
+        status != 'FAILED' &&
+        status != 'NO_SHOW';
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final requestsAsync = ref.watch(bloodRequestsProvider);
+
+    final currentRequest = requestsAsync.maybeWhen(
+      data: (requests) {
+        for (final item in requests) {
+          if (item.id == request.id) {
+            return item;
+          }
+        }
+
+        return request;
+      },
+      orElse: () => request,
+    );
+
+    final showActions =
+        _canManage(currentRequest) &&
+        (onEdit != null || onTerminate != null);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('Request Details'),
-        backgroundColor: AppColors.background,
+        backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
@@ -30,18 +80,34 @@ class BloodRequestDetailScreen extends StatelessWidget {
             AppSpacing.md,
             AppSpacing.xs,
             AppSpacing.md,
-            AppSpacing.xl,
+            AppSpacing.md,
           ),
           child: Column(
             children: [
-              _buildHero(context),
+              _buildHero(
+                context,
+                currentRequest,
+              ),
               const SizedBox(height: AppSpacing.sm),
-              _buildRequestInfo(context),
+              _buildRequestInfo(
+                context,
+                currentRequest,
+              ),
               const SizedBox(height: AppSpacing.sm),
-              _buildPatientAndHospital(context),
-              if (request.note.trim().isNotEmpty) ...[
+              _buildPatientAndHospital(
+                context,
+                currentRequest,
+              ),
+              if (currentRequest.note.trim().isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.sm),
-                _buildNote(context),
+                _buildNote(
+                  context,
+                  currentRequest,
+                ),
+              ],
+              if (showActions) ...[
+                const SizedBox(height: AppSpacing.md),
+                _buildActions(context),
               ],
             ],
           ),
@@ -50,13 +116,75 @@ class BloodRequestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context) {
+  Widget _buildActions(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AppCard(
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: [
+          if (onEdit != null)
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.edit_outlined,
+                label: 'Edit Request',
+                backgroundColor:
+                    colorScheme.primary.withValues(alpha: 0.08),
+                foregroundColor: colorScheme.primary,
+                onTap: () => onEdit?.call(),
+              ),
+            ),
+          if (onEdit != null && onTerminate != null)
+            const SizedBox(width: 8),
+          if (onTerminate != null)
+            Expanded(
+              child: _ActionButton(
+                icon: Icons.stop_circle_outlined,
+                label: 'Terminate',
+                backgroundColor:
+                    colorScheme.error.withValues(alpha: 0.08),
+                foregroundColor: colorScheme.error,
+                onTap: () => _showTerminateConfirmation(context),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showTerminateConfirmation(
+    BuildContext context,
+  ) async {
+    final shouldTerminate =
+        await AppConfirmationDialog.show(
+      context: context,
+      title: 'Terminate Blood Request?',
+      description:
+          'This will stop the request and prevent further donor matching. This action cannot be undone.',
+      confirmLabel: 'Terminate',
+      cancelLabel: 'Keep Request',
+      icon: Icons.stop_circle_outlined,
+      isDestructive: true,
+    );
+
+    if (shouldTerminate != true) return;
+
+    onTerminate?.call();
+  }
+
+  Widget _buildHero(
+    BuildContext context,
+    BloodRequestModel request,
+  ) {
     final theme = Theme.of(context);
-    final urgencyColor = _urgencyColor(request.urgency);
+    final colorScheme = theme.colorScheme;
+    final urgencyColor =
+        _urgencyColor(context, request.urgency);
 
     final progress = request.unitsRequired <= 0
         ? 0.0
-        : (request.unitsFulfilled / request.unitsRequired).clamp(0.0, 1.0);
+        : (request.unitsFulfilled / request.unitsRequired)
+            .clamp(0.0, 1.0);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -65,45 +193,56 @@ class BloodRequestDetailScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 58,
-                height: 58,
+                width: 54,
+                height: 54,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(16),
+                  color:
+                      colorScheme.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 child: Text(
                   request.bloodGroup,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w800,
+                  style:
+                      theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
                       '${request.unitsRemaining} '
                       '${request.unitsRemaining == 1 ? 'Unit' : 'Units'} Needed',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: AppColors.textPrimary,
+                      style:
+                          theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w800,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _purposeLabel(request),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          theme.textTheme.bodySmall?.copyWith(
+                        color:
+                            colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-              RequestStatusChip(status: request.status),
+              const SizedBox(width: 6),
+              RequestStatusChip(
+                status: request.status,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -117,7 +256,8 @@ class BloodRequestDetailScreen extends StatelessWidget {
               const SizedBox(width: 3),
               Text(
                 _urgencyLabel(request.urgency),
-                style: theme.textTheme.labelMedium?.copyWith(
+                style:
+                    theme.textTheme.labelMedium?.copyWith(
                   color: urgencyColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -125,8 +265,10 @@ class BloodRequestDetailScreen extends StatelessWidget {
               const Spacer(),
               Text(
                 '${request.unitsFulfilled}/${request.unitsRequired} fulfilled',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
+                style:
+                    theme.textTheme.labelSmall?.copyWith(
+                  color:
+                      colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -137,9 +279,11 @@ class BloodRequestDetailScreen extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 5,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.08),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.primary,
+              backgroundColor:
+                  colorScheme.primary.withValues(alpha: 0.08),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(
+                colorScheme.primary,
               ),
             ),
           ),
@@ -148,12 +292,19 @@ class BloodRequestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRequestInfo(BuildContext context) {
+  Widget _buildRequestInfo(
+    BuildContext context,
+    BloodRequestModel request,
+  ) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         children: [
-          _sectionTitle(context, Icons.bloodtype_outlined, 'Request'),
+          _sectionTitle(
+            context,
+            Icons.bloodtype_outlined,
+            'Request',
+          ),
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
@@ -183,7 +334,9 @@ class BloodRequestDetailScreen extends StatelessWidget {
                   context,
                   icon: Icons.schedule_outlined,
                   label: 'Required',
-                  value: _formatDateTime(request.requiredAt),
+                  value: _formatDateTime(
+                    request.requiredAt,
+                  ),
                 ),
               ),
               Expanded(
@@ -191,7 +344,9 @@ class BloodRequestDetailScreen extends StatelessWidget {
                   context,
                   icon: Icons.timer_outlined,
                   label: 'Expires',
-                  value: _formatDateTime(request.expiresAt),
+                  value: _formatDateTime(
+                    request.expiresAt,
+                  ),
                 ),
               ),
             ],
@@ -201,12 +356,19 @@ class BloodRequestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPatientAndHospital(BuildContext context) {
+  Widget _buildPatientAndHospital(
+    BuildContext context,
+    BloodRequestModel request,
+  ) {
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         children: [
-          _sectionTitle(context, Icons.info_outline, 'Information'),
+          _sectionTitle(
+            context,
+            Icons.info_outline,
+            'Information',
+          ),
           const SizedBox(height: AppSpacing.xs),
           _compactRow(
             context,
@@ -246,36 +408,46 @@ class BloodRequestDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNote(BuildContext context) {
+  Widget _buildNote(
+    BuildContext context,
+    BloodRequestModel request,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.notes_outlined,
             size: 19,
-            color: AppColors.primary,
+            color: colorScheme.primary,
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
                 Text(
                   'Note',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style:
+                      theme.textTheme.labelMedium?.copyWith(
+                    color:
+                        colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   request.note,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        height: 1.35,
-                      ),
+                  style:
+                      theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface,
+                    height: 1.35,
+                  ),
                 ),
               ],
             ),
@@ -291,19 +463,20 @@ class BloodRequestDetailScreen extends StatelessWidget {
     String title,
   ) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       children: [
         Icon(
           icon,
           size: 18,
-          color: AppColors.primary,
+          color: colorScheme.primary,
         ),
         const SizedBox(width: 6),
         Text(
           title,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: AppColors.textPrimary,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -318,6 +491,7 @@ class BloodRequestDetailScreen extends StatelessWidget {
     required String value,
   }) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,17 +499,20 @@ class BloodRequestDetailScreen extends StatelessWidget {
         Icon(
           icon,
           size: 17,
-          color: AppColors.textSecondary,
+          color: colorScheme.onSurfaceVariant,
         ),
         const SizedBox(width: 6),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
+                style:
+                    theme.textTheme.labelSmall?.copyWith(
+                  color:
+                      colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 1),
@@ -343,8 +520,9 @@ class BloodRequestDetailScreen extends StatelessWidget {
                 value,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textPrimary,
+                style:
+                    theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -363,6 +541,7 @@ class BloodRequestDetailScreen extends StatelessWidget {
     bool showDivider = true,
   }) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -373,15 +552,17 @@ class BloodRequestDetailScreen extends StatelessWidget {
               Icon(
                 icon,
                 size: 17,
-                color: AppColors.textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               SizedBox(
                 width: 82,
                 child: Text(
                   label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary,
+                  style:
+                      theme.textTheme.labelSmall?.copyWith(
+                    color:
+                        colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -391,8 +572,9 @@ class BloodRequestDetailScreen extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.right,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.textPrimary,
+                  style:
+                      theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -400,9 +582,12 @@ class BloodRequestDetailScreen extends StatelessWidget {
             ],
           ),
           if (showDivider)
-            const Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Divider(
+                height: 1,
+                color: colorScheme.outlineVariant,
+              ),
             ),
         ],
       ),
@@ -422,14 +607,19 @@ class BloodRequestDetailScreen extends StatelessWidget {
     }
   }
 
-  Color _urgencyColor(String urgency) {
+  Color _urgencyColor(
+    BuildContext context,
+    String urgency,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     switch (urgency) {
       case 'EMERGENCY':
-        return AppColors.error;
+        return colorScheme.error;
       case 'URGENT':
-        return AppColors.primary;
+        return colorScheme.primary;
       default:
-        return AppColors.textSecondary;
+        return colorScheme.onSurfaceVariant;
     }
   }
 
@@ -457,7 +647,9 @@ class BloodRequestDetailScreen extends StatelessWidget {
     }
   }
 
-  String _relationshipLabel(BloodRequestModel request) {
+  String _relationshipLabel(
+    BloodRequestModel request,
+  ) {
     switch (request.requesterRelationship) {
       case 'SELF':
         return 'Self';
@@ -485,11 +677,67 @@ class BloodRequestDetailScreen extends StatelessWidget {
   String _formatDateTime(DateTime dateTime) {
     final local = dateTime.toLocal();
 
-    final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
-    final minute = local.minute.toString().padLeft(2, '0');
+    final hour =
+        local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final minute =
+        local.minute.toString().padLeft(2, '0');
     final period = local.hour >= 12 ? 'PM' : 'AM';
 
     return '${local.day}/${local.month} '
         '$hour:$minute $period';
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 8,
+          ),
+          child: Row(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: foregroundColor,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: foregroundColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

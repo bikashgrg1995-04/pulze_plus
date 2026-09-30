@@ -7,6 +7,7 @@ abstract final class AppRoutes {
 
   static const requests = '/requests';
   static const bloodRequestDetail = '/requests/detail';
+  static const myBloodRequests = '/my-blood-requests';
 
   static const chat = '/chat';
 
