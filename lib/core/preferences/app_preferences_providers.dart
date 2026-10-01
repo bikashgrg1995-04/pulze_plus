@@ -9,8 +9,7 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   );
 });
 
-final appPreferencesStorageProvider =
-    Provider<AppPreferencesStorage>((ref) {
+final appPreferencesStorageProvider = Provider<AppPreferencesStorage>((ref) {
   return AppPreferencesStorage(
     preferences: ref.read(sharedPreferencesProvider),
   );

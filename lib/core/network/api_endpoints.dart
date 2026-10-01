@@ -38,4 +38,8 @@ class ApiEndpoints {
 
    // Blood requests
   static const bloodRequests = 'blood-requests/';
+
+    // Donors
+  static const donors = 'donors/';
+
 }

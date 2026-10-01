@@ -1,3 +1,4 @@
+
 abstract final class AppRoutes {
   static const startup = '/startup';
 
@@ -6,7 +7,11 @@ abstract final class AppRoutes {
   static const home = '/home';
 
   static const requests = '/requests';
+
+  static const donors = '/donors';
+
   static const bloodRequestDetail = '/requests/detail';
+
   static const myBloodRequests = '/my-blood-requests';
 
   static const chat = '/chat';
@@ -31,12 +36,12 @@ abstract final class AppRoutes {
 
   static const notifications = '/notifications';
 
-  //help & support
+  // help & support
   static const faqs = '/faqs';
 
-  //privacy policy
+  // privacy policy
   static const privacyPolicy = '/privacy-policy';
 
-  //terms and conditions
+  // terms and conditions
   static const termsConditions = '/terms-conditions';
 }

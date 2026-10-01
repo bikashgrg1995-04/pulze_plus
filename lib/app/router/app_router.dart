@@ -22,6 +22,7 @@ import 'package:pulze_plus/features/profile/screens/legal_document_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
+import 'package:pulze_plus/features/requests/screens/donor_list_screen.dart';
 import 'package:pulze_plus/features/requests/screens/my_blood_requests_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
@@ -36,6 +37,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authStatus = ref.read(authProvider).status;
       final preferences = ref.read(appPreferencesProvider);
+
       final hasCompletedEntry = preferences.hasCompletedEntry;
 
       final location = state.matchedLocation;
@@ -55,7 +57,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           location == AppRoutes.startup ||
           location == AppRoutes.onboarding ||
           isAuthRoute ||
-          isLegalRoute;
+          isLegalRoute ||
+          location == AppRoutes.home ||
+          location == AppRoutes.requests ||
+          location == AppRoutes.donors;
 
       if (authStatus == AuthStatus.initial ||
           authStatus == AuthStatus.loading) {
@@ -67,21 +72,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ------------------------------------------------------------
 
       if (location == AppRoutes.startup) {
-        if (hasCompletedEntry) {
-          return AppRoutes.home;
+        if (!hasCompletedEntry) {
+          return AppRoutes.onboarding;
         }
 
-        return AppRoutes.onboarding;
+        return AppRoutes.home;
       }
 
-      // Once the user has completed the first-entry flow,
-      // never show onboarding again.
+      // ------------------------------------------------------------
+      // Onboarding
+      // ------------------------------------------------------------
+
       if (location == AppRoutes.onboarding) {
         if (hasCompletedEntry) {
           return AppRoutes.home;
         }
 
-        return AppRoutes.auth;
+        return null;
       }
 
       // ------------------------------------------------------------
@@ -89,7 +96,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ------------------------------------------------------------
 
       if (authStatus == AuthStatus.unauthenticated) {
-        if (isPublicRoute || location == AppRoutes.home) {
+        if (isPublicRoute) {
           return null;
         }
 
@@ -99,8 +106,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ------------------------------------------------------------
       // Email verification
       // ------------------------------------------------------------
+
       if (authStatus == AuthStatus.needsVerification) {
-        if (location == AppRoutes.auth || location == AppRoutes.verifyEmail) {
+        if (location == AppRoutes.auth ||
+            location == AppRoutes.verifyEmail) {
           return null;
         }
 
@@ -206,7 +215,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.profileSetup,
         builder: (context, state) {
-          return const ProfileFormScreen(mode: ProfileFormMode.create);
+          return const ProfileFormScreen(
+            mode: ProfileFormMode.create,
+          );
         },
       ),
 
@@ -221,6 +232,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.requests,
         builder: (context, state) {
           return const RequestsScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.donors,
+        builder: (context, state) {
+          return const DonorListScreen();
         },
       ),
 
@@ -268,6 +286,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+
       GoRoute(
         path: AppRoutes.termsConditions,
         builder: (context, state) {

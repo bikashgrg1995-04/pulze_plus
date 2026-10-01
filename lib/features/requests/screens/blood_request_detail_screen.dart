@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pulze_plus/features/requests/providers/blood_request_provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_confirmation_dialog.dart';
 import '../models/blood_request_model.dart';
-import '../providers/profile_provider.dart';
 import '../widgets/request_status_chip.dart';
 
 class BloodRequestDetailArgs {

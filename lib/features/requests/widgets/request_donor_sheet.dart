@@ -7,11 +7,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../models/donor_model.dart';
 
 class RequestDonorSheet extends StatefulWidget {
-  const RequestDonorSheet({
-    super.key,
-    required this.donor,
-    this.onSubmit,
-  });
+  const RequestDonorSheet({super.key, required this.donor, this.onSubmit});
 
   final DonorModel donor;
   final VoidCallback? onSubmit;
@@ -61,25 +57,22 @@ class _RequestDonorSheetState extends State<RequestDonorSheet> {
             Text(
               'Request Blood',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
 
             const SizedBox(height: AppSpacing.xs),
 
             Text(
               'Send a blood request to this available donor.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: AppColors.textSecondary),
             ),
 
             const SizedBox(height: AppSpacing.lg),
 
-            _DonorSummary(
-              donor: widget.donor,
-            ),
+            _DonorSummary(donor: widget.donor),
 
             const SizedBox(height: AppSpacing.xl),
 
@@ -123,9 +116,7 @@ class _RequestDonorSheetState extends State<RequestDonorSheet> {
 }
 
 class _DonorSummary extends StatelessWidget {
-  const _DonorSummary({
-    required this.donor,
-  });
+  const _DonorSummary({required this.donor});
 
   final DonorModel donor;
 
@@ -136,9 +127,7 @@ class _DonorSummary extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -153,9 +142,9 @@ class _DonorSummary extends StatelessWidget {
             child: Text(
               donor.bloodGroup,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
+                color: AppColors.primary,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
           const SizedBox(width: AppSpacing.md),
@@ -165,16 +154,14 @@ class _DonorSummary extends StatelessWidget {
               children: [
                 Text(
                   '${donor.bloodGroup} Donor',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(context).textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${donor.distance.toStringAsFixed(1)} km away • Eligible',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                  '${donor.distance?.toStringAsFixed(1) ?? '--'} km away',
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),

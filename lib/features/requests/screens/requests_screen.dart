@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:pulze_plus/app/router/app_routes.dart';
+import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/core/widgets/app_confirmation_dialog.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
-import 'package:pulze_plus/features/requests/providers/profile_provider.dart';
+import 'package:pulze_plus/features/requests/providers/blood_request_provider.dart';
+import 'package:pulze_plus/features/requests/providers/donor_provider.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
 import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
 import 'package:pulze_plus/features/requests/widgets/my_request_item.dart';
@@ -15,13 +18,10 @@ import 'package:pulze_plus/features/requests/widgets/request_donor_sheet.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_empty_state.dart';
-import '../data/demo_donors.dart';
 import '../models/blood_request_model.dart';
 import '../models/donor_model.dart';
 import '../widgets/create_request_card.dart';
-import '../widgets/donor_filter_bar.dart';
 import '../widgets/donor_list_section.dart';
-import '../widgets/requests_header.dart';
 
 class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});
@@ -31,44 +31,6 @@ class RequestsScreen extends ConsumerStatefulWidget {
 }
 
 class _RequestsScreenState extends ConsumerState<RequestsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
-  String? _selectedBloodGroup;
-  String _searchQuery = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  List<DonorModel> get _filteredDonors {
-    final query = _searchQuery.trim().toLowerCase();
-
-    return demoDonors.where((donor) {
-      final matchesBloodGroup =
-          _selectedBloodGroup == null ||
-          donor.bloodGroup == _selectedBloodGroup;
-
-      final matchesSearch =
-          query.isEmpty || donor.bloodGroup.toLowerCase().contains(query);
-
-      return matchesBloodGroup && matchesSearch;
-    }).toList();
-  }
-
-  void _handleBloodGroupChanged(String? bloodGroup) {
-    setState(() {
-      _selectedBloodGroup = bloodGroup;
-    });
-  }
-
-  void _handleSearchChanged(String value) {
-    setState(() {
-      _searchQuery = value;
-    });
-  }
-
   void _handleDonorRequest(DonorModel donor) {
     showModalBottomSheet(
       context: context,
@@ -82,6 +44,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
           donor: donor,
           onSubmit: () {
             Navigator.of(context).pop();
+
             AppSnackBar.success(context, 'Request submitted successfully.');
           },
         );
@@ -172,7 +135,9 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     final shouldTerminate = await AppConfirmationDialog.show(
       context: context,
       title: 'Terminate Blood Request?',
-      description: 'This will stop the request and prevent further donor matching. This action cannot be undone.',
+      description:
+          'This will stop the request and prevent further donor matching. '
+          'This action cannot be undone.',
       confirmLabel: 'Terminate',
       cancelLabel: 'Keep Request',
       icon: Icons.stop_circle_outlined,
@@ -198,6 +163,42 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
 
   Future<void> _refreshRequests() async {
     await ref.read(bloodRequestsProvider.notifier).refreshRequests();
+
+    await ref.read(donorProvider.notifier).refreshDonors();
+  }
+
+  Widget _buildDonorSection() {
+    final donorState = ref.watch(donorProvider);
+    final locationEnabled = ref.watch(appPreferencesProvider).locationEnabled;
+
+    return donorState.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stackTrace) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+        child: AppEmptyState(
+          title: 'Unable to load donors',
+          description: 'Something went wrong while loading available donors.',
+          icon: Icons.error_outline,
+          actionLabel: 'Try again',
+          onActionPressed: () {
+            ref.read(donorProvider.notifier).refreshDonors();
+          },
+        ),
+      ),
+      data: (donors) {
+        return DonorListSection(
+          donors: donors,
+          onViewAll: () {
+            context.push(AppRoutes.donors);
+          },
+          onDonorRequest: _handleDonorRequest,
+          locationEnabled: locationEnabled,
+        );
+      },
+    );
   }
 
   Widget _buildMyRequestsSection() {
@@ -293,8 +294,6 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredDonors = _filteredDonors;
-
     final isAuthenticated =
         ref.watch(authProvider).status == AuthStatus.authenticated;
 
@@ -316,41 +315,24 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RequestsHeader(
-                  controller: _searchController,
-                  onSearchChanged: _handleSearchChanged,
+                const Text(
+                  'Blood Requests',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
                 ),
 
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.xs),
 
-                DonorFilterBar(
-                  selectedBloodGroup: _selectedBloodGroup,
-                  onBloodGroupChanged: _handleBloodGroupChanged,
-                  onFilterPressed: () {
-                    // More filters will be added here.
-                  },
+                const Text(
+                  'Find donors and manage your blood requests.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
-                if (filteredDonors.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: AppSpacing.xxl),
-                    child: AppEmptyState(
-                      title: 'No matching donors',
-                      description:
-                          'Try changing your blood group or search criteria.',
-                      icon: Icons.person_search_outlined,
-                    ),
-                  )
-                else
-                  DonorListSection(
-                    donors: filteredDonors,
-                    onViewAll: () {
-                      // Full donor list will be added later.
-                    },
-                    onDonorRequest: _handleDonorRequest,
-                  ),
+                _buildDonorSection(),
 
                 const SizedBox(height: AppSpacing.lg),
 

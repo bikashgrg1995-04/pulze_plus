@@ -11,6 +11,7 @@ class AppPreferencesState {
     required this.language,
     required this.hasCompletedEntry,
     required this.locationEnabled,
+    required this.hasCompletedLocationSetup,
   });
 
   final bool notificationsEnabled;
@@ -19,6 +20,7 @@ class AppPreferencesState {
   final String language;
   final bool hasCompletedEntry;
   final bool locationEnabled;
+  final bool hasCompletedLocationSetup;
 
   AppPreferencesState copyWith({
     bool? notificationsEnabled,
@@ -27,6 +29,7 @@ class AppPreferencesState {
     String? language,
     bool? hasCompletedEntry,
     bool? locationEnabled,
+    bool? hasCompletedLocationSetup,
   }) {
     return AppPreferencesState(
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
@@ -36,6 +39,8 @@ class AppPreferencesState {
       language: language ?? this.language,
       hasCompletedEntry: hasCompletedEntry ?? this.hasCompletedEntry,
       locationEnabled: locationEnabled ?? this.locationEnabled,
+      hasCompletedLocationSetup:
+          hasCompletedLocationSetup ?? this.hasCompletedLocationSetup,
     );
   }
 }
@@ -54,6 +59,7 @@ class AppPreferencesNotifier extends Notifier<AppPreferencesState> {
       language: _storage.getLanguage(),
       hasCompletedEntry: _storage.getHasCompletedEntry(),
       locationEnabled: _storage.getLocationEnabled(),
+      hasCompletedLocationSetup: _storage.getHasCompletedLocationSetup(),
     );
   }
 
@@ -85,6 +91,12 @@ class AppPreferencesNotifier extends Notifier<AppPreferencesState> {
     state = state.copyWith(locationEnabled: value);
 
     await _storage.setLocationEnabled(value);
+  }
+
+  Future<void> completeLocationSetup() async {
+    state = state.copyWith(hasCompletedLocationSetup: true);
+
+    await _storage.setHasCompletedLocationSetup(true);
   }
 
   Future<void> completeEntry() async {

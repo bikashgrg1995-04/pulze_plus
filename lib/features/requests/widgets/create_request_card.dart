@@ -5,10 +5,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
 
 class CreateRequestCard extends StatelessWidget {
-  const CreateRequestCard({
-    super.key,
-    this.onPressed,
-  });
+  const CreateRequestCard({super.key, this.onPressed});
 
   final VoidCallback? onPressed;
 
@@ -17,53 +14,71 @@ class CreateRequestCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm + 2,
+      ),
       backgroundColor: AppColors.navy,
       borderColor: AppColors.navy,
       onTap: onPressed,
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 42,
+            height: 42,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.add_circle_outline_rounded,
-              color: Colors.white,
-              size: 26,
-            ),
+            child: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
           ),
-          const SizedBox(width: AppSpacing.md),
+
+          const SizedBox(width: AppSpacing.sm + 2),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Create a Blood Request',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  'Create Blood Request',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xxs),
+                const SizedBox(height: 2),
                 Text(
-                  'Let eligible donors know you need blood.',
+                  'Need blood? Find eligible donors nearby.',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Colors.white.withValues(alpha: 0.72),
+                    fontSize: 11.5,
                   ),
                 ),
               ],
             ),
           ),
+
           const SizedBox(width: AppSpacing.sm),
-          const Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: 17,
-            color: Colors.white,
+
+          Container(
+            width: 32,
+            height: 32,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              size: 17,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
