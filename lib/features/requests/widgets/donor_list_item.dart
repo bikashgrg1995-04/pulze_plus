@@ -11,12 +11,14 @@ class DonorListItem extends StatelessWidget {
     super.key,
     required this.donor,
     this.onRequest,
+    required this.locationEnabled,
     this.onTap,
   });
 
   final DonorModel donor;
   final VoidCallback? onRequest;
   final VoidCallback? onTap;
+  final bool locationEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +28,29 @@ class DonorListItem extends StatelessWidget {
       padding: EdgeInsets.all(isSmallMobile ? AppSpacing.sm : AppSpacing.md),
       onTap: onTap,
       child: isSmallMobile
-          ? _SmallMobileLayout(donor: donor, onRequest: onRequest)
-          : _RegularLayout(donor: donor, onRequest: onRequest),
+          ? _SmallMobileLayout(
+              donor: donor,
+              locationEnabled: locationEnabled,
+              onRequest: onRequest,
+            )
+          : _RegularLayout(
+              donor: donor,
+              locationEnabled: locationEnabled,
+              onRequest: onRequest,
+            ),
     );
   }
 }
 
 class _RegularLayout extends StatelessWidget {
-  const _RegularLayout({required this.donor, required this.onRequest});
+  const _RegularLayout({
+    required this.donor,
+    required this.locationEnabled,
+    required this.onRequest,
+  });
 
   final DonorModel donor;
+  final bool locationEnabled;
   final VoidCallback? onRequest;
 
   @override
@@ -44,7 +59,9 @@ class _RegularLayout extends StatelessWidget {
       children: [
         _BloodGroupBadge(bloodGroup: donor.bloodGroup),
         const SizedBox(width: AppSpacing.sm),
-        Expanded(child: _DonorInfo(donor: donor)),
+        Expanded(
+          child: _DonorInfo(donor: donor, locationEnabled: locationEnabled),
+        ),
         const SizedBox(width: AppSpacing.sm),
         _RequestButton(onPressed: onRequest),
       ],
@@ -53,9 +70,14 @@ class _RegularLayout extends StatelessWidget {
 }
 
 class _SmallMobileLayout extends StatelessWidget {
-  const _SmallMobileLayout({required this.donor, required this.onRequest});
+  const _SmallMobileLayout({
+    required this.donor,
+    required this.locationEnabled,
+    required this.onRequest,
+  });
 
   final DonorModel donor;
+  final bool locationEnabled;
   final VoidCallback? onRequest;
 
   @override
@@ -64,7 +86,9 @@ class _SmallMobileLayout extends StatelessWidget {
       children: [
         _BloodGroupBadge(bloodGroup: donor.bloodGroup, size: 46),
         const SizedBox(width: AppSpacing.sm),
-        Expanded(child: _DonorInfo(donor: donor)),
+        Expanded(
+          child: _DonorInfo(donor: donor, locationEnabled: locationEnabled),
+        ),
         const SizedBox(width: AppSpacing.xs),
         _CompactRequestButton(onPressed: onRequest),
       ],
@@ -73,9 +97,10 @@ class _SmallMobileLayout extends StatelessWidget {
 }
 
 class _DonorInfo extends StatelessWidget {
-  const _DonorInfo({required this.donor});
+  const _DonorInfo({required this.donor, required this.locationEnabled});
 
   final DonorModel donor;
+  final bool locationEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -108,21 +133,24 @@ class _DonorInfo extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 4),
-        _DonorMetaRow(donor: donor),
+        _DonorMetaRow(donor: donor, locationEnabled: locationEnabled),
       ],
     );
   }
 }
 
 class _DonorMetaRow extends StatelessWidget {
-  const _DonorMetaRow({required this.donor});
+  const _DonorMetaRow({required this.donor, required this.locationEnabled});
 
   final DonorModel donor;
+  final bool locationEnabled;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hasDistance = donor.distance != null;
+
+    // Distance is shown ONLY when app-level location is enabled.
+    final hasDistance = locationEnabled && donor.distance != null;
 
     if (!hasDistance && !donor.isPhoneVerified) {
       return const SizedBox.shrink();
@@ -149,31 +177,33 @@ class _DonorMetaRow extends StatelessWidget {
             ),
           ),
         ],
-        if (hasDistance && donor.isPhoneVerified) ...[
-          const SizedBox(width: AppSpacing.xs),
-          Container(
-            width: 3,
-            height: 3,
-            decoration: const BoxDecoration(
-              color: AppColors.textTertiary,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-        ],
-        if (donor.isPhoneVerified)
-          Flexible(
-            child: Text(
-              'Verified',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.success,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+
+        // if (hasDistance && donor.isPhoneVerified) ...[
+        //   const SizedBox(width: AppSpacing.xs),
+        //   Container(
+        //     width: 3,
+        //     height: 3,
+        //     decoration: const BoxDecoration(
+        //       color: AppColors.textTertiary,
+        //       shape: BoxShape.circle,
+        //     ),
+        //   ),
+        //   const SizedBox(width: AppSpacing.xs),
+        // ],
+
+        // if (donor.isPhoneVerified)
+        //   Flexible(
+        //     child: Text(
+        //       'Verified',
+        //       maxLines: 1,
+        //       overflow: TextOverflow.ellipsis,
+        //       style: theme.textTheme.bodySmall?.copyWith(
+        //         color: AppColors.success,
+        //         fontSize: 12,
+        //         fontWeight: FontWeight.w500,
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }

@@ -16,7 +16,7 @@ class CreateRequestCard extends StatelessWidget {
     return AppCard(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm + 2,
+        vertical: AppSpacing.sm,
       ),
       backgroundColor: AppColors.navy,
       borderColor: AppColors.navy,
@@ -24,25 +24,27 @@ class CreateRequestCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(11),
             ),
-            child: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.bloodtype_rounded,
+              color: Colors.white,
+              size: 21,
+            ),
           ),
-
           const SizedBox(width: AppSpacing.sm + 2),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Create Blood Request',
+                  'Need Blood?',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -52,8 +54,8 @@ class CreateRequestCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Need blood? Find eligible donors nearby.',
-                  maxLines: 1,
+                  'Create a request and connect with nearby donors.',
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: Colors.white.withValues(alpha: 0.72),
@@ -63,9 +65,7 @@ class CreateRequestCard extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(width: AppSpacing.sm),
-
           Container(
             width: 32,
             height: 32,

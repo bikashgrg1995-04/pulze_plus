@@ -8,12 +8,12 @@ import 'package:pulze_plus/core/widgets/app_confirmation_dialog.dart';
 import 'package:pulze_plus/core/widgets/app_snack_bar.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
+import 'package:pulze_plus/features/navigation/providers/navigation_provider.dart';
 import 'package:pulze_plus/features/requests/providers/blood_request_provider.dart';
 import 'package:pulze_plus/features/requests/providers/donor_provider.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
 import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
 import 'package:pulze_plus/features/requests/widgets/my_request_item.dart';
-import 'package:pulze_plus/features/requests/widgets/request_donor_sheet.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -31,26 +31,164 @@ class RequestsScreen extends ConsumerStatefulWidget {
 }
 
 class _RequestsScreenState extends ConsumerState<RequestsScreen> {
-  void _handleDonorRequest(DonorModel donor) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return RequestDonorSheet(
-          donor: donor,
-          onSubmit: () {
-            Navigator.of(context).pop();
+  // ---------------------------------------------------------------------------
+  // Authentication / Guest Access
+  // ---------------------------------------------------------------------------
 
-            AppSnackBar.success(context, 'Request submitted successfully.');
-          },
+  bool get _isAuthenticated {
+    return ref.read(authProvider).status == AuthStatus.authenticated;
+  }
+
+  void _navigateToLogin() {
+    ref.read(navigationIndexProvider.notifier).setIndex(4);
+  }
+
+  void _showLoginRequired({
+    required String title,
+    required String description,
+  }) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          icon: Container(
+            width: 56,
+            height: 56,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.lock_outline_rounded,
+              color: AppColors.primary,
+              size: 27,
+            ),
+          ),
+          title: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          content: Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            0,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.textPrimary,
+                  side: const BorderSide(color: AppColors.border),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Not Now',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  _navigateToLogin();
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
   }
+
+  void _handleCreateRequestPressed() {
+    if (!_isAuthenticated) {
+      _showLoginRequired(
+        title: 'Login required',
+        description:
+            'Please log in to create a blood request and connect with donors.',
+      );
+      return;
+    }
+
+    _handleCreateRequest();
+  }
+
+  void _handleMyRequestsPressed() {
+    if (!_isAuthenticated) {
+      _showLoginRequired(
+        title: 'Login to view your requests',
+        description:
+            'Please log in to create, track, and manage your blood requests.',
+      );
+      return;
+    }
+
+    context.push(AppRoutes.myBloodRequests);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Donor Request
+  // ---------------------------------------------------------------------------
+
+  void _handleDonorRequest(DonorModel donor) {
+    if (!_isAuthenticated) {
+      _showLoginRequired(
+        title: 'Login required',
+        description: 'Please log in to create a blood request and request help from this donor.',
+      );
+      return;
+    }
+
+    _handleCreateRequest();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Create Request
+  // ---------------------------------------------------------------------------
 
   void _handleCreateRequest() {
     showModalBottomSheet(
@@ -89,6 +227,10 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       },
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Edit Request
+  // ---------------------------------------------------------------------------
 
   Future<void> _handleEditRequest(BloodRequestModel request) async {
     if (!mounted) return;
@@ -131,6 +273,10 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Terminate Request
+  // ---------------------------------------------------------------------------
+
   Future<void> _handleTerminateRequest(BloodRequestModel request) async {
     final shouldTerminate = await AppConfirmationDialog.show(
       context: context,
@@ -161,14 +307,23 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Refresh
+  // ---------------------------------------------------------------------------
+
   Future<void> _refreshRequests() async {
     await ref.read(bloodRequestsProvider.notifier).refreshRequests();
 
     await ref.read(donorProvider.notifier).refreshDonors();
   }
 
+  // ---------------------------------------------------------------------------
+  // Donor Section
+  // ---------------------------------------------------------------------------
+
   Widget _buildDonorSection() {
     final donorState = ref.watch(donorProvider);
+
     final locationEnabled = ref.watch(appPreferencesProvider).locationEnabled;
 
     return donorState.when(
@@ -191,17 +346,101 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       data: (donors) {
         return DonorListSection(
           donors: donors,
+          locationEnabled: locationEnabled,
           onViewAll: () {
             context.push(AppRoutes.donors);
           },
           onDonorRequest: _handleDonorRequest,
-          locationEnabled: locationEnabled,
         );
       },
     );
   }
 
-  Widget _buildMyRequestsSection() {
+  // ---------------------------------------------------------------------------
+  // Guest My Requests
+  // ---------------------------------------------------------------------------
+
+  Widget _buildGuestMyRequestsSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.bloodtype_outlined,
+              color: AppColors.primary,
+              size: 27,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Text(
+            'My Blood Requests',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const Text(
+            'Log in to create, track, and manage your blood requests.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: OutlinedButton.icon(
+              onPressed: _navigateToLogin,
+              icon: const Icon(Icons.login_rounded, size: 18),
+              label: const Text(
+                'Login to Continue',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: BorderSide(
+                  color: AppColors.primary.withValues(alpha: 0.35),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // My Requests Section
+  // ---------------------------------------------------------------------------
+
+  Widget _buildMyRequestsSection({required bool isAuthenticated}) {
+    if (!isAuthenticated) {
+      return _buildGuestMyRequestsSection();
+    }
+
     final requestsAsync = ref.watch(bloodRequestsProvider);
 
     return requestsAsync.when(
@@ -237,31 +476,6 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'My Blood Requests',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.push(AppRoutes.myBloodRequests);
-                  },
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 4,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: const Text('View More'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
             ...previewRequests.map(
               (request) => Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -292,59 +506,101 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
+    ref.listen(appPreferencesProvider, (previous, next) {
+      if (previous?.locationEnabled != next.locationEnabled) {
+        ref.read(donorProvider.notifier).refreshDonors();
+      }
+    });
+
     final isAuthenticated =
         ref.watch(authProvider).status == AuthStatus.authenticated;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _refreshRequests,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.lg,
-              AppSpacing.md,
-              AppSpacing.huge,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Blood Requests',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
-                ),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.huge,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Blood Requests',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              ),
 
-                const SizedBox(height: AppSpacing.xs),
+              const Text(
+                'Find donors and manage your blood requests.',
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              ),
 
-                const Text(
-                  'Find donors and manage your blood requests.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
+              const SizedBox(height: AppSpacing.xl),
+
+              // -------------------------------------------------------------
+              // Available Donors
+              // -------------------------------------------------------------
+              _buildDonorSection(),
+
+              const SizedBox(height: AppSpacing.lg),
+
+              // -------------------------------------------------------------
+              // Create Blood Request
+              //
+              // Visible for both guests and authenticated users.
+              // Guest -> login prompt
+              // Authenticated -> create request sheet
+              // -------------------------------------------------------------
+              CreateRequestCard(onPressed: _handleCreateRequestPressed),
+
+              const SizedBox(height: AppSpacing.md),
+
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'My Blood Requests',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                _buildDonorSection(),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                if (isAuthenticated) ...[
-                  CreateRequestCard(onPressed: _handleCreateRequest),
-
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  _buildMyRequestsSection(),
+                  TextButton(
+                    onPressed: _handleMyRequestsPressed,
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 4,
+                      ),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('View More'),
+                  ),
                 ],
-              ],
-            ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              // -------------------------------------------------------------
+              // My Blood Requests
+              //
+              // Guest -> login card
+              // Authenticated -> actual requests
+              // -------------------------------------------------------------
+              _buildMyRequestsSection(isAuthenticated: isAuthenticated),
+            ],
           ),
         ),
       ),

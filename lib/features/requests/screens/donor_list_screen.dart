@@ -30,6 +30,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   String? _selectedBloodGroup;
   double? _selectedRadius;
 
+  bool _isApplyingFilter = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,10 +47,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   @override
   void dispose() {
     _searchDebounce?.cancel();
-
-    _donorNotifier.clearFilters();
-    _donorNotifier.clearLocation();
-
     _searchController.dispose();
     _scrollController.dispose();
 
@@ -59,11 +57,15 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // Location
   // ---------------------------------------------------------------------------
 
-  Future<bool> _ensureLocationForNearbySearch() async {
+  Future<bool> _requestLocationForNearby() async {
     final preferences = ref.read(appPreferencesProvider);
 
-    if (preferences.locationEnabled) {
-      return true;
+    if (!preferences.locationEnabled) {
+      final shouldEnable = await _showEnableLocationDialog();
+
+      if (!shouldEnable) {
+        return false;
+      }
     }
 
     final locationService = ref.read(locationServiceProvider);
@@ -79,36 +81,150 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
 
       return true;
     } on LocationServiceDisabledException {
-      _showLocationMessage('Turn on location services to find nearby donors.');
+      await _showLocationUnavailableDialog(
+        'Location services are turned off. Please turn on location services and try again.',
+      );
     } on LocationPermissionDeniedException {
-      _showLocationMessage(
-        'Location permission is needed to find nearby donors.',
+      await _showLocationUnavailableDialog(
+        'Location permission is required to find nearby donors.',
       );
     } on LocationPermissionPermanentlyDeniedException {
-      _showLocationMessage(
-        'Location permission is disabled. Please enable it in Settings.',
+      await _showLocationUnavailableDialog(
+        'Location permission is disabled. Please enable it in your device settings.',
       );
     } catch (_) {
-      _showLocationMessage('Unable to access your location right now.');
+      await _showLocationUnavailableDialog(
+        'Unable to access your location right now. Please try again.',
+      );
     }
 
     return false;
   }
 
-  void _showLocationMessage(String message) {
+  Future<bool> _showEnableLocationDialog() async {
+    if (!mounted) {
+      return false;
+    }
+
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            0,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          title: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.location_on_outlined,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              const Expanded(
+                child: Text(
+                  'Enable Location?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Nearby donor search uses your current location to find donors within the selected radius.',
+            style: TextStyle(
+              fontSize: 13.5,
+              height: 1.45,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Not Now'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Enable Location'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result ?? false;
+  }
+
+  Future<void> _showLocationUnavailableDialog(String message) async {
     if (!mounted) {
       return;
     }
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Location unavailable',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 13.5,
+              height: 1.45,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -138,12 +254,24 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
 
     _searchDebounce?.cancel();
 
-    _searchDebounce = Timer(const Duration(milliseconds: 450), () {
+    _searchDebounce = Timer(const Duration(milliseconds: 450), () async {
       if (!mounted) {
         return;
       }
 
-      _donorNotifier.searchDonors(value);
+      setState(() {
+        _isApplyingFilter = true;
+      });
+
+      try {
+        await _donorNotifier.searchDonors(value);
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isApplyingFilter = false;
+          });
+        }
+      }
     });
   }
 
@@ -154,60 +282,836 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
 
     setState(() {});
 
-    _donorNotifier.searchDonors(null);
+    _applySearchClear();
   }
 
-  // ---------------------------------------------------------------------------
-  // Blood Group
-  // ---------------------------------------------------------------------------
+  Future<void> _applySearchClear() async {
+    setState(() {
+      _isApplyingFilter = true;
+    });
 
-  Future<void> _handleBloodGroupChanged(String? bloodGroup) async {
-    if (_selectedRadius != null) {
-      final locationReady = await _ensureLocationForNearbySearch();
-
-      if (!locationReady) {
-        return;
+    try {
+      await _donorNotifier.searchDonors(null);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isApplyingFilter = false;
+        });
       }
-
-      setState(() {
-        _selectedBloodGroup = bloodGroup;
-      });
-
-      await _donorNotifier.loadCurrentLocationDonors(
-        radius: _selectedRadius!,
-        bloodType: bloodGroup,
-        search: _searchController.text,
-      );
-
-      return;
     }
-
-    setState(() {
-      _selectedBloodGroup = bloodGroup;
-    });
-
-    await _donorNotifier.filterByBloodType(bloodGroup);
   }
 
   // ---------------------------------------------------------------------------
-  // Radius
+  // Filter
   // ---------------------------------------------------------------------------
 
-  Future<void> _handleRadiusChanged(double radius) async {
-    final locationReady = await _ensureLocationForNearbySearch();
+  Future<void> _openFilterSheet() async {
+    final selection = await showModalBottomSheet<_DonorFilterSelection>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      showDragHandle: false,
+      builder: (sheetContext) {
+        String? temporaryBloodGroup = _selectedBloodGroup;
+        double temporaryRadius = _selectedRadius ?? 25;
 
-    if (!locationReady) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final locationEnabled = ref.watch(
+              appPreferencesProvider.select((state) => state.locationEnabled),
+            );
+
+            return StatefulBuilder(
+              builder: (context, sheetSetState) {
+                return SafeArea(
+                  top: false,
+                  child: Container(
+                    height: MediaQuery.sizeOf(context).height * 0.7,
+                    decoration: const BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(28),
+                      ),
+                    ),
+                    child: DefaultTabController(
+                      length: 2,
+                      child: Column(
+                        children: [
+                          // ----------------------------------------------------
+                          // Drag handle
+                          // ----------------------------------------------------
+
+                          const SizedBox(height: AppSpacing.sm),
+
+                          Container(
+                            width: 42,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.border,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+
+                          // ----------------------------------------------------
+                          // Header
+                          // ----------------------------------------------------
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.lg,
+                              AppSpacing.md,
+                              AppSpacing.lg,
+                              AppSpacing.sm,
+                            ),
+                            child: Row(
+                              children: [
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Filter donors',
+                                        style: TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 3),
+                                      Text(
+                                        'Choose how you want to find donors.',
+                                        style: TextStyle(
+                                          fontSize: 12.5,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: 'Close',
+                                  onPressed: () {
+                                    Navigator.of(sheetContext).pop();
+                                  },
+                                  icon: const Icon(Icons.close_rounded),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // ----------------------------------------------------
+                          // Tabs
+                          // ----------------------------------------------------
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.lg,
+                            ),
+                            child: Container(
+                              height: 50,
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: const TabBar(
+                                dividerColor: Colors.transparent,
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                indicator: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                                labelColor: Colors.white,
+                                unselectedLabelColor: AppColors.textSecondary,
+                                labelStyle: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                unselectedLabelStyle: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                tabs: [
+                                  Tab(
+                                    icon: Icon(
+                                      Icons.bloodtype_outlined,
+                                      size: 17,
+                                    ),
+                                    text: 'Blood Group',
+                                  ),
+                                  Tab(
+                                    icon: Icon(
+                                      Icons.location_on_outlined,
+                                      size: 17,
+                                    ),
+                                    text: 'Location',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: AppSpacing.sm),
+
+                          // ----------------------------------------------------
+                          // Tab content
+                          // ----------------------------------------------------
+                          Expanded(
+                            child: TabBarView(
+                              physics: const BouncingScrollPhysics(),
+                              children: [
+                                // ==================================================
+                                // BLOOD GROUP
+                                // ==================================================
+
+                                SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.sm,
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Select blood group',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        'Choose a blood group to narrow donor results.',
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: AppSpacing.md),
+
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: [
+                                          _buildSheetBloodChip(
+                                            label: 'All',
+                                            value: null,
+                                            selected:
+                                                temporaryBloodGroup == null,
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = null;
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'A+',
+                                            value: 'A+',
+                                            selected:
+                                                temporaryBloodGroup == 'A+',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'A+';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'A−',
+                                            value: 'A-',
+                                            selected:
+                                                temporaryBloodGroup == 'A-',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'A-';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'B+',
+                                            value: 'B+',
+                                            selected:
+                                                temporaryBloodGroup == 'B+',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'B+';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'B−',
+                                            value: 'B-',
+                                            selected:
+                                                temporaryBloodGroup == 'B-',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'B-';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'AB+',
+                                            value: 'AB+',
+                                            selected:
+                                                temporaryBloodGroup == 'AB+',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'AB+';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'AB−',
+                                            value: 'AB-',
+                                            selected:
+                                                temporaryBloodGroup == 'AB-',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'AB-';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'O+',
+                                            value: 'O+',
+                                            selected:
+                                                temporaryBloodGroup == 'O+',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'O+';
+                                              });
+                                            },
+                                          ),
+                                          _buildSheetBloodChip(
+                                            label: 'O−',
+                                            value: 'O-',
+                                            selected:
+                                                temporaryBloodGroup == 'O-',
+                                            onTap: () {
+                                              sheetSetState(() {
+                                                temporaryBloodGroup = 'O-';
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: AppSpacing.lg),
+
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                          AppSpacing.sm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surface,
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.border,
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.info_outline_rounded,
+                                              size: 17,
+                                              color: AppColors.textSecondary,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                'Select All to search donors from every blood group.',
+                                                style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  height: 1.35,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // ==================================================
+                                // LOCATION
+                                // ==================================================
+                                SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.sm,
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                          AppSpacing.sm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.07,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.primary.withValues(
+                                              alpha: 0.16,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.location_on_outlined,
+                                              size: 19,
+                                              color: AppColors.primary,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                'Use your current location to find available donors within the selected radius.',
+                                                style: TextStyle(
+                                                  fontSize: 11.8,
+                                                  height: 1.4,
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: AppSpacing.md),
+
+                                      // ------------------------------------------------
+                                      // Location switch
+                                      // ------------------------------------------------
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppSpacing.sm,
+                                          vertical: AppSpacing.sm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surface,
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                          border: Border.all(
+                                            color: locationEnabled
+                                                ? AppColors.primary.withValues(
+                                                    alpha: 0.28,
+                                                  )
+                                                : AppColors.border,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                color: locationEnabled
+                                                    ? AppColors.primary
+                                                          .withValues(
+                                                            alpha: 0.10,
+                                                          )
+                                                    : AppColors.background,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.location_on_outlined,
+                                                size: 21,
+                                                color: locationEnabled
+                                                    ? AppColors.primary
+                                                    : AppColors.textSecondary,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: AppSpacing.sm,
+                                            ),
+                                            const Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Location',
+                                                    style: TextStyle(
+                                                      fontSize: 13.5,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color:
+                                                          AppColors.textPrimary,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 2),
+                                                  Text(
+                                                    'Use your current location to find nearby donors.',
+                                                    style: TextStyle(
+                                                      fontSize: 11.5,
+                                                      height: 1.3,
+                                                      color: AppColors
+                                                          .textSecondary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Switch.adaptive(
+                                              value: locationEnabled,
+                                              activeTrackColor: AppColors
+                                                  .primary
+                                                  .withValues(alpha: 0.45),
+                                              activeThumbColor:
+                                                  AppColors.primary,
+                                              onChanged: (value) async {
+                                                if (!value) {
+                                                  await ref
+                                                      .read(
+                                                        appPreferencesProvider
+                                                            .notifier,
+                                                      )
+                                                      .setLocationEnabled(
+                                                        false,
+                                                      );
+
+                                                  return;
+                                                }
+
+                                                await _requestLocationForNearby();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // ------------------------------------------------
+                                      // Radius
+                                      // ------------------------------------------------
+                                      if (locationEnabled) ...[
+                                        const SizedBox(height: AppSpacing.md),
+                                        Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            AppSpacing.sm,
+                                            AppSpacing.sm,
+                                            AppSpacing.sm,
+                                            AppSpacing.xs,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.surface,
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.border,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const Expanded(
+                                                    child: Text(
+                                                      'Search radius',
+                                                      style: TextStyle(
+                                                        fontSize: 12.5,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 9,
+                                                          vertical: 4,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.primary
+                                                          .withValues(
+                                                            alpha: 0.09,
+                                                          ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                    ),
+                                                    child: Text(
+                                                      '${temporaryRadius.toInt()} km',
+                                                      style: const TextStyle(
+                                                        fontSize: 11.5,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              SliderTheme(
+                                                data: SliderTheme.of(context).copyWith(
+                                                  trackHeight: 4,
+                                                  thumbShape:
+                                                      const RoundSliderThumbShape(
+                                                        enabledThumbRadius: 7,
+                                                      ),
+                                                  overlayShape:
+                                                      const RoundSliderOverlayShape(
+                                                        overlayRadius: 16,
+                                                      ),
+                                                  activeTrackColor:
+                                                      AppColors.primary,
+                                                  inactiveTrackColor:
+                                                      AppColors.border,
+                                                  thumbColor: AppColors.primary,
+                                                  overlayColor: AppColors
+                                                      .primary
+                                                      .withValues(alpha: 0.10),
+                                                ),
+                                                child: Slider(
+                                                  min: 5,
+                                                  max: 50,
+                                                  divisions: 9,
+                                                  value: temporaryRadius
+                                                      .clamp(5.0, 50.0)
+                                                      .toDouble(),
+                                                  onChanged: (value) {
+                                                    sheetSetState(() {
+                                                      temporaryRadius = value;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 4,
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '5 km',
+                                                      style: TextStyle(
+                                                        fontSize: 10.5,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '50 km',
+                                                      style: TextStyle(
+                                                        fontSize: 10.5,
+                                                        color: AppColors
+                                                            .textSecondary,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // ----------------------------------------------------
+                          // Bottom actions
+                          // ----------------------------------------------------
+                          Container(
+                            padding: EdgeInsets.fromLTRB(
+                              AppSpacing.lg,
+                              AppSpacing.sm,
+                              AppSpacing.lg,
+                              AppSpacing.md +
+                                  MediaQuery.viewInsetsOf(context).bottom,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              border: Border(
+                                top: BorderSide(
+                                  color: AppColors.border.withValues(
+                                    alpha: 0.8,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.of(sheetContext).pop();
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(48),
+                                      side: const BorderSide(
+                                        color: AppColors.border,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    child: const Text('Cancel'),
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                                Expanded(
+                                  flex: 2,
+                                  child: FilledButton(
+                                    onPressed: () {
+                                      Navigator.of(sheetContext).pop(
+                                        _DonorFilterSelection(
+                                          bloodGroup: temporaryBloodGroup,
+                                          locationEnabled: locationEnabled,
+                                          radius: locationEnabled
+                                              ? temporaryRadius
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                    style: FilledButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(48),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    child: const Text('Apply Filter'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+
+    if (selection == null) {
       return;
     }
 
+    await _applyFilterSelection(selection);
+  }
+
+  Future<void> _applyFilterSelection(_DonorFilterSelection selection) async {
     setState(() {
-      _selectedRadius = radius;
+      _selectedBloodGroup = selection.bloodGroup;
+      _selectedRadius = selection.locationEnabled ? selection.radius : null;
+      _isApplyingFilter = true;
     });
 
-    await _donorNotifier.loadCurrentLocationDonors(
-      radius: radius,
-      bloodType: _selectedBloodGroup,
-      search: _searchController.text,
+    try {
+      if (selection.locationEnabled) {
+        await _donorNotifier.loadCurrentLocationDonors(
+          radius: selection.radius ?? 25,
+          bloodType: selection.bloodGroup,
+          search: _searchController.text,
+        );
+      } else {
+        _donorNotifier.clearLocation();
+
+        await _donorNotifier.filterByBloodType(selection.bloodGroup);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isApplyingFilter = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildSheetBloodChip({
+    required String label,
+    required String? value,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withValues(alpha: 0.10)
+                : AppColors.background,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected
+                  ? AppColors.primary.withValues(alpha: 0.35)
+                  : AppColors.border,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (selected) ...[
+                const Icon(
+                  Icons.check_rounded,
+                  size: 15,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 5),
+              ],
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                  color: selected ? AppColors.primary : AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -216,40 +1120,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // ---------------------------------------------------------------------------
 
   Future<void> _handleRefresh() async {
-    await _donorNotifier.refreshDonors();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Nearby
-  // ---------------------------------------------------------------------------
-
-  Future<void> _handleUseNearby() async {
-    final locationReady = await _ensureLocationForNearbySearch();
-
-    if (!locationReady) {
-      return;
-    }
-
-    await _donorNotifier.loadCurrentLocationDonors(
-      radius: _selectedRadius ?? 50,
-      bloodType: _selectedBloodGroup,
-      search: _searchController.text,
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Clear Filters
-  // ---------------------------------------------------------------------------
-
-  Future<void> _clearFilters() async {
-    setState(() {
-      _selectedBloodGroup = null;
-      _selectedRadius = null;
-    });
-
-    _donorNotifier.clearFilters();
-    _donorNotifier.clearLocation();
-
     await _donorNotifier.refreshDonors();
   }
 
@@ -272,209 +1142,103 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   Widget _buildSearchField() {
     final hasText = _searchController.text.trim().isNotEmpty;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: _handleSearchChanged,
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: 'Search city or address',
-          hintStyle: const TextStyle(
-            fontSize: 14,
-            color: AppColors.textSecondary,
-          ),
-          prefixIcon: const Padding(
-            padding: EdgeInsets.only(left: 4),
-            child: Icon(
-              Icons.search_rounded,
-              size: 22,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          suffixIcon: hasText
-              ? IconButton(
-                  tooltip: 'Clear search',
-                  onPressed: _clearSearch,
-                  icon: const Icon(Icons.close_rounded, size: 20),
-                )
-              : null,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: 16,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Filter Section
-  // ---------------------------------------------------------------------------
-
-  Widget _buildFilterSection() {
-    final hasLocation =
-        _donorNotifier.latitude != null && _donorNotifier.longitude != null;
-
-    final hasActiveFilters =
-        _selectedBloodGroup != null || _selectedRadius != null || hasLocation;
-
-    final activeFilterCount =
-        (_selectedBloodGroup != null ? 1 : 0) +
-        (_selectedRadius != null ? 1 : 0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            const Expanded(
-              child: Text(
-                'Find donors',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        Expanded(
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _handleSearchChanged,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: 'Search city or address',
+                hintStyle: const TextStyle(
+                  fontSize: 13.5,
+                  color: AppColors.textSecondary,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  size: 21,
+                  color: AppColors.textSecondary,
+                ),
+                suffixIcon: hasText
+                    ? IconButton(
+                        tooltip: 'Clear search',
+                        onPressed: _clearSearch,
+                        icon: const Icon(Icons.close_rounded, size: 19),
+                      )
+                    : null,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: 14,
+                ),
               ),
             ),
-            if (activeFilterCount > 0)
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  '$activeFilterCount active',
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            if (hasActiveFilters)
-              TextButton(
-                onPressed: _clearFilters,
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 4,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: const Text(
-                  'Clear all',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            children: [
-              _buildFilterChip(
-                icon: Icons.bloodtype_outlined,
-                label: _selectedBloodGroup ?? 'Blood Group',
-                isActive: _selectedBloodGroup != null,
-                onTap: _showBloodGroupSheet,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _buildFilterChip(
-                icon: hasLocation
-                    ? Icons.my_location_rounded
-                    : Icons.location_on_outlined,
-                label: hasLocation
-                    ? 'Nearby ${_selectedRadius?.toInt() ?? 50} km'
-                    : 'Nearby',
-                isActive: hasLocation,
-                onTap: _handleUseNearby,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _buildFilterChip(
-                icon: Icons.tune_rounded,
-                label: _selectedRadius != null
-                    ? '${_selectedRadius!.toInt()} km'
-                    : 'Radius',
-                isActive: _selectedRadius != null,
-                onTap: _showRadiusSheet,
-                showArrow: true,
-              ),
-            ],
           ),
         ),
+        const SizedBox(width: AppSpacing.sm),
+        _buildFilterButton(),
       ],
     );
   }
 
-  Widget _buildFilterChip({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    bool isActive = false,
-    bool showArrow = false,
-  }) {
+  Widget _buildFilterButton() {
+    final hasActiveFilter =
+        _selectedBloodGroup != null || _selectedRadius != null;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+        onTap: _openFilterSheet,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.primary.withValues(alpha: 0.08)
+            color: hasActiveFilter
+                ? AppColors.primary.withValues(alpha: 0.10)
                 : AppColors.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isActive
+              color: hasActiveFilter
                   ? AppColors.primary.withValues(alpha: 0.35)
                   : AppColors.border,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
               Icon(
-                icon,
-                size: 18,
-                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                Icons.tune_rounded,
+                size: 21,
+                color: hasActiveFilter
+                    ? AppColors.primary
+                    : AppColors.textSecondary,
               ),
-              const SizedBox(width: 7),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isActive ? AppColors.primary : AppColors.textPrimary,
+              if (hasActiveFilter)
+                Positioned(
+                  right: -3,
+                  top: -4,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.surface, width: 1.5),
+                    ),
+                  ),
                 ),
-              ),
-              if (showArrow) ...[
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 18,
-                  color: isActive ? AppColors.primary : AppColors.textSecondary,
-                ),
-              ],
             ],
           ),
         ),
@@ -486,56 +1250,48 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // Location Prompt
   // ---------------------------------------------------------------------------
 
-  Widget _buildLocationPrompt() {
-    final locationEnabled = ref.watch(appPreferencesProvider).locationEnabled;
-
+  Widget _buildLocationPrompt(bool locationEnabled) {
     if (locationEnabled) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      margin: const EdgeInsets.only(top: AppSpacing.md),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      margin: const EdgeInsets.only(top: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + 2,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.055),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 34,
+            height: 34,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(12),
+              color: AppColors.primary.withValues(alpha: 0.09),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
               Icons.location_on_outlined,
               color: AppColors.primary,
-              size: 21,
+              size: 19,
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Turn on location',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: 3),
-                Text(
-                  'Enable location to see accurate donor distances near you.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1.4,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
+            child: Text(
+              'Turn on location to see accurate donor distances near you.',
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.35,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],
@@ -544,196 +1300,15 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // Blood Group Sheet
-  // ---------------------------------------------------------------------------
-
-  Future<void> _showBloodGroupSheet() async {
-    const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      showDragHandle: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              0,
-              AppSpacing.md,
-              AppSpacing.lg,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Blood Group',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                const Text(
-                  'Choose the blood group you need.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: [
-                    _buildBloodGroupChip(sheetContext, label: 'All', value: ''),
-                    ...bloodGroups.map(
-                      (group) => _buildBloodGroupChip(
-                        sheetContext,
-                        label: group,
-                        value: group,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (!mounted || selected == null) {
-      return;
-    }
-
-    final bloodGroup = selected.isEmpty ? null : selected;
-
-    await _handleBloodGroupChanged(bloodGroup);
-  }
-
-  Widget _buildBloodGroupChip(
-    BuildContext context, {
-    required String label,
-    required String value,
-  }) {
-    final currentValue = _selectedBloodGroup ?? '';
-
-    final isSelected = currentValue == value;
-
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) {
-        Navigator.of(context).pop(value);
-      },
-      selectedColor: AppColors.primary.withValues(alpha: 0.12),
-      backgroundColor: AppColors.background,
-      side: BorderSide(
-        color: isSelected ? AppColors.primary : AppColors.border,
-      ),
-      labelStyle: TextStyle(
-        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Radius Sheet
-  // ---------------------------------------------------------------------------
-
-  Future<void> _showRadiusSheet() async {
-    const radiusOptions = [5.0, 10.0, 25.0, 50.0];
-
-    final selected = await showModalBottomSheet<double>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      showDragHandle: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              0,
-              AppSpacing.md,
-              AppSpacing.lg,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Search Radius',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                const Text(
-                  'How far should we search for donors?',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                ...radiusOptions.map(
-                  (radius) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.location_on_outlined,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    title: Text(
-                      '${radius.toInt()} km',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    trailing: _selectedRadius == radius
-                        ? const Icon(
-                            Icons.check_circle_rounded,
-                            color: AppColors.primary,
-                          )
-                        : null,
-                    onTap: () {
-                      Navigator.of(sheetContext).pop(radius);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (!mounted || selected == null) {
-      return;
-    }
-
-    await _handleRadiusChanged(selected);
-  }
-
-  // ---------------------------------------------------------------------------
   // Donor Item
   // ---------------------------------------------------------------------------
 
-  Widget _buildDonorItem(DonorModel donor) {
+  Widget _buildDonorItem(DonorModel donor, {required bool locationEnabled}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: DonorListItem(
         donor: donor,
+        locationEnabled: locationEnabled,
         onRequest: () {
           _handleDonorRequest(donor);
         },
@@ -823,16 +1398,56 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // Donor List
   // ---------------------------------------------------------------------------
 
-  Widget _buildDonorContent(List<DonorModel> donors) {
-    if (donors.isEmpty) {
-      return _buildEmptyState();
+  Widget _buildDonorContent(
+    List<DonorModel> donors, {
+    required bool locationEnabled,
+  }) {
+    final content = donors.isEmpty
+        ? _buildEmptyState()
+        : Column(
+            children: [
+              for (final donor in donors)
+                _buildDonorItem(donor, locationEnabled: locationEnabled),
+              _buildPaginationLoader(),
+              _buildNoMoreResults(),
+            ],
+          );
+
+    if (!_isApplyingFilter) {
+      return content;
     }
 
-    return Column(
+    return Stack(
       children: [
-        for (final donor in donors) _buildDonorItem(donor),
-        _buildPaginationLoader(),
-        _buildNoMoreResults(),
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 150),
+          opacity: 0.45,
+          child: content,
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Center(
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.border),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 16,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(12),
+                child: const CircularProgressIndicator(strokeWidth: 2.2),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -841,7 +1456,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // Header
   // ---------------------------------------------------------------------------
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool locationEnabled) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
@@ -851,12 +1466,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSearchField(),
-          const SizedBox(height: AppSpacing.lg),
-          _buildFilterSection(),
-          _buildLocationPrompt(),
-        ],
+        children: [_buildSearchField(), _buildLocationPrompt(locationEnabled)],
       ),
     );
   }
@@ -868,6 +1478,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   @override
   Widget build(BuildContext context) {
     final donorState = ref.watch(donorProvider);
+
+    final locationEnabled = ref.watch(
+      appPreferencesProvider.select((state) => state.locationEnabled),
+    );
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -881,14 +1495,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
           'Available Donors',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: _handleRefresh,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
-          const SizedBox(width: AppSpacing.xs),
-        ],
       ),
       body: donorState.when(
         loading: () {
@@ -915,32 +1521,77 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
           );
         },
         data: (donors) {
-          return RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: ListView(
-              controller: _scrollController,
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
-              padding: const EdgeInsets.only(bottom: AppSpacing.huge),
-              children: [
-                _buildHeader(),
-                const Divider(height: 1, color: AppColors.border),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.md,
-                    AppSpacing.lg,
-                    AppSpacing.md,
-                    0,
-                  ),
-                  child: _buildDonorContent(donors),
+          return ListView(
+            controller: _scrollController,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: AppSpacing.huge),
+            children: [
+              _buildHeader(locationEnabled),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.xs,
+                  AppSpacing.md,
+                  AppSpacing.sm,
                 ),
-              ],
-            ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        locationEnabled
+                            ? 'Available nearby'
+                            : 'Available Donors',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    if (donors.isNotEmpty)
+                      Text(
+                        '${donors.length} donors',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 2),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: _buildDonorContent(
+                  donors,
+                  locationEnabled: locationEnabled,
+                ),
+              ),
+            ],
           );
         },
       ),
     );
   }
+}
+
+// -----------------------------------------------------------------------------
+// Filter Selection
+// -----------------------------------------------------------------------------
+
+class _DonorFilterSelection {
+  const _DonorFilterSelection({
+    required this.bloodGroup,
+    required this.locationEnabled,
+    required this.radius,
+  });
+
+  final String? bloodGroup;
+  final bool locationEnabled;
+  final double? radius;
 }

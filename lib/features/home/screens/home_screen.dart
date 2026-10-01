@@ -7,7 +7,6 @@ import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
 import 'package:pulze_plus/core/theme/app_colors.dart';
 import 'package:pulze_plus/core/theme/app_spacing.dart';
 import 'package:pulze_plus/core/utils/responsive_utils.dart';
-import 'package:pulze_plus/core/widgets/app_card.dart';
 import 'package:pulze_plus/core/widgets/app_section_header.dart';
 import 'package:pulze_plus/features/home/widgets/emergency_actions.dart';
 import 'package:pulze_plus/features/home/widgets/home_header.dart';
@@ -41,47 +40,123 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return;
     }
 
-    final preferencesNotifier = ref.read(appPreferencesProvider.notifier);
-
-    try {
-      final locationService = ref.read(locationServiceProvider);
-
-      await locationService.ensurePermission();
-
-      await preferencesNotifier.setLocationEnabled(true);
-    } on LocationServiceDisabledException {
-      await preferencesNotifier.setLocationEnabled(false);
-    } on LocationPermissionDeniedException {
-      await preferencesNotifier.setLocationEnabled(false);
-    } on LocationPermissionPermanentlyDeniedException {
-      await preferencesNotifier.setLocationEnabled(false);
-    } catch (_) {
-      await preferencesNotifier.setLocationEnabled(false);
-    } finally {
-      await preferencesNotifier.completeLocationSetup();
-    }
+    await _showLocationPermissionDialog();
   }
 
-  Future<void> _toggleLocation(
-    BuildContext context,
-    WidgetRef ref,
-    bool value,
-  ) async {
-    final preferencesNotifier = ref.read(appPreferencesProvider.notifier);
-
-    if (!value) {
-      await preferencesNotifier.setLocationEnabled(false);
+  Future<void> _showLocationPermissionDialog() async {
+    if (!mounted) {
       return;
     }
 
+    final shouldAllow = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          titlePadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.md,
+          ),
+          title: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.location_on_outlined,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  'Use your location?',
+                  style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Pulze+ uses your location to find nearby blood donors and '
+            'show accurate distances from you. Your location is not '
+            'shown publicly to other users.',
+            style: Theme.of(dialogContext).textTheme.bodyMedium
+                ?.copyWith(height: 1.5, color: AppColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(false);
+              },
+              child: const Text('Not now'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(true);
+              },
+              child: const Text('Allow Location'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    final preferencesNotifier = ref.read(appPreferencesProvider.notifier);
+
+    // User declined our explanation dialog.
+    if (shouldAllow != true) {
+      await preferencesNotifier.setLocationEnabled(false);
+      await preferencesNotifier.completeLocationSetup();
+      return;
+    }
+
+    await _requestDeviceLocationPermission();
+  }
+
+  Future<void> _requestDeviceLocationPermission() async {
+    final preferencesNotifier = ref.read(appPreferencesProvider.notifier);
+
     try {
       final locationService = ref.read(locationServiceProvider);
 
+      // This opens the native Android/iOS permission dialog.
       await locationService.ensurePermission();
 
       await preferencesNotifier.setLocationEnabled(true);
     } on LocationServiceDisabledException {
-      if (!context.mounted) {
+      await preferencesNotifier.setLocationEnabled(false);
+
+      if (!mounted) {
         return;
       }
 
@@ -91,7 +166,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       );
     } on LocationPermissionDeniedException {
-      if (!context.mounted) {
+      await preferencesNotifier.setLocationEnabled(false);
+
+      if (!mounted) {
         return;
       }
 
@@ -99,7 +176,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const SnackBar(content: Text('Location permission was denied.')),
       );
     } on LocationPermissionPermanentlyDeniedException {
-      if (!context.mounted) {
+      await preferencesNotifier.setLocationEnabled(false);
+
+      if (!mounted) {
         return;
       }
 
@@ -112,7 +191,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       );
     } catch (_) {
-      if (!context.mounted) {
+      await preferencesNotifier.setLocationEnabled(false);
+
+      if (!mounted) {
         return;
       }
 
@@ -121,6 +202,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           content: Text('Could not access your location right now.'),
         ),
       );
+    } finally {
+      await preferencesNotifier.completeLocationSetup();
     }
   }
 
@@ -132,8 +215,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       tablet: AppSpacing.xxl,
       large: AppSpacing.xxxl,
     );
-
-    final locationEnabled = ref.watch(appPreferencesProvider).locationEnabled;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -152,66 +233,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   HomeHeader(isGuest: widget.isGuest),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  AppCard(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.10),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.location_on_outlined,
-                            color: AppColors.primary,
-                            size: 23,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm + 2),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Location',
-                                style: Theme.of(context).textTheme.titleSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.textPrimary,
-                                    ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                locationEnabled
-                                    ? 'Used to find nearby donors'
-                                    : 'Location is turned off',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: AppColors.textSecondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Switch.adaptive(
-                          value: locationEnabled,
-                          onChanged: (value) {
-                            _toggleLocation(context, ref, value);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
 
                   const SizedBox(height: AppSpacing.md),
 

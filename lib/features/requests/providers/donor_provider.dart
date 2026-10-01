@@ -1,3 +1,4 @@
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -23,6 +24,7 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
   int _currentPage = 1;
   bool _hasMore = true;
   bool _isLoadingMore = false;
+  bool _isRefreshing = false;
 
   @override
   Future<List<DonorModel>> build() async {
@@ -57,7 +59,8 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
     }
 
     try {
-      final serviceEnabled = await _locationService.isLocationServiceEnabled();
+      final serviceEnabled =
+          await _locationService.isLocationServiceEnabled();
 
       if (!serviceEnabled) {
         _clearLocationCoordinates();
@@ -130,7 +133,10 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
       _currentPage = nextPage;
       _hasMore = page.hasNext;
 
-      state = AsyncData([...currentDonors, ...page.results]);
+      state = AsyncData([
+        ...currentDonors,
+        ...page.results,
+      ]);
     } catch (_) {
       // Keep the already loaded donors visible.
       state = AsyncData(currentDonors);
@@ -170,12 +176,13 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
     _bloodType = bloodType;
     _search = search?.trim();
 
-    state = const AsyncLoading();
+    _isRefreshing = true;
 
     try {
       await _locationService.ensurePermission();
 
-      final Position position = await _locationService.getCurrentPosition();
+      final Position position =
+          await _locationService.getCurrentPosition();
 
       _latitude = position.latitude;
       _longitude = position.longitude;
@@ -184,7 +191,12 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
 
       state = AsyncData(donors);
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      // Keep the existing donor list visible if the refresh fails.
+      if (!state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
+    } finally {
+      _isRefreshing = false;
     }
   }
 
@@ -222,7 +234,8 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
 
   Future<void> _refreshCurrentLocation() async {
     try {
-      final serviceEnabled = await _locationService.isLocationServiceEnabled();
+      final serviceEnabled =
+          await _locationService.isLocationServiceEnabled();
 
       if (!serviceEnabled) {
         _clearLocationCoordinates();
@@ -250,14 +263,19 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
   }
 
   Future<void> _reloadFromFirstPage() async {
-    state = const AsyncLoading();
+    _isRefreshing = true;
 
     try {
       final donors = await _loadFirstPage();
 
       state = AsyncData(donors);
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      // Keep the existing donor list visible if the request fails.
+      if (!state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
+    } finally {
+      _isRefreshing = false;
     }
   }
 
@@ -289,6 +307,8 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
 
   bool get isLoadingMore => _isLoadingMore;
 
+  bool get isRefreshing => _isRefreshing;
+
   int get currentPage => _currentPage;
 
   String? get searchQuery => _search;
@@ -303,9 +323,12 @@ class DonorNotifier extends AsyncNotifier<List<DonorModel>> {
 }
 
 final donorRepositoryProvider = Provider<DonorRepository>((ref) {
-  return DonorRepository(apiService: ref.read(apiServiceProvider));
+  return DonorRepository(
+    apiService: ref.read(apiServiceProvider),
+  );
 });
 
-final donorProvider = AsyncNotifierProvider<DonorNotifier, List<DonorModel>>(
+final donorProvider =
+    AsyncNotifierProvider<DonorNotifier, List<DonorModel>>(
   DonorNotifier.new,
 );
