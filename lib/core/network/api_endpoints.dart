@@ -41,5 +41,6 @@ class ApiEndpoints {
 
     // Donors
   static const donors = 'donors/';
+  static const externalDonors = 'donors/external/';
 
 }

@@ -5,6 +5,8 @@ class BloodRequestModel {
   const BloodRequestModel({
     required this.id,
     required this.requester,
+    required this.requestType,
+    required this.targetDonor,
     required this.patientType,
     required this.patientName,
     required this.requesterRelationship,
@@ -31,6 +33,12 @@ class BloodRequestModel {
 
   final int id;
   final int requester;
+
+  /// GENERAL or DIRECT.
+  final String requestType;
+
+  /// Only populated for DIRECT requests.
+  final int? targetDonor;
 
   final String patientType;
   final String patientName;
@@ -65,35 +73,73 @@ class BloodRequestModel {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  factory BloodRequestModel.fromJson(Map<String, dynamic> json) {
+  bool get isGeneral => requestType == 'GENERAL';
+
+  bool get isDirect => requestType == 'DIRECT';
+
+  bool get isActive => status == 'ACTIVE';
+
+  bool get isFulfilled => status == 'FULFILLED';
+
+  factory BloodRequestModel.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return BloodRequestModel(
       id: _parseInt(json['id']),
       requester: _parseInt(json['requester']),
-      patientType: json['patient_type']?.toString() ?? '',
-      patientName: json['patient_name']?.toString() ?? '',
+      requestType:
+          json['request_type']?.toString() ?? 'GENERAL',
+      targetDonor: _parseNullableInt(
+        json['target_donor'],
+      ),
+      patientType:
+          json['patient_type']?.toString() ?? '',
+      patientName:
+          json['patient_name']?.toString() ?? '',
       requesterRelationship:
           json['requester_relationship']?.toString() ?? '',
-      otherRelationship: json['other_relationship']?.toString() ?? '',
-      purpose: json['purpose']?.toString() ?? '',
-      purposeOther: json['purpose_other']?.toString() ?? '',
-      bloodGroup: json['blood_group']?.toString() ?? '',
-      unitsRequired: _parseInt(json['units_required']),
-      unitsFulfilled: _parseInt(json['units_fulfilled']),
-      unitsRemaining: _parseInt(json['units_remaining']),
-      urgency: json['urgency']?.toString() ?? '',
-      requiredAt: DateTime.parse(json['required_at'].toString()),
-      expiresAt: DateTime.parse(json['expires_at'].toString()),
-      hospitalName: json['hospital_name']?.toString() ?? '',
-      location: BloodRequestLocation.fromJson(json['location']),
-      contactType: json['contact_type']?.toString() ?? '',
-      contactPhone: json['contact_phone']?.toString() ?? '',
-      contactVerifiedAt: _parseNullableDateTime(
+      otherRelationship:
+          json['other_relationship']?.toString() ?? '',
+      purpose:
+          json['purpose']?.toString() ?? '',
+      purposeOther:
+          json['purpose_other']?.toString() ?? '',
+      bloodGroup:
+          json['blood_group']?.toString() ?? '',
+      unitsRequired:
+          _parseInt(json['units_required']),
+      unitsFulfilled:
+          _parseInt(json['units_fulfilled']),
+      unitsRemaining:
+          _parseInt(json['units_remaining']),
+      urgency:
+          json['urgency']?.toString() ?? '',
+      requiredAt:
+          _parseDateTime(json['required_at']),
+      expiresAt:
+          _parseDateTime(json['expires_at']),
+      hospitalName:
+          json['hospital_name']?.toString() ?? '',
+      location:
+          BloodRequestLocation.fromJson(
+        json['location'],
+      ),
+      contactType:
+          json['contact_type']?.toString() ?? '',
+      contactPhone:
+          json['contact_phone']?.toString() ?? '',
+      contactVerifiedAt:
+          _parseNullableDateTime(
         json['contact_verified_at'],
       ),
-      note: json['note']?.toString() ?? '',
-      status: json['status']?.toString() ?? '',
-      createdAt: DateTime.parse(json['created_at'].toString()),
-      updatedAt: DateTime.parse(json['updated_at'].toString()),
+      note:
+          json['note']?.toString() ?? '',
+      status:
+          json['status']?.toString() ?? '',
+      createdAt:
+          _parseDateTime(json['created_at']),
+      updatedAt:
+          _parseDateTime(json['updated_at']),
     );
   }
 
@@ -101,6 +147,8 @@ class BloodRequestModel {
     return {
       'id': id,
       'requester': requester,
+      'request_type': requestType,
+      'target_donor': targetDonor,
       'patient_type': patientType,
       'patient_name': patientName,
       'requester_relationship': requesterRelationship,
@@ -118,7 +166,8 @@ class BloodRequestModel {
       'location': location?.toJson(),
       'contact_type': contactType,
       'contact_phone': contactPhone,
-      'contact_verified_at': contactVerifiedAt?.toIso8601String(),
+      'contact_verified_at':
+          contactVerifiedAt?.toIso8601String(),
       'note': note,
       'status': status,
       'created_at': createdAt.toIso8601String(),
@@ -129,6 +178,8 @@ class BloodRequestModel {
   BloodRequestModel copyWith({
     int? id,
     int? requester,
+    String? requestType,
+    int? targetDonor,
     String? patientType,
     String? patientName,
     String? requesterRelationship,
@@ -155,30 +206,57 @@ class BloodRequestModel {
     return BloodRequestModel(
       id: id ?? this.id,
       requester: requester ?? this.requester,
-      patientType: patientType ?? this.patientType,
-      patientName: patientName ?? this.patientName,
+      requestType:
+          requestType ?? this.requestType,
+      targetDonor:
+          targetDonor ?? this.targetDonor,
+      patientType:
+          patientType ?? this.patientType,
+      patientName:
+          patientName ?? this.patientName,
       requesterRelationship:
-          requesterRelationship ?? this.requesterRelationship,
-      otherRelationship: otherRelationship ?? this.otherRelationship,
-      purpose: purpose ?? this.purpose,
-      purposeOther: purposeOther ?? this.purposeOther,
-      bloodGroup: bloodGroup ?? this.bloodGroup,
-      unitsRequired: unitsRequired ?? this.unitsRequired,
-      unitsFulfilled: unitsFulfilled ?? this.unitsFulfilled,
-      unitsRemaining: unitsRemaining ?? this.unitsRemaining,
-      urgency: urgency ?? this.urgency,
-      requiredAt: requiredAt ?? this.requiredAt,
-      expiresAt: expiresAt ?? this.expiresAt,
-      hospitalName: hospitalName ?? this.hospitalName,
-      location: location ?? this.location,
-      contactType: contactType ?? this.contactType,
-      contactPhone: contactPhone ?? this.contactPhone,
+          requesterRelationship ??
+          this.requesterRelationship,
+      otherRelationship:
+          otherRelationship ??
+          this.otherRelationship,
+      purpose:
+          purpose ?? this.purpose,
+      purposeOther:
+          purposeOther ?? this.purposeOther,
+      bloodGroup:
+          bloodGroup ?? this.bloodGroup,
+      unitsRequired:
+          unitsRequired ?? this.unitsRequired,
+      unitsFulfilled:
+          unitsFulfilled ?? this.unitsFulfilled,
+      unitsRemaining:
+          unitsRemaining ?? this.unitsRemaining,
+      urgency:
+          urgency ?? this.urgency,
+      requiredAt:
+          requiredAt ?? this.requiredAt,
+      expiresAt:
+          expiresAt ?? this.expiresAt,
+      hospitalName:
+          hospitalName ?? this.hospitalName,
+      location:
+          location ?? this.location,
+      contactType:
+          contactType ?? this.contactType,
+      contactPhone:
+          contactPhone ?? this.contactPhone,
       contactVerifiedAt:
-          contactVerifiedAt ?? this.contactVerifiedAt,
-      note: note ?? this.note,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+          contactVerifiedAt ??
+          this.contactVerifiedAt,
+      note:
+          note ?? this.note,
+      status:
+          status ?? this.status,
+      createdAt:
+          createdAt ?? this.createdAt,
+      updatedAt:
+          updatedAt ?? this.updatedAt,
     );
   }
 
@@ -187,10 +265,46 @@ class BloodRequestModel {
       return value;
     }
 
-    return int.tryParse(value?.toString() ?? '') ?? 0;
+    if (value is num) {
+      return value.toInt();
+    }
+
+    return int.tryParse(
+          value?.toString() ?? '',
+        ) ??
+        0;
   }
 
-  static DateTime? _parseNullableDateTime(dynamic value) {
+  static int? _parseNullableInt(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is int) {
+      return value;
+    }
+
+    if (value is num) {
+      return value.toInt();
+    }
+
+    return int.tryParse(
+      value.toString(),
+    );
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    final parsed = DateTime.tryParse(
+      value?.toString() ?? '',
+    );
+
+    return parsed ??
+        DateTime.fromMillisecondsSinceEpoch(0);
+  }
+
+  static DateTime? _parseNullableDateTime(
+    dynamic value,
+  ) {
     if (value == null) {
       return null;
     }
@@ -215,25 +329,53 @@ class BloodRequestLocation {
   final double latitude;
   final double longitude;
 
-  factory BloodRequestLocation.fromJson(dynamic json) {
+  static BloodRequestLocation? fromJson(
+    dynamic json,
+  ) {
     if (json == null) {
-      return const BloodRequestLocation(
-        latitude: 0,
-        longitude: 0,
-      );
+      return null;
     }
 
-    if (json is Map<String, dynamic>) {
-      final coordinates = json['coordinates'];
+    if (json is Map) {
+      final map = Map<String, dynamic>.from(json);
 
-      if (coordinates is List && coordinates.length >= 2) {
+      // GeoJSON:
+      // {
+      //   "type": "Point",
+      //   "coordinates": [longitude, latitude]
+      // }
+      final coordinates = map['coordinates'];
+
+      if (coordinates is List &&
+          coordinates.length >= 2) {
         return BloodRequestLocation(
-          longitude: _parseDouble(coordinates[0]),
-          latitude: _parseDouble(coordinates[1]),
+          longitude: _parseDouble(
+            coordinates[0],
+          ),
+          latitude: _parseDouble(
+            coordinates[1],
+          ),
+        );
+      }
+
+      // Accepted connection detail:
+      // {
+      //   "latitude": ...,
+      //   "longitude": ...
+      // }
+      final latitude = map['latitude'];
+      final longitude = map['longitude'];
+
+      if (latitude != null && longitude != null) {
+        return BloodRequestLocation(
+          latitude: _parseDouble(latitude),
+          longitude: _parseDouble(longitude),
         );
       }
     }
 
+    // Optional WKT support:
+    // POINT(longitude latitude)
     if (json is String) {
       final match = RegExp(
         r'POINT\s*\(\s*([-+]?\d*\.?\d+)\s+([-+]?\d*\.?\d+)\s*\)',
@@ -242,16 +384,17 @@ class BloodRequestLocation {
 
       if (match != null) {
         return BloodRequestLocation(
-          longitude: double.parse(match.group(1)!),
-          latitude: double.parse(match.group(2)!),
+          longitude: double.parse(
+            match.group(1)!,
+          ),
+          latitude: double.parse(
+            match.group(2)!,
+          ),
         );
       }
     }
 
-    return const BloodRequestLocation(
-      latitude: 0,
-      longitude: 0,
-    );
+    return null;
   }
 
   Map<String, dynamic> toJson() {
@@ -269,6 +412,9 @@ class BloodRequestLocation {
       return value.toDouble();
     }
 
-    return double.tryParse(value?.toString() ?? '') ?? 0;
+    return double.tryParse(
+          value?.toString() ?? '',
+        ) ??
+        0;
   }
 }

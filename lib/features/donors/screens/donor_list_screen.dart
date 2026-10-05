@@ -10,8 +10,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../models/donor_model.dart';
+import '../models/external_donor_model.dart';
 import '../providers/donor_provider.dart';
+import '../providers/external_donor_provider.dart';
 import '../widgets/donor_list_item.dart';
+import '../widgets/external_donor_list_item.dart';
 
 class DonorListScreen extends ConsumerStatefulWidget {
   const DonorListScreen({super.key});
@@ -23,13 +26,16 @@ class DonorListScreen extends ConsumerStatefulWidget {
 class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   late final TextEditingController _searchController;
   late final ScrollController _scrollController;
+
   late final DonorNotifier _donorNotifier;
+  late final ExternalDonorNotifier _externalDonorNotifier;
 
   Timer? _searchDebounce;
 
   String? _selectedBloodGroup;
   double? _selectedRadius;
 
+  bool _showExternalDonors = false;
   bool _isApplyingFilter = false;
 
   @override
@@ -37,6 +43,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     super.initState();
 
     _donorNotifier = ref.read(donorProvider.notifier);
+    _externalDonorNotifier = ref.read(externalDonorProvider.notifier);
 
     _searchController = TextEditingController();
     _scrollController = ScrollController();
@@ -51,6 +58,30 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     _scrollController.dispose();
 
     super.dispose();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Donor Type
+  // ---------------------------------------------------------------------------
+
+  void _switchDonorType(bool showExternal) {
+    if (_showExternalDonors == showExternal) {
+      return;
+    }
+
+    _searchDebounce?.cancel();
+
+    setState(() {
+      _showExternalDonors = showExternal;
+      _searchController.clear();
+      _selectedBloodGroup = null;
+      _selectedRadius = null;
+      _isApplyingFilter = false;
+    });
+
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -77,7 +108,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         return false;
       }
 
-      await ref.read(appPreferencesProvider.notifier).setLocationEnabled(true);
+      await ref
+          .read(appPreferencesProvider.notifier)
+          .setLocationEnabled(true);
 
       return true;
     } on LocationServiceDisabledException {
@@ -204,7 +237,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
           ),
           title: const Text(
             'Location unavailable',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           content: Text(
             message,
@@ -239,8 +275,15 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     final position = _scrollController.position;
 
     if (position.pixels >= position.maxScrollExtent - 300) {
-      if (!_donorNotifier.isLoadingMore && _donorNotifier.hasMore) {
-        _donorNotifier.loadMore();
+      if (_showExternalDonors) {
+        if (!_externalDonorNotifier.isLoadingMore &&
+            _externalDonorNotifier.hasMore) {
+          _externalDonorNotifier.loadMore();
+        }
+      } else {
+        if (!_donorNotifier.isLoadingMore && _donorNotifier.hasMore) {
+          _donorNotifier.loadMore();
+        }
       }
     }
   }
@@ -254,30 +297,36 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
 
     _searchDebounce?.cancel();
 
-    _searchDebounce = Timer(const Duration(milliseconds: 450), () async {
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        _isApplyingFilter = true;
-      });
-
-      try {
-        await _donorNotifier.searchDonors(value);
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isApplyingFilter = false;
-          });
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 450),
+      () async {
+        if (!mounted) {
+          return;
         }
-      }
-    });
+
+        setState(() {
+          _isApplyingFilter = true;
+        });
+
+        try {
+          if (_showExternalDonors) {
+            await _externalDonorNotifier.searchDonors(value);
+          } else {
+            await _donorNotifier.searchDonors(value);
+          }
+        } finally {
+          if (mounted) {
+            setState(() {
+              _isApplyingFilter = false;
+            });
+          }
+        }
+      },
+    );
   }
 
   void _clearSearch() {
     _searchDebounce?.cancel();
-
     _searchController.clear();
 
     setState(() {});
@@ -291,7 +340,11 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     });
 
     try {
-      await _donorNotifier.searchDonors(null);
+      if (_showExternalDonors) {
+        await _externalDonorNotifier.searchDonors(null);
+      } else {
+        await _donorNotifier.searchDonors(null);
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -306,6 +359,311 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // ---------------------------------------------------------------------------
 
   Future<void> _openFilterSheet() async {
+    if (_showExternalDonors) {
+      await _openExternalFilterSheet();
+      return;
+    }
+
+    await _openAppDonorFilterSheet();
+  }
+
+  Future<void> _openExternalFilterSheet() async {
+    final selection = await showModalBottomSheet<String?>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      showDragHandle: false,
+      builder: (sheetContext) {
+        String? temporaryBloodGroup = _selectedBloodGroup;
+
+        return StatefulBuilder(
+          builder: (context, sheetSetState) {
+            return SafeArea(
+              top: false,
+              child: Container(
+                height: MediaQuery.sizeOf(context).height * 0.55,
+                decoration: const BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: AppSpacing.sm),
+                    Container(
+                      width: 42,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        AppSpacing.md,
+                        AppSpacing.lg,
+                        AppSpacing.sm,
+                      ),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Filter external donors',
+                                  style: TextStyle(
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  'Choose a blood group to narrow results.',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: 'Close',
+                            onPressed: () {
+                              Navigator.of(sheetContext).pop();
+                            },
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          AppSpacing.sm,
+                          AppSpacing.lg,
+                          AppSpacing.lg,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Select blood group',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Choose a blood group to narrow external donor results.',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                _buildSheetBloodChip(
+                                  label: 'All',
+                                  value: null,
+                                  selected: temporaryBloodGroup == null,
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = null;
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'A+',
+                                  value: 'A+',
+                                  selected: temporaryBloodGroup == 'A+',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'A+';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'A−',
+                                  value: 'A-',
+                                  selected: temporaryBloodGroup == 'A-',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'A-';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'B+',
+                                  value: 'B+',
+                                  selected: temporaryBloodGroup == 'B+',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'B+';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'B−',
+                                  value: 'B-',
+                                  selected: temporaryBloodGroup == 'B-',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'B-';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'AB+',
+                                  value: 'AB+',
+                                  selected: temporaryBloodGroup == 'AB+',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'AB+';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'AB−',
+                                  value: 'AB-',
+                                  selected: temporaryBloodGroup == 'AB-',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'AB-';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'O+',
+                                  value: 'O+',
+                                  selected: temporaryBloodGroup == 'O+',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'O+';
+                                    });
+                                  },
+                                ),
+                                _buildSheetBloodChip(
+                                  label: 'O−',
+                                  value: 'O-',
+                                  selected: temporaryBloodGroup == 'O-',
+                                  onTap: () {
+                                    sheetSetState(() {
+                                      temporaryBloodGroup = 'O-';
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        AppSpacing.sm,
+                        AppSpacing.lg,
+                        AppSpacing.md,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        border: Border(
+                          top: BorderSide(
+                            color: AppColors.border.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(sheetContext).pop();
+                              },
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(48),
+                                side: const BorderSide(
+                                  color: AppColors.border,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: const Text('Cancel'),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            flex: 2,
+                            child: FilledButton(
+                              onPressed: () {
+                                Navigator.of(sheetContext).pop(
+                                  temporaryBloodGroup,
+                                );
+                              },
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: const Text('Apply Filter'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (selection == null && _selectedBloodGroup == null) {
+      return;
+    }
+
+    await _applyExternalBloodFilter(selection);
+  }
+
+  Future<void> _applyExternalBloodFilter(String? bloodGroup) async {
+    setState(() {
+      _selectedBloodGroup = bloodGroup;
+      _selectedRadius = null;
+      _isApplyingFilter = true;
+    });
+
+    try {
+      await _externalDonorNotifier.filterByBloodType(bloodGroup);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isApplyingFilter = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _openAppDonorFilterSheet() async {
     final selection = await showModalBottomSheet<_DonorFilterSelection>(
       context: context,
       isScrollControlled: true,
@@ -318,7 +676,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         return Consumer(
           builder: (context, ref, child) {
             final locationEnabled = ref.watch(
-              appPreferencesProvider.select((state) => state.locationEnabled),
+              appPreferencesProvider.select(
+                (state) => state.locationEnabled,
+              ),
             );
 
             return StatefulBuilder(
@@ -337,12 +697,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                       length: 2,
                       child: Column(
                         children: [
-                          // ----------------------------------------------------
-                          // Drag handle
-                          // ----------------------------------------------------
-
                           const SizedBox(height: AppSpacing.sm),
-
                           Container(
                             width: 42,
                             height: 4,
@@ -351,10 +706,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-
-                          // ----------------------------------------------------
-                          // Header
-                          // ----------------------------------------------------
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
                               AppSpacing.lg,
@@ -398,10 +749,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                               ],
                             ),
                           ),
-
-                          // ----------------------------------------------------
-                          // Tabs
-                          // ----------------------------------------------------
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.lg,
@@ -412,7 +759,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: AppColors.border),
+                                border: Border.all(
+                                  color: AppColors.border,
+                                ),
                               ),
                               child: const TabBar(
                                 dividerColor: Colors.transparent,
@@ -424,7 +773,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                   ),
                                 ),
                                 labelColor: Colors.white,
-                                unselectedLabelColor: AppColors.textSecondary,
+                                unselectedLabelColor:
+                                    AppColors.textSecondary,
                                 labelStyle: TextStyle(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w700,
@@ -452,20 +802,11 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                               ),
                             ),
                           ),
-
                           const SizedBox(height: AppSpacing.sm),
-
-                          // ----------------------------------------------------
-                          // Tab content
-                          // ----------------------------------------------------
                           Expanded(
                             child: TabBarView(
                               physics: const BouncingScrollPhysics(),
                               children: [
-                                // ==================================================
-                                // BLOOD GROUP
-                                // ==================================================
-
                                 SingleChildScrollView(
                                   physics: const BouncingScrollPhysics(),
                                   padding: const EdgeInsets.fromLTRB(
@@ -495,124 +836,27 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: AppSpacing.md),
-
                                       Wrap(
                                         spacing: 8,
                                         runSpacing: 8,
-                                        children: [
-                                          _buildSheetBloodChip(
-                                            label: 'All',
-                                            value: null,
-                                            selected:
-                                                temporaryBloodGroup == null,
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = null;
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'A+',
-                                            value: 'A+',
-                                            selected:
-                                                temporaryBloodGroup == 'A+',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'A+';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'A−',
-                                            value: 'A-',
-                                            selected:
-                                                temporaryBloodGroup == 'A-',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'A-';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'B+',
-                                            value: 'B+',
-                                            selected:
-                                                temporaryBloodGroup == 'B+',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'B+';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'B−',
-                                            value: 'B-',
-                                            selected:
-                                                temporaryBloodGroup == 'B-',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'B-';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'AB+',
-                                            value: 'AB+',
-                                            selected:
-                                                temporaryBloodGroup == 'AB+',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'AB+';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'AB−',
-                                            value: 'AB-',
-                                            selected:
-                                                temporaryBloodGroup == 'AB-',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'AB-';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'O+',
-                                            value: 'O+',
-                                            selected:
-                                                temporaryBloodGroup == 'O+',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'O+';
-                                              });
-                                            },
-                                          ),
-                                          _buildSheetBloodChip(
-                                            label: 'O−',
-                                            value: 'O-',
-                                            selected:
-                                                temporaryBloodGroup == 'O-',
-                                            onTap: () {
-                                              sheetSetState(() {
-                                                temporaryBloodGroup = 'O-';
-                                              });
-                                            },
-                                          ),
-                                        ],
+                                        children: _buildBloodGroupChips(
+                                          temporaryBloodGroup,
+                                          (value) {
+                                            sheetSetState(() {
+                                              temporaryBloodGroup = value;
+                                            });
+                                          },
+                                        ),
                                       ),
-
                                       const SizedBox(height: AppSpacing.lg),
-
                                       Container(
                                         padding: const EdgeInsets.all(
                                           AppSpacing.sm,
                                         ),
                                         decoration: BoxDecoration(
                                           color: AppColors.surface,
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(14),
                                           border: Border.all(
                                             color: AppColors.border,
                                           ),
@@ -642,10 +886,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                     ],
                                   ),
                                 ),
-
-                                // ==================================================
-                                // LOCATION
-                                // ==================================================
                                 SingleChildScrollView(
                                   physics: const BouncingScrollPhysics(),
                                   padding: const EdgeInsets.fromLTRB(
@@ -666,11 +906,11 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                           color: AppColors.primary.withValues(
                                             alpha: 0.07,
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(14),
                                           border: Border.all(
-                                            color: AppColors.primary.withValues(
+                                            color:
+                                                AppColors.primary.withValues(
                                               alpha: 0.16,
                                             ),
                                           ),
@@ -699,12 +939,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                           ],
                                         ),
                                       ),
-
                                       const SizedBox(height: AppSpacing.md),
-
-                                      // ------------------------------------------------
-                                      // Location switch
-                                      // ------------------------------------------------
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: AppSpacing.sm,
@@ -712,9 +947,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: AppColors.surface,
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                           border: Border.all(
                                             color: locationEnabled
                                                 ? AppColors.primary.withValues(
@@ -732,9 +966,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                               decoration: BoxDecoration(
                                                 color: locationEnabled
                                                     ? AppColors.primary
-                                                          .withValues(
-                                                            alpha: 0.10,
-                                                          )
+                                                        .withValues(
+                                                        alpha: 0.10,
+                                                      )
                                                     : AppColors.background,
                                                 borderRadius:
                                                     BorderRadius.circular(12),
@@ -771,8 +1005,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                                     style: TextStyle(
                                                       fontSize: 11.5,
                                                       height: 1.3,
-                                                      color: AppColors
-                                                          .textSecondary,
+                                                      color:
+                                                          AppColors.textSecondary,
                                                     ),
                                                   ),
                                                 ],
@@ -795,7 +1029,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                                       .setLocationEnabled(
                                                         false,
                                                       );
-
                                                   return;
                                                 }
 
@@ -805,10 +1038,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                           ],
                                         ),
                                       ),
-
-                                      // ------------------------------------------------
-                                      // Radius
-                                      // ------------------------------------------------
                                       if (locationEnabled) ...[
                                         const SizedBox(height: AppSpacing.md),
                                         Container(
@@ -820,9 +1049,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: AppColors.surface,
-                                            borderRadius: BorderRadius.circular(
-                                              16,
-                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
                                             border: Border.all(
                                               color: AppColors.border,
                                             ),
@@ -847,19 +1075,20 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                                   ),
                                                   Container(
                                                     padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 9,
-                                                          vertical: 4,
-                                                        ),
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                      horizontal: 9,
+                                                      vertical: 4,
+                                                    ),
                                                     decoration: BoxDecoration(
                                                       color: AppColors.primary
                                                           .withValues(
-                                                            alpha: 0.09,
-                                                          ),
+                                                        alpha: 0.09,
+                                                      ),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                            20,
-                                                          ),
+                                                        20,
+                                                      ),
                                                     ),
                                                     child: Text(
                                                       '${temporaryRadius.toInt()} km',
@@ -874,26 +1103,29 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                                   ),
                                                 ],
                                               ),
-
                                               SliderTheme(
-                                                data: SliderTheme.of(context).copyWith(
+                                                data: SliderTheme.of(context)
+                                                    .copyWith(
                                                   trackHeight: 4,
                                                   thumbShape:
                                                       const RoundSliderThumbShape(
-                                                        enabledThumbRadius: 7,
-                                                      ),
+                                                    enabledThumbRadius: 7,
+                                                  ),
                                                   overlayShape:
                                                       const RoundSliderOverlayShape(
-                                                        overlayRadius: 16,
-                                                      ),
+                                                    overlayRadius: 16,
+                                                  ),
                                                   activeTrackColor:
                                                       AppColors.primary,
                                                   inactiveTrackColor:
                                                       AppColors.border,
-                                                  thumbColor: AppColors.primary,
+                                                  thumbColor:
+                                                      AppColors.primary,
                                                   overlayColor: AppColors
                                                       .primary
-                                                      .withValues(alpha: 0.10),
+                                                      .withValues(
+                                                    alpha: 0.10,
+                                                  ),
                                                 ),
                                                 child: Slider(
                                                   min: 5,
@@ -909,7 +1141,6 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                                   },
                                                 ),
                                               ),
-
                                               const Padding(
                                                 padding: EdgeInsets.symmetric(
                                                   horizontal: 4,
@@ -948,17 +1179,12 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                               ],
                             ),
                           ),
-
-                          // ----------------------------------------------------
-                          // Bottom actions
-                          // ----------------------------------------------------
                           Container(
-                            padding: EdgeInsets.fromLTRB(
+                            padding: const EdgeInsets.fromLTRB(
                               AppSpacing.lg,
                               AppSpacing.sm,
                               AppSpacing.lg,
-                              AppSpacing.md +
-                                  MediaQuery.viewInsetsOf(context).bottom,
+                              AppSpacing.md,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.surface,
@@ -983,7 +1209,8 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                                         color: AppColors.border,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius:
+                                            BorderRadius.circular(14),
                                       ),
                                     ),
                                     child: const Text('Cancel'),
@@ -1035,10 +1262,13 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     await _applyFilterSelection(selection);
   }
 
-  Future<void> _applyFilterSelection(_DonorFilterSelection selection) async {
+  Future<void> _applyFilterSelection(
+    _DonorFilterSelection selection,
+  ) async {
     setState(() {
       _selectedBloodGroup = selection.bloodGroup;
-      _selectedRadius = selection.locationEnabled ? selection.radius : null;
+      _selectedRadius =
+          selection.locationEnabled ? selection.radius : null;
       _isApplyingFilter = true;
     });
 
@@ -1052,7 +1282,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
       } else {
         _donorNotifier.clearLocation();
 
-        await _donorNotifier.filterByBloodType(selection.bloodGroup);
+        await _donorNotifier.filterByBloodType(
+          selection.bloodGroup,
+        );
       }
     } finally {
       if (mounted) {
@@ -1061,6 +1293,35 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         });
       }
     }
+  }
+
+  List<Widget> _buildBloodGroupChips(
+    String? selectedBloodGroup,
+    ValueChanged<String?> onSelected,
+  ) {
+    const groups = <MapEntry<String, String?>>[
+      MapEntry('All', null),
+      MapEntry('A+', 'A+'),
+      MapEntry('A−', 'A-'),
+      MapEntry('B+', 'B+'),
+      MapEntry('B−', 'B-'),
+      MapEntry('AB+', 'AB+'),
+      MapEntry('AB−', 'AB-'),
+      MapEntry('O+', 'O+'),
+      MapEntry('O−', 'O-'),
+    ];
+
+    return [
+      for (final group in groups)
+        _buildSheetBloodChip(
+          label: group.key,
+          value: group.value,
+          selected: selectedBloodGroup == group.value,
+          onTap: () {
+            onSelected(group.value);
+          },
+        ),
+    ];
   }
 
   Widget _buildSheetBloodChip({
@@ -1104,8 +1365,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                 label,
                 style: TextStyle(
                   fontSize: 12.5,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? AppColors.primary : AppColors.textPrimary,
+                  fontWeight:
+                      selected ? FontWeight.w700 : FontWeight.w600,
+                  color:
+                      selected ? AppColors.primary : AppColors.textPrimary,
                 ),
               ),
             ],
@@ -1120,11 +1383,15 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // ---------------------------------------------------------------------------
 
   Future<void> _handleRefresh() async {
-    await _donorNotifier.refreshDonors();
+    if (_showExternalDonors) {
+      await _externalDonorNotifier.refreshDonors();
+    } else {
+      await _donorNotifier.refreshDonors();
+    }
   }
 
   // ---------------------------------------------------------------------------
-  // Donor actions
+  // Donor Actions
   // ---------------------------------------------------------------------------
 
   void _handleDonorTap(DonorModel donor) {
@@ -1133,6 +1400,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
 
   void _handleDonorRequest(DonorModel donor) {
     // Existing donor request flow can be connected later.
+  }
+
+  void _handleExternalDonorTap(ExternalDonorModel donor) {
+    // External donor detail/contact flow can be connected later.
   }
 
   // ---------------------------------------------------------------------------
@@ -1157,7 +1428,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
               onChanged: _handleSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'Search city or address',
+                hintText: _showExternalDonors
+                    ? 'Search name, city or address'
+                    : 'Search city or address',
                 hintStyle: const TextStyle(
                   fontSize: 13.5,
                   color: AppColors.textSecondary,
@@ -1171,7 +1444,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                     ? IconButton(
                         tooltip: 'Clear search',
                         onPressed: _clearSearch,
-                        icon: const Icon(Icons.close_rounded, size: 19),
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          size: 19,
+                        ),
                       )
                     : null,
                 border: InputBorder.none,
@@ -1192,8 +1468,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   }
 
   Widget _buildFilterButton() {
-    final hasActiveFilter =
-        _selectedBloodGroup != null || _selectedRadius != null;
+    final hasActiveFilter = _showExternalDonors
+        ? _selectedBloodGroup != null
+        : _selectedBloodGroup != null || _selectedRadius != null;
 
     return Material(
       color: Colors.transparent,
@@ -1235,7 +1512,10 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.surface, width: 1.5),
+                      border: Border.all(
+                        color: AppColors.surface,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -1251,7 +1531,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _buildLocationPrompt(bool locationEnabled) {
-    if (locationEnabled) {
+    if (locationEnabled || _showExternalDonors) {
       return const SizedBox.shrink();
     }
 
@@ -1300,10 +1580,102 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   }
 
   // ---------------------------------------------------------------------------
+  // Donor Type Selector
+  // ---------------------------------------------------------------------------
+
+  Widget _buildDonorTypeSelector() {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildDonorTypeButton(
+              label: 'App Donors',
+              icon: Icons.person_outline_rounded,
+              selected: !_showExternalDonors,
+              onTap: () {
+                _switchDonorType(false);
+              },
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: _buildDonorTypeButton(
+              label: 'External Donors',
+              icon: Icons.groups_outlined,
+              selected: _showExternalDonors,
+              onTap: () {
+                _switchDonorType(true);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDonorTypeButton({
+    required String label,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: selected
+                    ? Colors.white
+                    : AppColors.textSecondary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: selected
+                      ? Colors.white
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // Donor Item
   // ---------------------------------------------------------------------------
 
-  Widget _buildDonorItem(DonorModel donor, {required bool locationEnabled}) {
+  Widget _buildDonorItem(
+    DonorModel donor, {
+    required bool locationEnabled,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: DonorListItem(
@@ -1319,12 +1691,28 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
     );
   }
 
+  Widget _buildExternalDonorItem(ExternalDonorModel donor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: ExternalDonorListItem(
+        donor: donor,
+        onTap: () {
+          _handleExternalDonorTap(donor);
+        },
+      ),
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Pagination UI
   // ---------------------------------------------------------------------------
 
   Widget _buildPaginationLoader() {
-    if (!_donorNotifier.isLoadingMore) {
+    final isLoading = _showExternalDonors
+        ? _externalDonorNotifier.isLoadingMore
+        : _donorNotifier.isLoadingMore;
+
+    if (!isLoading) {
       return const SizedBox.shrink();
     }
 
@@ -1334,23 +1722,37 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         child: SizedBox(
           width: 22,
           height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2.2),
+          child: CircularProgressIndicator(
+            strokeWidth: 2.2,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildNoMoreResults() {
-    if (_donorNotifier.hasMore) {
+    final hasMore = _showExternalDonors
+        ? _externalDonorNotifier.hasMore
+        : _donorNotifier.hasMore;
+
+    if (hasMore) {
       return const SizedBox.shrink();
     }
 
-    return const Padding(
-      padding: EdgeInsets.only(top: AppSpacing.xs, bottom: AppSpacing.md),
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: AppSpacing.xs,
+        bottom: AppSpacing.md,
+      ),
       child: Center(
         child: Text(
-          'No more donors to show',
-          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          _showExternalDonors
+              ? 'No more external donors to show'
+              : 'No more donors to show',
+          style: const TextStyle(
+            fontSize: 12,
+            color: AppColors.textSecondary,
+          ),
         ),
       ),
     );
@@ -1363,20 +1765,26 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   Widget _buildEmptyState() {
     final search = _searchController.text.trim();
 
-    final hasFilter = _selectedBloodGroup != null || _selectedRadius != null;
+    final hasFilter = _showExternalDonors
+        ? _selectedBloodGroup != null
+        : _selectedBloodGroup != null || _selectedRadius != null;
 
     String description;
 
     if (search.isNotEmpty) {
-      description =
-          'No donors found for "$search". Try a different city or address.';
+      description = _showExternalDonors
+          ? 'No external donors found for "$search". Try a different name, city or address.'
+          : 'No donors found for "$search". Try a different city or address.';
     } else if (_selectedBloodGroup != null) {
-      description =
-          'No ${_selectedBloodGroup!} donors were found with the current filters.';
+      description = _showExternalDonors
+          ? 'No external ${_selectedBloodGroup!} donors were found.'
+          : 'No ${_selectedBloodGroup!} donors were found with the current filters.';
     } else if (hasFilter) {
       description = 'No donors were found within the selected search area.';
     } else {
-      description = 'There are no available donors to show right now.';
+      description = _showExternalDonors
+          ? 'There are no external donors to show right now.'
+          : 'There are no available donors to show right now.';
     }
 
     return Padding(
@@ -1385,7 +1793,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         vertical: AppSpacing.xl,
       ),
       child: AppEmptyState(
-        title: 'No donors found',
+        title: _showExternalDonors
+            ? 'No external donors found'
+            : 'No donors found',
         description: description,
         icon: Icons.person_search_outlined,
         actionLabel: search.isNotEmpty ? 'Clear search' : null,
@@ -1395,7 +1805,7 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // Donor List
+  // Donor List Content
   // ---------------------------------------------------------------------------
 
   Widget _buildDonorContent(
@@ -1407,12 +1817,36 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         : Column(
             children: [
               for (final donor in donors)
-                _buildDonorItem(donor, locationEnabled: locationEnabled),
+                _buildDonorItem(
+                  donor,
+                  locationEnabled: locationEnabled,
+                ),
               _buildPaginationLoader(),
               _buildNoMoreResults(),
             ],
           );
 
+    return _buildFilteredContent(content);
+  }
+
+  Widget _buildExternalDonorContent(
+    List<ExternalDonorModel> donors,
+  ) {
+    final content = donors.isEmpty
+        ? _buildEmptyState()
+        : Column(
+            children: [
+              for (final donor in donors)
+                _buildExternalDonorItem(donor),
+              _buildPaginationLoader(),
+              _buildNoMoreResults(),
+            ],
+          );
+
+    return _buildFilteredContent(content);
+  }
+
+  Widget _buildFilteredContent(Widget content) {
     if (!_isApplyingFilter) {
       return content;
     }
@@ -1433,7 +1867,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(
+                    color: AppColors.border,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.08),
@@ -1443,7 +1879,9 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
                   ],
                 ),
                 padding: const EdgeInsets.all(12),
-                child: const CircularProgressIndicator(strokeWidth: 2.2),
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                ),
               ),
             ),
           ),
@@ -1466,7 +1904,12 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildSearchField(), _buildLocationPrompt(locationEnabled)],
+        children: [
+          _buildDonorTypeSelector(),
+          const SizedBox(height: AppSpacing.md),
+          _buildSearchField(),
+          _buildLocationPrompt(locationEnabled),
+        ],
       ),
     );
   }
@@ -1478,9 +1921,12 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
   @override
   Widget build(BuildContext context) {
     final donorState = ref.watch(donorProvider);
+    final externalDonorState = ref.watch(externalDonorProvider);
 
     final locationEnabled = ref.watch(
-      appPreferencesProvider.select((state) => state.locationEnabled),
+      appPreferencesProvider.select(
+        (state) => state.locationEnabled,
+      ),
     );
 
     return Scaffold(
@@ -1491,91 +1937,208 @@ class _DonorListScreenState extends ConsumerState<DonorListScreen> {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         titleSpacing: AppSpacing.md,
-        title: const Text(
-          'Available Donors',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        title: Text(
+          _showExternalDonors
+              ? 'External Donors'
+              : 'Available Donors',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
-      body: donorState.when(
-        loading: () {
-          return const Center(child: CircularProgressIndicator());
-        },
-        error: (error, stackTrace) {
-          return ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            children: [
-              SizedBox(
-                height: 220,
-                child: Center(
-                  child: AppEmptyState(
-                    title: 'Unable to load donors',
-                    description: 'Something went wrong while loading donors.',
-                    icon: Icons.error_outline,
-                    actionLabel: 'Try again',
-                    onActionPressed: _handleRefresh,
-                  ),
+      body: _showExternalDonors
+          ? _buildExternalDonorBody(externalDonorState)
+          : _buildAppDonorBody(
+              donorState,
+              locationEnabled: locationEnabled,
+            ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // App Donor Body
+  // ---------------------------------------------------------------------------
+
+  Widget _buildAppDonorBody(
+    AsyncValue<List<DonorModel>> donorState, {
+    required bool locationEnabled,
+  }) {
+    return donorState.when(
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      error: (error, stackTrace) {
+        return ListView(
+          keyboardDismissBehavior:
+              ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: [
+            SizedBox(
+              height: 220,
+              child: Center(
+                child: AppEmptyState(
+                  title: 'Unable to load donors',
+                  description:
+                      'Something went wrong while loading donors.',
+                  icon: Icons.error_outline,
+                  actionLabel: 'Try again',
+                  onActionPressed: _handleRefresh,
                 ),
               ),
-            ],
-          );
-        },
-        data: (donors) {
-          return ListView(
-            controller: _scrollController,
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: AppSpacing.huge),
-            children: [
-              _buildHeader(locationEnabled),
-
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.xs,
-                  AppSpacing.md,
-                  AppSpacing.sm,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        locationEnabled
-                            ? 'Available nearby'
-                            : 'Available Donors',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+            ),
+          ],
+        );
+      },
+      data: (donors) {
+        return ListView(
+          controller: _scrollController,
+          keyboardDismissBehavior:
+              ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(
+            bottom: AppSpacing.huge,
+          ),
+          children: [
+            _buildHeader(locationEnabled),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xs,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      locationEnabled
+                          ? 'Available nearby'
+                          : 'Available Donors',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    if (donors.isNotEmpty)
-                      Text(
-                        '${donors.length} donors',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                        ),
+                  ),
+                  if (donors.isNotEmpty)
+                    Text(
+                      '${donors.length} donors',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
                       ),
-                  ],
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+              ),
+              child: _buildDonorContent(
+                donors,
+                locationEnabled: locationEnabled,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // External Donor Body
+  // ---------------------------------------------------------------------------
+
+  Widget _buildExternalDonorBody(
+    AsyncValue<List<ExternalDonorModel>> donorState,
+  ) {
+    return donorState.when(
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      error: (error, stackTrace) {
+        return ListView(
+          keyboardDismissBehavior:
+              ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: [
+            SizedBox(
+              height: 220,
+              child: Center(
+                child: AppEmptyState(
+                  title: 'Unable to load external donors',
+                  description:
+                      'Something went wrong while loading external donors.',
+                  icon: Icons.error_outline,
+                  actionLabel: 'Try again',
+                  onActionPressed: _handleRefresh,
                 ),
               ),
-
-              const SizedBox(height: 2),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: _buildDonorContent(
-                  donors,
-                  locationEnabled: locationEnabled,
-                ),
+            ),
+          ],
+        );
+      },
+      data: (donors) {
+        return ListView(
+          controller: _scrollController,
+          keyboardDismissBehavior:
+              ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(
+            bottom: AppSpacing.huge,
+          ),
+          children: [
+            _buildHeader(false),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xs,
+                AppSpacing.md,
+                AppSpacing.sm,
               ),
-            ],
-          );
-        },
-      ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'External Donors',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  if (donors.isNotEmpty)
+                    Text(
+                      '${donors.length} donors',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+              ),
+              child: _buildExternalDonorContent(donors),
+            ),
+          ],
+        );
+      },
     );
   }
 }

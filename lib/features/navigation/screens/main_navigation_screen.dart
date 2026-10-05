@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/auth/screens/auth_screen.dart';
-import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
+import 'package:pulze_plus/features/donors/screens/donor_screen.dart';
 import 'package:pulze_plus/features/home/screens/home_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
@@ -39,11 +37,7 @@ class MainNavigationScreen extends ConsumerWidget {
       const HomeScreen(isGuest: false),
       const RequestsScreen(),
       const SizedBox.shrink(),
-      ChatsScreen(
-        onChatTap: (chat) {
-          context.push(AppRoutes.chatDetail, extra: chat);
-        },
-      ),
+      DonorScreen(),
       _buildProfileScreen(authState),
     ];
 

@@ -12,9 +12,6 @@ import 'package:pulze_plus/features/auth/screens/forgot_password_screen.dart';
 import 'package:pulze_plus/features/auth/screens/reset_password_screen.dart';
 import 'package:pulze_plus/features/auth/screens/verify_email_screen.dart';
 import 'package:pulze_plus/features/auth/screens/verify_password_reset_screen.dart';
-import 'package:pulze_plus/features/chat/models/chat_model.dart';
-import 'package:pulze_plus/features/chat/screens/chat_detail_screen.dart';
-import 'package:pulze_plus/features/chat/screens/chats_screen.dart';
 import 'package:pulze_plus/features/navigation/screens/main_navigation_screen.dart';
 import 'package:pulze_plus/features/onboarding/screens/onboarding_screen.dart';
 import 'package:pulze_plus/features/profile/screens/faq_screen.dart';
@@ -22,7 +19,8 @@ import 'package:pulze_plus/features/profile/screens/legal_document_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_form_screen.dart';
 import 'package:pulze_plus/features/profile/screens/profile_screen.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
-import 'package:pulze_plus/features/requests/screens/donor_list_screen.dart';
+import 'package:pulze_plus/features/donors/screens/donor_list_screen.dart';
+import 'package:pulze_plus/features/donors/screens/incoming_blood_requests_screen.dart';
 import 'package:pulze_plus/features/requests/screens/my_blood_requests_screen.dart';
 import 'package:pulze_plus/features/requests/screens/requests_screen.dart';
 
@@ -108,8 +106,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // ------------------------------------------------------------
 
       if (authStatus == AuthStatus.needsVerification) {
-        if (location == AppRoutes.auth ||
-            location == AppRoutes.verifyEmail) {
+        if (location == AppRoutes.auth || location == AppRoutes.verifyEmail) {
           return null;
         }
 
@@ -215,9 +212,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.profileSetup,
         builder: (context, state) {
-          return const ProfileFormScreen(
-            mode: ProfileFormMode.create,
-          );
+          return const ProfileFormScreen(mode: ProfileFormMode.create);
         },
       ),
 
@@ -242,10 +237,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
+      // GoRoute(
+      //   path: AppRoutes.donorDetail,
+      //   builder: (context, state) {
+      //     final donor = state.extra as DonorModel;
+      //     return DonorDetailScreen(donor: donor);
+      //   },
+
       GoRoute(
         path: AppRoutes.myBloodRequests,
         builder: (context, state) {
           return const MyBloodRequestsScreen();
+        },
+      ),
+
+      GoRoute(
+        path: AppRoutes.incomingBloodRequests,
+        builder: (context, state) {
+          return const IncomingBloodRequestsScreen();
         },
       ),
 
@@ -258,25 +267,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             request: args.request,
             onEdit: args.onEdit,
             onTerminate: args.onTerminate,
+            onAccept: args.onAccept,
+            onDecline: args.onDecline,
+            onComplete: args.onComplete,
+            onConnection: args.onConnection,
           );
         },
       ),
 
-      GoRoute(
-        path: AppRoutes.chat,
-        builder: (context, state) {
-          return const ChatsScreen();
-        },
-      ),
+      // GoRoute(
+      //   path: AppRoutes.chatDetail,
+      //   builder: (context, state) {
+      //     final chat = state.extra as ChatModel;
 
-      GoRoute(
-        path: AppRoutes.chatDetail,
-        builder: (context, state) {
-          final chat = state.extra as ChatModel;
-
-          return ChatDetailScreen(chat: chat);
-        },
-      ),
+      //     return ChatDetailScreen(chat: chat);
+      //   },
+      // ),
 
       GoRoute(
         path: AppRoutes.privacyPolicy,

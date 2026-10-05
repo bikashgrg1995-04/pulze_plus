@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pulze_plus/core/utils/responsive_utils.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -121,7 +122,7 @@ class _DonorPreviewList extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 246,
+            height: ResponsiveUtils.heightPercent(context, 0.25),
             child: ListView.separated(
               padding: const EdgeInsets.all(AppSpacing.xs),
               physics: const BouncingScrollPhysics(),

@@ -13,11 +13,21 @@ class BloodRequestDetailArgs {
     required this.request,
     this.onEdit,
     this.onTerminate,
+    this.onAccept,
+    this.onDecline,
+    this.onComplete,
+    this.onConnection,
   });
 
   final BloodRequestModel request;
+
   final VoidCallback? onEdit;
   final VoidCallback? onTerminate;
+
+  final VoidCallback? onAccept;
+  final VoidCallback? onDecline;
+  final VoidCallback? onComplete;
+  final VoidCallback? onConnection;
 }
 
 class BloodRequestDetailScreen extends ConsumerWidget {
@@ -26,21 +36,33 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     required this.request,
     this.onEdit,
     this.onTerminate,
+    this.onAccept,
+    this.onDecline,
+    this.onComplete,
+    this.onConnection,
   });
 
   final BloodRequestModel request;
+
   final VoidCallback? onEdit;
   final VoidCallback? onTerminate;
 
-  bool _canManage(BloodRequestModel request) {
-    final status = request.status.toUpperCase();
+  final VoidCallback? onAccept;
+  final VoidCallback? onDecline;
+  final VoidCallback? onComplete;
+  final VoidCallback? onConnection;
 
-    return status != 'COMPLETED' &&
-        status != 'CANCELLED' &&
-        status != 'EXPIRED' &&
-        status != 'FAILED' &&
-        status != 'NO_SHOW';
+  // ---------------------------------------------------------------------------
+  // Request Management
+  // ---------------------------------------------------------------------------
+
+  bool _canManage(BloodRequestModel request) {
+    return request.status.toUpperCase() == 'ACTIVE';
   }
+
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,9 +84,18 @@ class BloodRequestDetailScreen extends ConsumerWidget {
       orElse: () => request,
     );
 
+    final hasManageActions =
+        onEdit != null || onTerminate != null;
+
+    final hasDonorActions =
+        onAccept != null ||
+        onDecline != null ||
+        onComplete != null ||
+        onConnection != null;
+
     final showActions =
-        _canManage(currentRequest) &&
-        (onEdit != null || onTerminate != null);
+        (hasManageActions && _canManage(currentRequest)) ||
+        hasDonorActions;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -116,51 +147,155 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
   Widget _buildActions(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    final hasDonorActions =
+        onAccept != null ||
+        onDecline != null ||
+        onComplete != null ||
+        onConnection != null;
+
+    final hasManageActions =
+        onEdit != null ||
+        onTerminate != null;
+
     return AppCard(
       padding: const EdgeInsets.all(8),
-      child: Row(
+      child: Column(
         children: [
-          if (onEdit != null)
-            Expanded(
-              child: _ActionButton(
-                icon: Icons.edit_outlined,
-                label: 'Edit Request',
-                backgroundColor:
-                    colorScheme.primary.withValues(alpha: 0.08),
-                foregroundColor: colorScheme.primary,
-                onTap: () => onEdit?.call(),
-              ),
+          // ---------------------------------------------------------------
+          // Accept / Decline
+          // ---------------------------------------------------------------
+
+          if (onAccept != null || onDecline != null)
+            Row(
+              children: [
+                if (onAccept != null)
+                  Expanded(
+                    child: _ActionButton(
+                      icon: Icons.check_circle_outline_rounded,
+                      label: 'Accept',
+                      backgroundColor:
+                          colorScheme.primary.withValues(alpha: 0.08),
+                      foregroundColor: colorScheme.primary,
+                      onTap: () => onAccept?.call(),
+                    ),
+                  ),
+                if (onAccept != null && onDecline != null)
+                  const SizedBox(width: 8),
+                if (onDecline != null)
+                  Expanded(
+                    child: _ActionButton(
+                      icon: Icons.close_rounded,
+                      label: 'Decline',
+                      backgroundColor:
+                          colorScheme.error.withValues(alpha: 0.08),
+                      foregroundColor: colorScheme.error,
+                      onTap: () => onDecline?.call(),
+                    ),
+                  ),
+              ],
             ),
-          if (onEdit != null && onTerminate != null)
-            const SizedBox(width: 8),
-          if (onTerminate != null)
-            Expanded(
-              child: _ActionButton(
-                icon: Icons.stop_circle_outlined,
-                label: 'Terminate',
-                backgroundColor:
-                    colorScheme.error.withValues(alpha: 0.08),
-                foregroundColor: colorScheme.error,
-                onTap: () => _showTerminateConfirmation(context),
-              ),
+
+          // ---------------------------------------------------------------
+          // Complete Donation
+          // ---------------------------------------------------------------
+
+          if (onComplete != null) ...[
+            if (onAccept != null || onDecline != null)
+              const SizedBox(height: 8),
+            _ActionButton(
+              icon: Icons.volunteer_activism_outlined,
+              label: 'Complete Donation',
+              backgroundColor:
+                  colorScheme.primary.withValues(alpha: 0.08),
+              foregroundColor: colorScheme.primary,
+              onTap: () => onComplete?.call(),
+            ),
+          ],
+
+          // ---------------------------------------------------------------
+          // Connection
+          // ---------------------------------------------------------------
+
+          if (onConnection != null) ...[
+            if (onAccept != null ||
+                onDecline != null ||
+                onComplete != null)
+              const SizedBox(height: 8),
+            _ActionButton(
+              icon: Icons.link_rounded,
+              label: 'View Connection',
+              backgroundColor:
+                  colorScheme.secondary.withValues(alpha: 0.08),
+              foregroundColor: colorScheme.secondary,
+              onTap: () => onConnection?.call(),
+            ),
+          ],
+
+          // ---------------------------------------------------------------
+          // Separator between donor and requester actions
+          // ---------------------------------------------------------------
+
+          if (hasDonorActions && hasManageActions)
+            const SizedBox(height: 8),
+
+          // ---------------------------------------------------------------
+          // Edit / Terminate
+          // ---------------------------------------------------------------
+
+          if (hasManageActions)
+            Row(
+              children: [
+                if (onEdit != null)
+                  Expanded(
+                    child: _ActionButton(
+                      icon: Icons.edit_outlined,
+                      label: 'Edit Request',
+                      backgroundColor:
+                          colorScheme.primary.withValues(alpha: 0.08),
+                      foregroundColor: colorScheme.primary,
+                      onTap: () => onEdit?.call(),
+                    ),
+                  ),
+                if (onEdit != null && onTerminate != null)
+                  const SizedBox(width: 8),
+                if (onTerminate != null)
+                  Expanded(
+                    child: _ActionButton(
+                      icon: Icons.stop_circle_outlined,
+                      label: 'Terminate',
+                      backgroundColor:
+                          colorScheme.error.withValues(alpha: 0.08),
+                      foregroundColor: colorScheme.error,
+                      onTap: () => _showTerminateConfirmation(context),
+                    ),
+                  ),
+              ],
             ),
         ],
       ),
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Terminate Confirmation
+  // ---------------------------------------------------------------------------
+
   Future<void> _showTerminateConfirmation(
     BuildContext context,
   ) async {
-    final shouldTerminate =
-        await AppConfirmationDialog.show(
+    final shouldTerminate = await AppConfirmationDialog.show(
       context: context,
       title: 'Terminate Blood Request?',
       description:
-          'This will stop the request and prevent further donor matching. This action cannot be undone.',
+          'This will stop the request and prevent further donor matching. '
+          'This action cannot be undone.',
       confirmLabel: 'Terminate',
       cancelLabel: 'Keep Request',
       icon: Icons.stop_circle_outlined,
@@ -172,14 +307,20 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     onTerminate?.call();
   }
 
+  // ---------------------------------------------------------------------------
+  // Hero
+  // ---------------------------------------------------------------------------
+
   Widget _buildHero(
     BuildContext context,
     BloodRequestModel request,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final urgencyColor =
-        _urgencyColor(context, request.urgency);
+    final urgencyColor = _urgencyColor(
+      context,
+      request.urgency,
+    );
 
     final progress = request.unitsRequired <= 0
         ? 0.0
@@ -203,8 +344,7 @@ class BloodRequestDetailScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   request.bloodGroup,
-                  style:
-                      theme.textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.w900,
                   ),
@@ -264,7 +404,8 @@ class BloodRequestDetailScreen extends ConsumerWidget {
               ),
               const Spacer(),
               Text(
-                '${request.unitsFulfilled}/${request.unitsRequired} fulfilled',
+                '${request.unitsFulfilled}/${request.unitsRequired} '
+                'fulfilled',
                 style:
                     theme.textTheme.labelSmall?.copyWith(
                   color:
@@ -291,6 +432,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Request Information
+  // ---------------------------------------------------------------------------
 
   Widget _buildRequestInfo(
     BuildContext context,
@@ -356,6 +501,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Patient / Hospital
+  // ---------------------------------------------------------------------------
+
   Widget _buildPatientAndHospital(
     BuildContext context,
     BloodRequestModel request,
@@ -408,6 +557,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Note
+  // ---------------------------------------------------------------------------
+
   Widget _buildNote(
     BuildContext context,
     BloodRequestModel request,
@@ -457,6 +610,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Section Title
+  // ---------------------------------------------------------------------------
+
   Widget _sectionTitle(
     BuildContext context,
     IconData icon,
@@ -483,6 +640,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Compact Info
+  // ---------------------------------------------------------------------------
 
   Widget _compactInfo(
     BuildContext context, {
@@ -532,6 +693,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Compact Row
+  // ---------------------------------------------------------------------------
 
   Widget _compactRow(
     BuildContext context,
@@ -593,6 +758,10 @@ class BloodRequestDetailScreen extends ConsumerWidget {
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Labels
+  // ---------------------------------------------------------------------------
 
   String _urgencyLabel(String urgency) {
     switch (urgency) {
@@ -679,14 +848,21 @@ class BloodRequestDetailScreen extends ConsumerWidget {
 
     final hour =
         local.hour % 12 == 0 ? 12 : local.hour % 12;
+
     final minute =
         local.minute.toString().padLeft(2, '0');
-    final period = local.hour >= 12 ? 'PM' : 'AM';
+
+    final period =
+        local.hour >= 12 ? 'PM' : 'AM';
 
     return '${local.day}/${local.month} '
         '$hour:$minute $period';
   }
 }
+
+// =============================================================================
+// Action Button
+// =============================================================================
 
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
@@ -726,12 +902,16 @@ class _ActionButton extends StatelessWidget {
                 color: foregroundColor,
               ),
               const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  color: foregroundColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: foregroundColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],

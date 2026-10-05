@@ -17,18 +17,12 @@ class DonorModel {
   final double? distance;
 
   /// Whether the donor is currently available for donation.
-  ///
-  /// The current donor-list API does not return this field yet.
   final bool isAvailable;
 
   /// Whether the donor is currently eligible to donate.
-  ///
-  /// The current donor-list API does not return this field yet.
   final bool isEligible;
 
   /// Last donation date, if available.
-  ///
-  /// The current donor-list API does not return this field yet.
   final String? lastDonation;
 
   factory DonorModel.fromJson(Map<String, dynamic> json) {
@@ -36,10 +30,10 @@ class DonorModel {
       id: json['id'] as int,
       bloodGroup: json['blood_type'] as String,
       phoneNumber: json['phone_number'] as String?,
-      isPhoneVerified: json['is_phone_verified'] as bool,
+      isPhoneVerified: json['is_phone_verified'] as bool? ?? false,
       distance: (json['distance_km'] as num?)?.toDouble(),
-      isAvailable: json['is_available'] as bool? ?? true,
-      isEligible: json['is_eligible'] as bool? ?? true,
+      isAvailable: json['is_available'] as bool? ?? false,
+      isEligible: json['is_eligible'] as bool? ?? false,
       lastDonation: json['last_donation'] as String?,
     );
   }

@@ -10,7 +10,7 @@ import 'package:pulze_plus/features/auth/models/auth_state.dart';
 import 'package:pulze_plus/features/auth/providers/auth_provider.dart';
 import 'package:pulze_plus/features/navigation/providers/navigation_provider.dart';
 import 'package:pulze_plus/features/requests/providers/blood_request_provider.dart';
-import 'package:pulze_plus/features/requests/providers/donor_provider.dart';
+import 'package:pulze_plus/features/donors/providers/donor_provider.dart';
 import 'package:pulze_plus/features/requests/screens/blood_request_detail_screen.dart';
 import 'package:pulze_plus/features/requests/widgets/create_blood_request_sheet.dart';
 import 'package:pulze_plus/features/requests/widgets/my_request_item.dart';
@@ -19,9 +19,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../models/blood_request_model.dart';
-import '../models/donor_model.dart';
+import '../../donors/models/donor_model.dart';
 import '../widgets/create_request_card.dart';
-import '../widgets/donor_list_section.dart';
+import '../../donors/widgets/donor_list_section.dart';
 
 class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});

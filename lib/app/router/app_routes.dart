@@ -10,11 +10,13 @@ abstract final class AppRoutes {
 
   static const donors = '/donors';
 
+  static const donorDetail = '/donors/detail';
+
   static const bloodRequestDetail = '/requests/detail';
 
   static const myBloodRequests = '/my-blood-requests';
 
-  static const chat = '/chat';
+  static const incomingBloodRequests = '/incoming-blood-requests';
 
   static const chatDetail = '/chat-detail';
 

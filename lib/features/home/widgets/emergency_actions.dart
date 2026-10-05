@@ -21,53 +21,82 @@ class EmergencyActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _EmergencyActionItem(
-            icon: Icons.local_hospital_outlined,
-            label: 'Ambulance',
-            onPressed: onAmbulancePressed,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        Expanded(
-          child: _EmergencyActionItem(
-            icon: Icons.bloodtype_outlined,
-            label: 'Blood Banks',
-            onPressed: onBloodBankPressed,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        Expanded(
-          child: _EmergencyActionItem(
-            icon: Icons.local_police_outlined,
-            label: 'Police',
-            onPressed: onPolicePressed,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        Expanded(
-          child: _EmergencyActionItem(
-            icon: Icons.local_fire_department_outlined,
-            label: 'Firefighters',
-            onPressed: onFirefighterPressed,
-          ),
-        ),
-      ],
+    final actions = [
+      _EmergencyActionData(
+        icon: Icons.local_hospital_outlined,
+        label: 'Ambulance',
+        color: AppColors.primary,
+        onPressed: onAmbulancePressed,
+      ),
+      _EmergencyActionData(
+        icon: Icons.bloodtype_outlined,
+        label: 'Blood banks',
+        color: AppColors.error,
+        onPressed: onBloodBankPressed,
+      ),
+      _EmergencyActionData(
+        icon: Icons.local_police_outlined,
+        label: 'Police',
+        color: AppColors.navy,
+        onPressed: onPolicePressed,
+      ),
+      _EmergencyActionData(
+        icon: Icons.local_fire_department_outlined,
+        label: 'Fire service',
+        color: Colors.deepOrange,
+        onPressed: onFirefighterPressed,
+      ),
+    ];
+
+    return GridView.builder(
+      itemCount: actions.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        crossAxisSpacing: AppSpacing.xs,
+        mainAxisSpacing: AppSpacing.xs,
+        mainAxisExtent: 82,
+      ),
+      itemBuilder: (context, index) {
+        final action = actions[index];
+
+        return _EmergencyActionItem(
+          icon: action.icon,
+          label: action.label,
+          color: action.color,
+          onPressed: action.onPressed,
+        );
+      },
     );
   }
+}
+
+class _EmergencyActionData {
+  const _EmergencyActionData({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onPressed;
 }
 
 class _EmergencyActionItem extends StatelessWidget {
   const _EmergencyActionItem({
     required this.icon,
     required this.label,
+    required this.color,
     this.onPressed,
   });
 
   final IconData icon;
   final String label;
+  final Color color;
   final VoidCallback? onPressed;
 
   @override
@@ -75,48 +104,48 @@ class _EmergencyActionItem extends StatelessWidget {
     final theme = Theme.of(context);
 
     return AppCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xxs,
-        vertical: AppSpacing.sm,
-      ),
+      padding: EdgeInsets.zero,
       borderRadius: AppRadius.lg,
       onTap: onPressed,
-      child: SizedBox(
-        height: 82,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(
-                icon,
-                size: 22,
-                color: AppColors.navy,
-              ),
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          color: AppColors.surface,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: AppSpacing.xs,
             ),
-            const SizedBox(height: AppSpacing.xs),
-            SizedBox(
-              height: 30,
-              child: Center(
-                child: Text(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Icon(icon, size: 20, color: color),
+                ),
+                const SizedBox(height: 5),
+                Text(
                   label,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w600,
-                    height: 1.25,
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:pulze_plus/app/router/app_routes.dart';
 import 'package:pulze_plus/core/location/location_providers.dart';
 import 'package:pulze_plus/core/location/location_service.dart';
 import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
@@ -14,7 +16,10 @@ import 'package:pulze_plus/features/home/widgets/home_recommendation.dart';
 import 'package:pulze_plus/features/home/widgets/home_request_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key, this.isGuest = true});
+  const HomeScreen({
+    super.key,
+    this.isGuest = true,
+  });
 
   final bool isGuest;
 
@@ -28,25 +33,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestInitialLocation();
+      if (mounted) _requestInitialLocation();
     });
   }
 
   Future<void> _requestInitialLocation() async {
     final preferences = ref.read(appPreferencesProvider);
 
-    // The initial location request has already been handled.
-    if (preferences.hasCompletedLocationSetup) {
-      return;
-    }
+    if (preferences.hasCompletedLocationSetup) return;
 
     await _showLocationPermissionDialog();
   }
 
   Future<void> _showLocationPermissionDialog() async {
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     final shouldAllow = await showDialog<bool>(
       context: context,
@@ -95,9 +95,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Text(
                   'Use your location?',
                   style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
                 ),
               ),
             ],
@@ -106,20 +106,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             'Pulze+ uses your location to find nearby blood donors and '
             'show accurate distances from you. Your location is not '
             'shown publicly to other users.',
-            style: Theme.of(dialogContext).textTheme.bodyMedium
-                ?.copyWith(height: 1.5, color: AppColors.textSecondary),
+            style: Theme.of(dialogContext).textTheme.bodyMedium?.copyWith(
+                  height: 1.5,
+                  color: AppColors.textSecondary,
+                ),
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(false),
               child: const Text('Not now'),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(true);
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(true),
               child: const Text('Allow Location'),
             ),
           ],
@@ -127,13 +125,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     final preferencesNotifier = ref.read(appPreferencesProvider.notifier);
 
-    // User declined our explanation dialog.
     if (shouldAllow != true) {
       await preferencesNotifier.setLocationEnabled(false);
       await preferencesNotifier.completeLocationSetup();
@@ -148,63 +143,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     try {
       final locationService = ref.read(locationServiceProvider);
-
-      // This opens the native Android/iOS permission dialog.
       await locationService.ensurePermission();
-
       await preferencesNotifier.setLocationEnabled(true);
     } on LocationServiceDisabledException {
       await preferencesNotifier.setLocationEnabled(false);
-
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Location services are turned off on your device.'),
-        ),
-      );
+      _showMessage('Location services are turned off on your device.');
     } on LocationPermissionDeniedException {
       await preferencesNotifier.setLocationEnabled(false);
-
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location permission was denied.')),
-      );
+      _showMessage('Location permission was denied.');
     } on LocationPermissionPermanentlyDeniedException {
       await preferencesNotifier.setLocationEnabled(false);
-
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Location permission is permanently denied. '
-            'Please enable it from device settings.',
-          ),
-        ),
+      _showMessage(
+        'Location permission is permanently denied. '
+        'Please enable it from device settings.',
       );
     } catch (_) {
       await preferencesNotifier.setLocationEnabled(false);
-
-      if (!mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not access your location right now.'),
-        ),
-      );
+      _showMessage('Could not access your location right now.');
     } finally {
       await preferencesNotifier.completeLocationSetup();
     }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  void _openIncomingRequests() {
+    context.push(AppRoutes.incomingBloodRequests);
+  }
+
+  void _openUrgentRequests() {
+    // Replace with your request-list route when available.
+    _openIncomingRequests();
+  }
+
+  void _openRecommendation() {
+    if (widget.isGuest) {
+      // Replace with your sign-up/join route when available.
+      return;
+    }
+
+    _openSettings();
+  }
+
+  void _openNotifications() {
+    // TODO: Add your notifications route.
+    // context.push(AppRoutes.notifications);
+  }
+
+  void _openSettings() {
+    // TODO: Add your settings route.
+    // context.push(AppRoutes.settings);
   }
 
   @override
@@ -226,70 +220,132 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SliverPadding(
               padding: EdgeInsets.fromLTRB(
                 horizontalPadding,
-                AppSpacing.lg,
+                AppSpacing.md,
                 horizontalPadding,
-                120,
+                112,
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  HomeHeader(isGuest: widget.isGuest),
-
-                  const SizedBox(height: AppSpacing.md),
-
+                  HomeHeader(
+                    isGuest: widget.isGuest,
+                    onNotificationPressed: _openNotifications,
+                    onSettingsPressed: _openSettings,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
                   const AppSectionHeader(title: 'Emergency'),
-
-                  const SizedBox(height: AppSpacing.sm),
-
+                  const SizedBox(height: AppSpacing.xs),
                   const EmergencyActions(),
 
-                  const SizedBox(height: AppSpacing.sm),
+                  if (!widget.isGuest) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    const AppSectionHeader(
+                      title: 'Incoming Blood Requests',
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    _buildIncomingRequestsCard(context),
+                  ],
 
-                  const AppSectionHeader(
-                    title: 'Urgent Requests',
+                  const SizedBox(height: AppSpacing.lg),
+                  AppSectionHeader(
+                    title: 'Urgent Near You',
                     actionLabel: 'See all',
+                    onActionPressed: _openUrgentRequests,
                   ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  const HomeRequestCard(
+                  const SizedBox(height: AppSpacing.xs),
+                  HomeRequestCard(
                     bloodGroup: 'O+',
                     units: '2 units',
                     location: 'Bharatpur Hospital',
                     distance: '3.2 km away',
                     isUrgent: true,
+                    onTap: _openUrgentRequests,
                   ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  const AppSectionHeader(
-                    title: 'Requests Near You',
-                    actionLabel: 'See all',
-                  ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  const HomeRequestCard(
+                  const SizedBox(height: AppSpacing.xs),
+                  HomeRequestCard(
                     bloodGroup: 'A+',
                     units: '1 unit',
                     location: 'Chitwan Medical College',
                     distance: '5.4 km away',
+                    onTap: _openUrgentRequests,
                   ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
+                  const SizedBox(height: AppSpacing.md),
                   AppSectionHeader(
                     title: widget.isGuest
                         ? 'Why join Pulze+'
                         : 'Recommended for you',
                   ),
-
-                  const SizedBox(height: AppSpacing.sm),
-
-                  HomeRecommendation(isGuest: widget.isGuest),
+                  const SizedBox(height: AppSpacing.xs),
+                  HomeRecommendation(
+                    isGuest: widget.isGuest,
+                    onPressed: _openRecommendation,
+                  ),
                 ]),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIncomingRequestsCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Material(
+      color: colorScheme.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: _openIncomingRequests,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                child: Icon(
+                  Icons.inbox_outlined,
+                  size: 21,
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Incoming Blood Requests',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'View requests sent directly to you.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
         ),
       ),
     );

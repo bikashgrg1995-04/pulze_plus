@@ -4,7 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../models/donor_model.dart';
+import '../../donors/models/donor_model.dart';
 
 class RequestDonorSheet extends StatefulWidget {
   const RequestDonorSheet({super.key, required this.donor, this.onSubmit});

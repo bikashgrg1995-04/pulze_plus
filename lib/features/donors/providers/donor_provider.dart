@@ -6,7 +6,7 @@ import 'package:pulze_plus/core/location/location_providers.dart';
 import 'package:pulze_plus/core/location/location_service.dart';
 import 'package:pulze_plus/core/network/network_providers.dart';
 import 'package:pulze_plus/core/preferences/app_preferences_provider.dart';
-import 'package:pulze_plus/features/requests/data/donor_repository.dart';
+import 'package:pulze_plus/features/donors/data/donor_repository.dart';
 
 import '../models/donor_model.dart';
 
